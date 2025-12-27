@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { SearchDialog } from "@/components/search/SearchDialog";
+import { Logo } from "@/components/layout/Logo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -60,14 +62,7 @@ export function Header() {
           </Button>
 
           {/* Logo */}
-          <Link 
-            to="/" 
-            className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
-          >
-            <span className="font-display text-xl font-semibold tracking-[0.2em] text-foreground lg:text-2xl">
-              PHERES
-            </span>
-          </Link>
+          <Logo className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0" />
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex lg:items-center lg:gap-8">
@@ -97,11 +92,13 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </Button>
+            <ThemeToggle />
             <Button 
               variant="ghost" 
               size="icon" 
               aria-label="Favorites"
               onClick={handleFavoritesClick}
+              className="hidden sm:flex"
             >
               <Heart className="h-5 w-5" />
             </Button>
@@ -135,7 +132,7 @@ export function Header() {
         <div
           className={cn(
             "lg:hidden overflow-hidden transition-all duration-300 ease-out",
-            mobileMenuOpen ? "max-h-[28rem]" : "max-h-0"
+            mobileMenuOpen ? "max-h-[32rem]" : "max-h-0"
           )}
         >
           <div className="container py-4 space-y-1">

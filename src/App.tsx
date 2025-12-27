@@ -19,6 +19,8 @@ import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Collection from "./pages/Collection";
 import Product from "./pages/Product";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
 import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
 import ForgotPassword from "./pages/account/ForgotPassword";
@@ -66,6 +68,8 @@ const App = () => (
               <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
               <Route path="/shop/collection/:slug" element={<Collection />} />
               <Route path="/product/:slug" element={<Product />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
             
             {/* Auth routes */}
             <Route path="/account/login" element={<Login />} />
