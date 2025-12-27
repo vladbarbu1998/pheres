@@ -1,10 +1,27 @@
-import { Heart, ShoppingBag } from "lucide-react";
+import { useState } from "react";
+import { Heart, ShoppingBag, Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductSpecs } from "./ProductSpecs";
 import { Link } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface Variant {
+  id: string;
+  name: string;
+  price_adjustment: number;
+  is_active: boolean;
+}
 
 interface ProductInfoProps {
+  productId: string;
   name: string;
   price: number;
   compareAtPrice?: number | null;
@@ -20,9 +37,11 @@ interface ProductInfoProps {
   stoneType?: string | null;
   certification?: string | null;
   isNew?: boolean;
+  variants?: Variant[];
 }
 
 export function ProductInfo({
+  productId,
   name,
   price,
   compareAtPrice,
@@ -38,11 +57,36 @@ export function ProductInfo({
   stoneType,
   certification,
   isNew,
+  variants = [],
 }: ProductInfoProps) {
+  const { addItem } = useCart();
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
+
+  const activeVariants = variants.filter(v => v.is_active);
+  const hasVariants = activeVariants.length > 0;
+  const selectedVariant = activeVariants.find(v => v.id === selectedVariantId);
+  
+  const finalPrice = price + (selectedVariant?.price_adjustment || 0);
   const hasDiscount = compareAtPrice && compareAtPrice > price;
   const discountPercent = hasDiscount
     ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
     : 0;
+
+  const handleAddToCart = async () => {
+    if (hasVariants && !selectedVariantId) {
+      return; // Require variant selection
+    }
+
+    setIsAdding(true);
+    await addItem(productId, selectedVariantId);
+    setIsAdding(false);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 2000);
+  };
+
+  const canAddToCart = !hasVariants || selectedVariantId;
 
   return (
     <div className="flex flex-col gap-6">
@@ -78,7 +122,7 @@ export function ProductInfo({
       {/* Price */}
       <div className="flex items-baseline gap-3">
         <span className="font-display text-2xl font-semibold text-foreground">
-          ${price.toLocaleString()}
+          ${finalPrice.toLocaleString()}
         </span>
         {hasDiscount && (
           <span className="text-lg text-muted-foreground line-through">
@@ -94,11 +138,56 @@ export function ProductInfo({
         </p>
       )}
 
+      {/* Variant selector */}
+      {hasVariants && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">
+            Select Option
+          </label>
+          <Select value={selectedVariantId || ""} onValueChange={setSelectedVariantId}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Choose an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {activeVariants.map((variant) => (
+                <SelectItem key={variant.id} value={variant.id}>
+                  {variant.name}
+                  {variant.price_adjustment !== 0 && (
+                    <span className="text-muted-foreground ml-2">
+                      ({variant.price_adjustment > 0 ? "+" : ""}${variant.price_adjustment.toLocaleString()})
+                    </span>
+                  )}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Button size="lg" className="flex-1">
-          <ShoppingBag className="mr-2 h-5 w-5" />
-          Add to Cart
+        <Button 
+          size="lg" 
+          className="flex-1"
+          onClick={handleAddToCart}
+          disabled={!canAddToCart || isAdding}
+        >
+          {isAdding ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Adding...
+            </>
+          ) : justAdded ? (
+            <>
+              <Check className="mr-2 h-5 w-5" />
+              Added to Cart
+            </>
+          ) : (
+            <>
+              <ShoppingBag className="mr-2 h-5 w-5" />
+              {hasVariants && !selectedVariantId ? "Select an option" : "Add to Cart"}
+            </>
+          )}
         </Button>
         <Button size="lg" variant="outline">
           <Heart className="mr-2 h-5 w-5" />
