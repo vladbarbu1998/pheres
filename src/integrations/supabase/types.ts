@@ -636,6 +636,7 @@ export type Database = {
           metal_type: string | null
           metal_weight: string | null
           name: string
+          product_number: string | null
           short_description: string | null
           sku: string | null
           slug: string
@@ -661,6 +662,7 @@ export type Database = {
           metal_type?: string | null
           metal_weight?: string | null
           name: string
+          product_number?: string | null
           short_description?: string | null
           sku?: string | null
           slug: string
@@ -686,6 +688,7 @@ export type Database = {
           metal_type?: string | null
           metal_weight?: string | null
           name?: string
+          product_number?: string | null
           short_description?: string | null
           sku?: string | null
           slug?: string

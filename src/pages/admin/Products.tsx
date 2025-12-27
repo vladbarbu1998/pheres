@@ -38,7 +38,8 @@ export default function AdminProducts() {
   const filteredProducts = products?.filter(
     (product) =>
       product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.slug.toLowerCase().includes(search.toLowerCase())
+      product.slug.toLowerCase().includes(search.toLowerCase()) ||
+      (product.product_number?.toLowerCase().includes(search.toLowerCase()) ?? false)
   );
 
   const handleDelete = async () => {
@@ -116,6 +117,7 @@ export default function AdminProducts() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-16">ID</TableHead>
                 <TableHead className="w-16">Image</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Price</TableHead>
@@ -127,6 +129,11 @@ export default function AdminProducts() {
             <TableBody>
               {filteredProducts?.map((product) => (
                 <TableRow key={product.id}>
+                  <TableCell>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {product.product_number || "—"}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     {getPrimaryImage(product) ? (
                       <img
