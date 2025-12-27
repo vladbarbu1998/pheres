@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Collection from "./pages/Collection";
@@ -18,6 +19,18 @@ import OrderDetail from "./pages/account/OrderDetail";
 import Addresses from "./pages/account/Addresses";
 import Favorites from "./pages/account/Favorites";
 import Details from "./pages/account/Details";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminProducts from "./pages/admin/Products";
+import AdminProductForm from "./pages/admin/ProductForm";
+import AdminCollections from "./pages/admin/Collections";
+import AdminCategories from "./pages/admin/Categories";
+import AdminOrders from "./pages/admin/Orders";
+import AdminOrderDetail from "./pages/admin/OrderDetail";
+import AdminCustomers from "./pages/admin/Customers";
+import AdminNews from "./pages/admin/News";
+import AdminPress from "./pages/admin/Press";
+import AdminStory from "./pages/admin/Story";
+import AdminInbox from "./pages/admin/Inbox";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,54 +54,27 @@ const App = () => (
             <Route path="/account/forgot-password" element={<ForgotPassword />} />
             
             {/* Protected account routes */}
-            <Route
-              path="/account"
-              element={
-                <ProtectedRoute>
-                  <AccountOverview />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/account/orders"
-              element={
-                <ProtectedRoute>
-                  <Orders />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/account/orders/:id"
-              element={
-                <ProtectedRoute>
-                  <OrderDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/account/addresses"
-              element={
-                <ProtectedRoute>
-                  <Addresses />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/account/favorites"
-              element={
-                <ProtectedRoute>
-                  <Favorites />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/account/details"
-              element={
-                <ProtectedRoute>
-                  <Details />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/account" element={<ProtectedRoute><AccountOverview /></ProtectedRoute>} />
+            <Route path="/account/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+            <Route path="/account/orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+            <Route path="/account/addresses" element={<ProtectedRoute><Addresses /></ProtectedRoute>} />
+            <Route path="/account/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+            <Route path="/account/details" element={<ProtectedRoute><Details /></ProtectedRoute>} />
+            
+            {/* Admin routes */}
+            <Route path="/admin" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+            <Route path="/admin/products" element={<AdminProtectedRoute><AdminProducts /></AdminProtectedRoute>} />
+            <Route path="/admin/products/new" element={<AdminProtectedRoute><AdminProductForm /></AdminProtectedRoute>} />
+            <Route path="/admin/products/:id" element={<AdminProtectedRoute><AdminProductForm /></AdminProtectedRoute>} />
+            <Route path="/admin/collections" element={<AdminProtectedRoute><AdminCollections /></AdminProtectedRoute>} />
+            <Route path="/admin/categories" element={<AdminProtectedRoute><AdminCategories /></AdminProtectedRoute>} />
+            <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrders /></AdminProtectedRoute>} />
+            <Route path="/admin/orders/:id" element={<AdminProtectedRoute><AdminOrderDetail /></AdminProtectedRoute>} />
+            <Route path="/admin/customers" element={<AdminProtectedRoute><AdminCustomers /></AdminProtectedRoute>} />
+            <Route path="/admin/news" element={<AdminProtectedRoute><AdminNews /></AdminProtectedRoute>} />
+            <Route path="/admin/press" element={<AdminProtectedRoute><AdminPress /></AdminProtectedRoute>} />
+            <Route path="/admin/story" element={<AdminProtectedRoute><AdminStory /></AdminProtectedRoute>} />
+            <Route path="/admin/inbox" element={<AdminProtectedRoute><AdminInbox /></AdminProtectedRoute>} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
