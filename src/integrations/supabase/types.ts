@@ -338,6 +338,7 @@ export type Database = {
           billing_state: string | null
           created_at: string
           currency: string
+          customer_email: string | null
           customer_notes: string | null
           delivered_at: string | null
           discount_amount: number
@@ -378,6 +379,7 @@ export type Database = {
           billing_state?: string | null
           created_at?: string
           currency?: string
+          customer_email?: string | null
           customer_notes?: string | null
           delivered_at?: string | null
           discount_amount?: number
@@ -418,6 +420,7 @@ export type Database = {
           billing_state?: string | null
           created_at?: string
           currency?: string
+          customer_email?: string | null
           customer_notes?: string | null
           delivered_at?: string | null
           discount_amount?: number

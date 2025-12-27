@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -29,7 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
 type OrderStatus = Database["public"]["Enums"]["order_status"];
@@ -53,6 +54,28 @@ export default function AdminOrderDetail() {
   const [newStatus, setNewStatus] = useState<OrderStatus | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [sendEmail, setSendEmail] = useState(true);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  // Function to send order status email
+  const sendOrderEmail = async (orderId: string, status: string, previousStatus?: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("order-emails", {
+        body: {
+          order_id: orderId,
+          status,
+          previous_status: previousStatus,
+          notify_admin: status === "pending",
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error("Failed to send order email:", error);
+      throw error;
+    }
+  };
 
   const handleStatusChange = (status: OrderStatus) => {
     setNewStatus(status);
@@ -62,6 +85,7 @@ export default function AdminOrderDetail() {
   const confirmStatusChange = async () => {
     if (!newStatus || !id) return;
 
+    const previousStatus = order?.status;
     setIsUpdating(true);
     try {
       const updateData: any = { status: newStatus };
@@ -75,7 +99,21 @@ export default function AdminOrderDetail() {
 
       if (error) throw error;
 
-      toast.success(`Order status updated to ${newStatus}`);
+      // Send email notification if enabled
+      if (sendEmail) {
+        try {
+          await sendOrderEmail(id, newStatus, previousStatus);
+          toast.success(`Order status updated to ${newStatus} and email sent`);
+        } catch (emailError) {
+          console.error("Email failed:", emailError);
+          toast.success(`Order status updated to ${newStatus}`, {
+            description: "Email notification failed to send",
+          });
+        }
+      } else {
+        toast.success(`Order status updated to ${newStatus}`);
+      }
+
       queryClient.invalidateQueries({ queryKey: ["admin-order", id] });
       queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
     } catch (error) {
@@ -84,6 +122,21 @@ export default function AdminOrderDetail() {
       setIsUpdating(false);
       setShowConfirm(false);
       setNewStatus(null);
+    }
+  };
+
+  // Manual email resend
+  const handleResendEmail = async () => {
+    if (!order) return;
+    
+    setIsSendingEmail(true);
+    try {
+      await sendOrderEmail(order.id, order.status);
+      toast.success("Email sent successfully");
+    } catch (error) {
+      toast.error("Failed to send email");
+    } finally {
+      setIsSendingEmail(false);
     }
   };
 
@@ -246,6 +299,30 @@ export default function AdminOrderDetail() {
             </CardContent>
           </Card>
 
+          {/* Email Notifications */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                Email Notifications
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Send order status email to the customer.
+              </p>
+              <Button
+                variant="outline"
+                onClick={handleResendEmail}
+                disabled={isSendingEmail}
+                className="w-full"
+              >
+                {isSendingEmail && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Resend Status Email
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Tracking */}
           {(order.tracking_number || order.tracking_url) && (
             <Card>
@@ -305,6 +382,19 @@ export default function AdminOrderDetail() {
               This will update the order status to "{newStatus}".
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="flex items-center space-x-2 py-4">
+            <Checkbox
+              id="send-email"
+              checked={sendEmail}
+              onCheckedChange={(checked) => setSendEmail(checked as boolean)}
+            />
+            <label
+              htmlFor="send-email"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Send email notification to customer
+            </label>
+          </div>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmStatusChange} disabled={isUpdating}>
