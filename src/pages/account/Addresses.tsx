@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { CountrySelect } from "@/components/ui/country-select";
+import { PhoneInput } from "@/components/ui/phone-input";
 import {
   Dialog,
   DialogContent,
@@ -254,8 +255,18 @@ function AddressForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone">Phone (optional)</Label>
-        <Input id="phone" type="tel" {...register("phone")} />
+        <Label>Phone (optional)</Label>
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field }) => (
+            <PhoneInput
+              value={field.value || ""}
+              onValueChange={field.onChange}
+              placeholder="Phone number"
+            />
+          )}
+        />
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
