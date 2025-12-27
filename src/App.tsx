@@ -15,6 +15,8 @@ import Press from "./pages/Press";
 import Contact from "./pages/Contact";
 import SearchPage from "./pages/Search";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import Collection from "./pages/Collection";
 import Product from "./pages/Product";
 import Login from "./pages/account/Login";
@@ -60,6 +62,8 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
               <Route path="/shop/collection/:slug" element={<Collection />} />
               <Route path="/product/:slug" element={<Product />} />
             
