@@ -1,20 +1,20 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Heart, Search, ShoppingBag, Menu, X, User } from "lucide-react";
+import { Heart, Search, ShoppingBag, Menu, X, User, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { SearchDialog } from "@/components/search/SearchDialog";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { useTheme } from "next-themes";
 
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Shop", href: "/shop" },
   { name: "Our Story", href: "/story" },
-  { name: "Celebrities", href: "/celebrities" },
-  { name: "Press", href: "/press" },
+  { name: "Celebrities & Press", href: "/press" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -25,6 +25,12 @@ export function Header() {
   const { itemCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleAccountClick = () => {
     if (user) {
@@ -46,6 +52,15 @@ export function Header() {
     navigate("/cart");
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -58,10 +73,10 @@ export function Header() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <Menu className="h-5 w-5" />
           </Button>
 
-          {/* Logo */}
+          {/* Logo - centered on mobile */}
           <Logo className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0" />
 
           {/* Desktop navigation */}
@@ -84,21 +99,25 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 lg:gap-2">
+            {/* Desktop only actions */}
             <Button 
               variant="ghost" 
               size="icon" 
               aria-label="Search"
               onClick={() => setSearchOpen(true)}
+              className="hidden lg:flex"
             >
               <Search className="h-5 w-5" />
             </Button>
-            <ThemeToggle />
+            <div className="hidden lg:block">
+              <ThemeToggle />
+            </div>
             <Button 
               variant="ghost" 
               size="icon" 
               aria-label="Favorites"
               onClick={handleFavoritesClick}
-              className="hidden sm:flex"
+              className="hidden lg:flex"
             >
               <Heart className="h-5 w-5" />
             </Button>
@@ -107,10 +126,12 @@ export function Header() {
               size="icon" 
               aria-label="Account"
               onClick={handleAccountClick}
-              className="hidden sm:flex"
+              className="hidden lg:flex"
             >
               <User className="h-5 w-5" />
             </Button>
+            
+            {/* Cart - always visible */}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -127,37 +148,70 @@ export function Header() {
             </Button>
           </div>
         </nav>
+      </header>
 
-        {/* Mobile menu */}
-        <div
-          className={cn(
-            "lg:hidden overflow-hidden transition-all duration-300 ease-out",
-            mobileMenuOpen ? "max-h-[32rem]" : "max-h-0"
-          )}
-        >
-          <div className="container py-4 space-y-1">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-                  "block py-3 text-base font-medium transition-colors hover:text-foreground",
-                  location.pathname === item.href 
-                    ? "text-foreground" 
-                    : "text-muted-foreground"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
-            <div className="border-t border-border/50 pt-4 mt-4 space-y-1">
+      {/* Mobile slide-out menu overlay */}
+      <div
+        className={cn(
+          "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+          mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
+      {/* Mobile slide-out menu */}
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-full max-w-xs bg-background shadow-xl transition-transform duration-300 ease-out lg:hidden",
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        <div className="flex h-full flex-col">
+          {/* Menu header */}
+          <div className="flex items-center justify-between border-b border-border/50 px-6 py-4">
+            <Logo />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* Menu content */}
+          <div className="flex-1 overflow-y-auto px-6 py-6">
+            {/* Main navigation */}
+            <nav className="space-y-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={cn(
+                    "block py-3 text-base font-medium transition-colors hover:text-foreground",
+                    location.pathname === item.href 
+                      ? "text-foreground" 
+                      : "text-muted-foreground"
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Divider */}
+            <div className="my-6 border-t border-border/50" />
+
+            {/* Secondary actions */}
+            <div className="space-y-1">
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   setSearchOpen(true);
                 }}
-                className="flex w-full items-center gap-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <Search className="h-5 w-5" />
                 Search
@@ -167,7 +221,7 @@ export function Header() {
                   setMobileMenuOpen(false);
                   handleAccountClick();
                 }}
-                className="flex w-full items-center gap-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <User className="h-5 w-5" />
                 {user ? "My Account" : "Sign In"}
@@ -177,30 +231,26 @@ export function Header() {
                   setMobileMenuOpen(false);
                   handleFavoritesClick();
                 }}
-                className="flex w-full items-center gap-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <Heart className="h-5 w-5" />
                 Favorites
               </button>
               <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleCartClick();
-                }}
-                className="flex w-full items-center gap-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                onClick={toggleTheme}
+                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                <ShoppingBag className="h-5 w-5" />
-                Cart
-                {itemCount > 0 && (
-                  <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                    {itemCount}
-                  </span>
+                {mounted && theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
                 )}
+                {mounted && theme === "dark" ? "Light Mode" : "Dark Mode"}
               </button>
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
       <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </>
