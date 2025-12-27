@@ -3,9 +3,12 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
-import { useEffect } from "react";
+import Image from "@tiptap/extension-image";
+import { useEffect, useRef, useState } from "react";
 import { Toggle } from "@/components/ui/toggle";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Bold,
   Italic,
@@ -22,6 +25,8 @@ import {
   Quote,
   Undo,
   Redo,
+  ImageIcon,
+  Loader2,
 } from "lucide-react";
 
 interface RichTextEditorProps {
@@ -31,6 +36,9 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -46,6 +54,11 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
         openOnClick: false,
         HTMLAttributes: {
           class: "text-primary underline",
+        },
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: "max-w-full h-auto rounded-lg my-4",
         },
       }),
     ],
@@ -68,6 +81,53 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     }
   }, [content, editor]);
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !editor) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be smaller than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `content/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("editor-images")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("editor-images")
+        .getPublicUrl(filePath);
+
+      editor.chain().focus().setImage({ src: publicUrl }).run();
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   if (!editor) {
     return null;
   }
@@ -81,6 +141,15 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
 
   return (
     <div className="border rounded-lg overflow-hidden bg-background">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        className="hidden"
+      />
+
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 p-2 border-b bg-muted/30">
         <Toggle
@@ -204,6 +273,19 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
           aria-label="Link"
         >
           <LinkIcon className="h-4 w-4" />
+        </Toggle>
+
+        <Toggle
+          size="sm"
+          onPressedChange={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          aria-label="Insert Image"
+        >
+          {isUploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <ImageIcon className="h-4 w-4" />
+          )}
         </Toggle>
 
         <Separator orientation="vertical" className="mx-1 h-6" />
