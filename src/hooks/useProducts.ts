@@ -41,7 +41,7 @@ export function useProducts({
             is_primary,
             display_order
           ),
-          product_collections!inner (
+          product_collections (
             collection_id,
             collections (
               id,
