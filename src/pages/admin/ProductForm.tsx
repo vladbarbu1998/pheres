@@ -27,6 +27,7 @@ import { Loader2, Plus, Trash2, Upload, GripVertical } from "lucide-react";
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1, "Slug is required"),
+  sku: z.string().optional(),
   base_price: z.coerce.number().min(0, "Price must be positive"),
   compare_at_price: z.coerce.number().optional().nullable(),
   short_description: z.string().optional(),
@@ -61,7 +62,7 @@ export default function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const isNew = id === "new";
+  const isNew = !id; // No id param means new product
 
   const { data: product, isLoading: productLoading } = useAdminProduct(isNew ? undefined : id);
   const { data: categories } = useAdminCategories();
@@ -108,6 +109,7 @@ export default function ProductForm() {
       reset({
         name: product.name,
         slug: product.slug,
+        sku: (product as any).sku || "",
         base_price: product.base_price,
         compare_at_price: product.compare_at_price,
         short_description: product.short_description || "",
@@ -200,6 +202,7 @@ export default function ProductForm() {
       const productData = {
         name: data.name,
         slug: data.slug,
+        sku: data.sku || null,
         base_price: data.base_price,
         short_description: data.short_description || null,
         description: data.description || null,
@@ -327,7 +330,15 @@ export default function ProductForm() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="sku">SKU</Label>
+                <Input
+                  id="sku"
+                  {...register("sku")}
+                  placeholder="e.g., PH-RNG-001"
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="base_price">Price *</Label>
                 <Input

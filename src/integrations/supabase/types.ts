@@ -634,6 +634,7 @@ export type Database = {
           metal_weight: string | null
           name: string
           short_description: string | null
+          sku: string | null
           slug: string
           stone_carat: string | null
           stone_clarity: string | null
@@ -658,6 +659,7 @@ export type Database = {
           metal_weight?: string | null
           name: string
           short_description?: string | null
+          sku?: string | null
           slug: string
           stone_carat?: string | null
           stone_clarity?: string | null
@@ -682,6 +684,7 @@ export type Database = {
           metal_weight?: string | null
           name?: string
           short_description?: string | null
+          sku?: string | null
           slug?: string
           stone_carat?: string | null
           stone_clarity?: string | null
