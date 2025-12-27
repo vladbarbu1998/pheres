@@ -241,14 +241,12 @@ export function CountrySelect({ value, onValueChange, error }: CountrySelectProp
       <PopoverContent 
         className="w-[--radix-popover-trigger-width] p-0" 
         align="start"
-        side="bottom"
         sideOffset={4}
-        avoidCollisions={false}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <Command>
           <CommandInput placeholder="Search country..." />
-          <CommandList className="max-h-[280px] overflow-y-auto overscroll-contain touch-pan-y">
+          <CommandList className="h-[280px] overflow-y-auto overscroll-contain touch-pan-y">
             <CommandEmpty>No country found.</CommandEmpty>
             <CommandGroup>
               {countries.map((country) => (
