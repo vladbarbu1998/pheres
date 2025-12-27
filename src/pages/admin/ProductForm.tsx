@@ -469,12 +469,15 @@ export default function ProductForm() {
                   control={control}
                   name="category_id"
                   render={({ field }) => (
-                    <Select value={field.value || ""} onValueChange={field.onChange}>
+                    <Select 
+                      value={field.value || "none"} 
+                      onValueChange={(val) => field.onChange(val === "none" ? null : val)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No category</SelectItem>
+                        <SelectItem value="none">No category</SelectItem>
                         {categories?.map((cat) => (
                           <SelectItem key={cat.id} value={cat.id}>
                             {cat.name}
