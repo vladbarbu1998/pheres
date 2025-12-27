@@ -241,6 +241,8 @@ export function CountrySelect({ value, onValueChange, error }: CountrySelectProp
       <PopoverContent 
         className="w-[--radix-popover-trigger-width] p-0" 
         align="start"
+        side="bottom"
+        sideOffset={4}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <Command>

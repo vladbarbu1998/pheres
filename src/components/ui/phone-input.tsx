@@ -291,6 +291,8 @@ export function PhoneInput({ value = "", onValueChange, error, placeholder = "Ph
         <PopoverContent 
           className="w-[280px] p-0" 
           align="start"
+          side="bottom"
+          sideOffset={4}
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command>
