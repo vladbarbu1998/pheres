@@ -18,6 +18,43 @@ export function usePublishedPress() {
   });
 }
 
+export function useCelebrityEntries() {
+  return useQuery({
+    queryKey: ["press-celebrities"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("press_entries")
+        .select("*")
+        .eq("is_published", true)
+        .not("celebrity_name", "is", null)
+        .order("is_featured", { ascending: false })
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
+export function usePressArticles() {
+  return useQuery({
+    queryKey: ["press-articles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("press_entries")
+        .select("*")
+        .eq("is_published", true)
+        .is("celebrity_name", null)
+        .not("external_link", "is", null)
+        .order("is_featured", { ascending: false })
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
 export function useFeaturedPress() {
   return useQuery({
     queryKey: ["press-featured"],
