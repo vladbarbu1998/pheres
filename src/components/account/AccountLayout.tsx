@@ -48,7 +48,8 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
           <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
             {/* Sidebar Navigation */}
             <aside className="lg:w-64 lg:shrink-0">
-              <nav className="flex flex-row gap-1 overflow-x-auto pb-4 lg:flex-col lg:gap-1 lg:pb-0">
+              {/* Mobile: Vertical stacked navigation */}
+              <nav className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:flex-col lg:gap-1">
                 {navItems.map((item) => {
                   const isActive = location.pathname === item.href ||
                     (item.href !== "/account" && location.pathname.startsWith(item.href));
@@ -58,14 +59,14 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
                       key={item.href}
                       to={item.href}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap",
+                        "flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:gap-3 lg:px-4 lg:py-3",
                         isActive
                           ? "bg-secondary text-foreground"
                           : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                       )}
                     >
-                      <item.icon className="h-5 w-5 shrink-0" />
-                      {item.name}
+                      <item.icon className="h-4 w-4 shrink-0 lg:h-5 lg:w-5" />
+                      <span className="truncate">{item.name}</span>
                     </Link>
                   );
                 })}
@@ -73,10 +74,10 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
                 <Button
                   variant="ghost"
                   onClick={handleSignOut}
-                  className="flex items-center justify-start gap-3 px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                  className="flex items-center justify-start gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary/50 hover:text-foreground lg:gap-3 lg:px-4 lg:py-3 h-auto"
                 >
-                  <LogOut className="h-5 w-5 shrink-0" />
-                  Sign Out
+                  <LogOut className="h-4 w-4 shrink-0 lg:h-5 lg:w-5" />
+                  <span className="truncate">Sign Out</span>
                 </Button>
               </nav>
             </aside>
