@@ -5,6 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProductSpecs } from "./ProductSpecs";
 import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { useFavoriteToggle } from "@/hooks/useFavoriteToggle";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -60,6 +62,7 @@ export function ProductInfo({
   variants = [],
 }: ProductInfoProps) {
   const { addItem } = useCart();
+  const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(productId);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -189,9 +192,14 @@ export function ProductInfo({
             </>
           )}
         </Button>
-        <Button size="lg" variant="outline">
-          <Heart className="mr-2 h-5 w-5" />
-          Add to Wishlist
+        <Button 
+          size="lg" 
+          variant="outline"
+          onClick={toggleFavorite}
+          disabled={isToggling}
+        >
+          <Heart className={cn("mr-2 h-5 w-5", isFavorited && "fill-primary text-primary")} />
+          {isFavorited ? "In Wishlist" : "Add to Wishlist"}
         </Button>
       </div>
 
