@@ -12,6 +12,7 @@ import Story from "./pages/Story";
 import Celebrities from "./pages/Celebrities";
 import Press from "./pages/Press";
 import Contact from "./pages/Contact";
+import SearchPage from "./pages/Search";
 import Collection from "./pages/Collection";
 import Product from "./pages/Product";
 import Login from "./pages/account/Login";
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/celebrities" element={<Celebrities />} />
             <Route path="/press" element={<Press />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/shop/collection/:slug" element={<Collection />} />
             <Route path="/product/:slug" element={<Product />} />
             

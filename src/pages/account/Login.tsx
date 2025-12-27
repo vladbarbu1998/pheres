@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -24,8 +24,12 @@ export default function LoginPage() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/account";
+  // Support both state-based redirect and query param redirect
+  const redirectParam = searchParams.get("redirect");
+  const stateFrom = (location.state as { from?: { pathname: string } })?.from?.pathname;
+  const from = redirectParam || stateFrom || "/account";
 
   const {
     register,
