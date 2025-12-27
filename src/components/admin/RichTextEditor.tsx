@@ -4,9 +4,11 @@ import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
+import { TextStyle } from "@tiptap/extension-text-style";
 import { useEffect, useRef, useState } from "react";
 import { Toggle } from "@/components/ui/toggle";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -28,11 +30,129 @@ import {
   ImageIcon,
   Loader2,
 } from "lucide-react";
+import { Extension } from "@tiptap/core";
+
+// Custom FontSize extension
+const FontSize = Extension.create({
+  name: "fontSize",
+  addOptions() {
+    return {
+      types: ["textStyle"],
+    };
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: (element) => element.style.fontSize?.replace(/['"]+/g, ""),
+            renderHTML: (attributes) => {
+              if (!attributes.fontSize) return {};
+              return { style: `font-size: ${attributes.fontSize}` };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setFontSize:
+        (fontSize: string) =>
+        ({ chain }) => {
+          return chain().setMark("textStyle", { fontSize }).run();
+        },
+      unsetFontSize:
+        () =>
+        ({ chain }) => {
+          return chain().setMark("textStyle", { fontSize: null }).removeEmptyTextStyle().run();
+        },
+    };
+  },
+});
+
+// Custom FontWeight extension
+const FontWeight = Extension.create({
+  name: "fontWeight",
+  addOptions() {
+    return {
+      types: ["textStyle"],
+    };
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontWeight: {
+            default: null,
+            parseHTML: (element) => element.style.fontWeight,
+            renderHTML: (attributes) => {
+              if (!attributes.fontWeight) return {};
+              return { style: `font-weight: ${attributes.fontWeight}` };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setFontWeight:
+        (fontWeight: string) =>
+        ({ chain }) => {
+          return chain().setMark("textStyle", { fontWeight }).run();
+        },
+      unsetFontWeight:
+        () =>
+        ({ chain }) => {
+          return chain().setMark("textStyle", { fontWeight: null }).removeEmptyTextStyle().run();
+        },
+    };
+  },
+});
+
+const FONT_SIZES = [
+  { label: "12px", value: "12px" },
+  { label: "14px", value: "14px" },
+  { label: "16px", value: "16px" },
+  { label: "18px", value: "18px" },
+  { label: "20px", value: "20px" },
+  { label: "24px", value: "24px" },
+  { label: "28px", value: "28px" },
+  { label: "32px", value: "32px" },
+  { label: "36px", value: "36px" },
+  { label: "48px", value: "48px" },
+];
+
+const FONT_WEIGHTS = [
+  { label: "Light", value: "300" },
+  { label: "Normal", value: "400" },
+  { label: "Medium", value: "500" },
+  { label: "Semibold", value: "600" },
+  { label: "Bold", value: "700" },
+  { label: "Extrabold", value: "800" },
+];
 
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
   placeholder?: string;
+}
+
+declare module "@tiptap/core" {
+  interface Commands<ReturnType> {
+    fontSize: {
+      setFontSize: (fontSize: string) => ReturnType;
+      unsetFontSize: () => ReturnType;
+    };
+    fontWeight: {
+      setFontWeight: (fontWeight: string) => ReturnType;
+      unsetFontWeight: () => ReturnType;
+    };
+  }
 }
 
 export function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
@@ -47,6 +167,9 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
         },
       }),
       Underline,
+      TextStyle,
+      FontSize,
+      FontWeight,
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
@@ -85,13 +208,11 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     const file = event.target.files?.[0];
     if (!file || !editor) return;
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       toast.error("Please select an image file");
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Image must be smaller than 5MB");
       return;
@@ -121,7 +242,6 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       toast.error("Failed to upload image");
     } finally {
       setIsUploading(false);
-      // Reset input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -139,9 +259,18 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     }
   };
 
+  const getCurrentFontSize = () => {
+    const attrs = editor.getAttributes("textStyle");
+    return attrs.fontSize || "";
+  };
+
+  const getCurrentFontWeight = () => {
+    const attrs = editor.getAttributes("textStyle");
+    return attrs.fontWeight || "";
+  };
+
   return (
     <div className="border rounded-lg overflow-hidden bg-background">
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -151,7 +280,57 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       />
 
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 p-2 border-b bg-muted/30">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-muted/30">
+        {/* Font Size Select */}
+        <Select
+          value={getCurrentFontSize()}
+          onValueChange={(value) => {
+            if (value === "default") {
+              editor.chain().focus().unsetFontSize().run();
+            } else {
+              editor.chain().focus().setFontSize(value).run();
+            }
+          }}
+        >
+          <SelectTrigger className="h-8 w-[80px] text-xs">
+            <SelectValue placeholder="Size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default</SelectItem>
+            {FONT_SIZES.map((size) => (
+              <SelectItem key={size.value} value={size.value}>
+                {size.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Font Weight Select */}
+        <Select
+          value={getCurrentFontWeight()}
+          onValueChange={(value) => {
+            if (value === "default") {
+              editor.chain().focus().unsetFontWeight().run();
+            } else {
+              editor.chain().focus().setFontWeight(value).run();
+            }
+          }}
+        >
+          <SelectTrigger className="h-8 w-[100px] text-xs">
+            <SelectValue placeholder="Weight" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default</SelectItem>
+            {FONT_WEIGHTS.map((weight) => (
+              <SelectItem key={weight.value} value={weight.value}>
+                {weight.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Separator orientation="vertical" className="mx-1 h-6" />
+
         <Toggle
           size="sm"
           pressed={editor.isActive("bold")}
