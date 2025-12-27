@@ -1,9 +1,9 @@
 import { Layout } from "@/components/layout/Layout";
-import { usePublishedPress } from "@/hooks/usePress";
+import { usePressArticles } from "@/hooks/usePress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Award, Crown, Star, Sparkles, Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { Link } from "react-router-dom";
+import { ExternalLink, Award, Crown, Star, Sparkles, ArrowRight, Newspaper } from "lucide-react";
 
 // Static recognition/awards data
 const recognitions = [
@@ -30,11 +30,7 @@ const recognitions = [
 ];
 
 export default function Press() {
-  const { data: pressEntries, isLoading, isError, refetch } = usePublishedPress();
-
-  // Separate celebrity appearances from other press
-  const celebrityEntries = pressEntries?.filter((entry) => entry.celebrity_name) || [];
-  const pressArticles = pressEntries?.filter((entry) => !entry.celebrity_name && entry.external_link) || [];
+  const { data: pressArticles, isLoading, isError, refetch } = usePressArticles();
 
   return (
     <Layout>
@@ -42,112 +38,27 @@ export default function Press() {
       <section className="relative py-20 md:py-32 lg:py-40">
         <div className="container max-w-4xl text-center">
           <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-primary animate-fade-in">
-            Red Carpet & Recognition
+            Media & Recognition
           </p>
           <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in text-balance">
-            Pheres on the World Stage
+            Press & Awards
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl animate-fade-in" style={{ animationDelay: "100ms" }}>
-            From the Oscars to the Golden Globes, Pheres jewelry has adorned some of 
-            the world's most celebrated figures on the most prestigious stages.
+            Global acknowledgment of exceptional craftsmanship, visionary leadership, 
+            and the art of creating truly extraordinary jewelry.
           </p>
-        </div>
-      </section>
-
-      {/* Celebrities Section */}
-      <section className="border-t border-border/50 py-16 md:py-24">
-        <div className="container max-w-6xl">
-          <div className="mb-12 md:mb-16">
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-              Celebrity Moments
-            </h2>
-            <p className="mt-4 max-w-2xl text-muted-foreground">
-              Worn by icons who understand that true luxury speaks for itself.
-            </p>
-          </div>
-
-          {isLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="space-y-3">
-                  <Skeleton className="aspect-[3/4] w-full" />
-                  <Skeleton className="h-5 w-2/3" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
-              ))}
-            </div>
-          ) : isError ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Unable to load press entries.</p>
-              <Button onClick={() => refetch()} variant="outline" className="mt-4">
-                Try Again
-              </Button>
-            </div>
-          ) : celebrityEntries.length === 0 ? (
-            <div className="text-center py-16 border border-dashed border-border rounded-lg">
-              <Crown className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-              <p className="text-muted-foreground">
-                Celebrity appearances coming soon.
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {celebrityEntries.map((entry, index) => (
-                <article 
-                  key={entry.id} 
-                  className="group animate-fade-in"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <div className="aspect-[3/4] overflow-hidden bg-muted mb-4">
-                    {entry.image_url ? (
-                      <img
-                        src={entry.image_url}
-                        alt={`${entry.celebrity_name} at ${entry.event_name || "event"}`}
-                        className="h-full w-full object-cover transition-luxury group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                        <Star className="h-12 w-12 text-primary/30" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="font-display text-lg font-semibold text-foreground">
-                      {entry.celebrity_name}
-                    </h3>
-                    {entry.event_name && (
-                      <p className="text-sm text-primary font-medium">
-                        {entry.event_name}
-                      </p>
-                    )}
-                    {entry.event_date && (
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {format(new Date(entry.event_date), "MMMM yyyy")}
-                      </p>
-                    )}
-                    {entry.description && (
-                      <p className="text-sm text-muted-foreground pt-2 leading-relaxed">
-                        {entry.description}
-                      </p>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 
       {/* Awards & Recognition Section */}
-      <section className="bg-card py-16 md:py-24">
+      <section className="border-t border-border/50 bg-card py-16 md:py-24">
         <div className="container max-w-6xl">
           <div className="mb-12 md:mb-16 text-center">
             <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
               Awards & Recognition
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Global acknowledgment of exceptional craftsmanship and visionary leadership.
+              Honors that reflect our commitment to excellence and innovation.
             </p>
           </div>
 
@@ -155,10 +66,10 @@ export default function Press() {
             {recognitions.map((item, index) => (
               <div 
                 key={item.title}
-                className="group p-6 bg-background border border-border rounded-lg text-center animate-fade-in hover:border-primary/30 transition-luxury"
+                className="group p-6 bg-background border border-border rounded-sm text-center animate-fade-in hover:border-primary/30 transition-all duration-300"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-luxury group-hover:bg-primary/20">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover:bg-primary/20">
                   <item.icon className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-display text-base font-semibold text-foreground mb-2">
@@ -174,18 +85,31 @@ export default function Press() {
       </section>
 
       {/* Press Articles Section */}
-      {pressArticles.length > 0 && (
-        <section className="py-16 md:py-24">
-          <div className="container max-w-4xl">
-            <div className="mb-12 md:mb-16 text-center">
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                In the Press
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-                Featured coverage and notable mentions from around the world.
-              </p>
-            </div>
+      <section className="py-16 md:py-24">
+        <div className="container max-w-4xl">
+          <div className="mb-12 md:mb-16 text-center">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              In the Press
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+              Featured coverage and notable mentions from around the world.
+            </p>
+          </div>
 
+          {isLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 w-full" />
+              ))}
+            </div>
+          ) : isError ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Unable to load press articles.</p>
+              <Button onClick={() => refetch()} variant="outline" className="mt-4">
+                Try Again
+              </Button>
+            </div>
+          ) : pressArticles && pressArticles.length > 0 ? (
             <div className="space-y-4">
               {pressArticles.map((article, index) => (
                 <a
@@ -193,7 +117,7 @@ export default function Press() {
                   href={article.external_link!}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center justify-between p-6 border border-border rounded-lg transition-luxury hover:border-primary/30 hover:bg-accent/50 animate-fade-in"
+                  className="group flex items-center justify-between p-6 border border-border rounded-sm transition-all duration-300 hover:border-primary/30 hover:bg-accent/50 animate-fade-in"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex-1 min-w-0">
@@ -210,26 +134,40 @@ export default function Press() {
                 </a>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <div className="text-center py-16 border border-dashed border-border rounded-sm">
+              <Newspaper className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+              <h3 className="font-display text-lg font-medium text-foreground mb-2">
+                Press Coverage Coming Soon
+              </h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                We're compiling our media features and press coverage. 
+                Check back soon for the latest news about Pheres.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* CTA Section */}
-      <section className="border-t border-border/50 py-16 md:py-20">
+      <section className="border-t border-border/50 bg-secondary/30 py-16 md:py-20">
         <div className="container max-w-3xl text-center">
           <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-            Experience the Collection
+            See Who Wears Pheres
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Discover the pieces that have graced the world's most prestigious stages.
+            Discover the icons who have chosen Pheres for the world's most celebrated events.
           </p>
-          <div className="mt-8">
-            <a
-              href="/shop"
-              className="inline-flex items-center justify-center rounded-sm bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-luxury hover:bg-primary/90"
-            >
-              Explore the Collection
-            </a>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg">
+              <Link to="/celebrities">
+                View Celebrities
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link to="/shop">Explore Collection</Link>
+            </Button>
           </div>
         </div>
       </section>

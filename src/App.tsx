@@ -9,6 +9,7 @@ import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Story from "./pages/Story";
+import Celebrities from "./pages/Celebrities";
 import Press from "./pages/Press";
 import Contact from "./pages/Contact";
 import Collection from "./pages/Collection";
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/story" element={<Story />} />
+            <Route path="/celebrities" element={<Celebrities />} />
             <Route path="/press" element={<Press />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/shop/collection/:slug" element={<Collection />} />
