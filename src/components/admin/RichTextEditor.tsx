@@ -22,8 +22,6 @@ import {
   AlignCenter,
   AlignRight,
   Link as LinkIcon,
-  Heading2,
-  Heading3,
   Quote,
   Undo,
   Redo,
@@ -362,25 +360,6 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
           aria-label="Strikethrough"
         >
           <Strikethrough className="h-4 w-4" />
-        </Toggle>
-
-        <Separator orientation="vertical" className="mx-1 h-6" />
-
-        <Toggle
-          size="sm"
-          pressed={editor.isActive("heading", { level: 2 })}
-          onPressedChange={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          aria-label="Heading 2"
-        >
-          <Heading2 className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive("heading", { level: 3 })}
-          onPressedChange={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          aria-label="Heading 3"
-        >
-          <Heading3 className="h-4 w-4" />
         </Toggle>
 
         <Separator orientation="vertical" className="mx-1 h-6" />
