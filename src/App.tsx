@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
+import Story from "./pages/Story";
 import Collection from "./pages/Collection";
 import Product from "./pages/Product";
 import Login from "./pages/account/Login";
@@ -46,6 +47,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/shop" element={<Shop />} />
+            <Route path="/story" element={<Story />} />
             <Route path="/shop/collection/:slug" element={<Collection />} />
             <Route path="/product/:slug" element={<Product />} />
             
