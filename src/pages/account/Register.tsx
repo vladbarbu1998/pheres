@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,8 +27,15 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { signUp, user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/account", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   const {
     register,
@@ -58,6 +65,17 @@ export default function RegisterPage() {
     toast.success("Welcome to Pheres! Your account has been created.");
     navigate("/account", { replace: true });
   };
+
+  // Show loading or nothing while checking auth
+  if (authLoading || user) {
+    return (
+      <Layout>
+        <div className="container flex min-h-[70vh] items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

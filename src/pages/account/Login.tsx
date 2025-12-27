@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +21,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -30,6 +30,13 @@ export default function LoginPage() {
   const redirectParam = searchParams.get("redirect");
   const stateFrom = (location.state as { from?: { pathname: string } })?.from?.pathname;
   const from = redirectParam || stateFrom || "/account";
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, authLoading, navigate, from]);
 
   const {
     register,
@@ -56,6 +63,17 @@ export default function LoginPage() {
     toast.success("Welcome back!");
     navigate(from, { replace: true });
   };
+
+  // Show loading or nothing while checking auth
+  if (authLoading || user) {
+    return (
+      <Layout>
+        <div className="container flex min-h-[70vh] items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
