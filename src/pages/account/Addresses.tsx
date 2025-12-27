@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MapPin, Plus, Trash2, Star, Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AccountLayout } from "@/components/account/AccountLayout";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { CountrySelect } from "@/components/ui/country-select";
 import {
   Dialog,
   DialogContent,
@@ -82,6 +83,7 @@ function AddressForm({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<AddressFormData>({
     resolver: zodResolver(addressSchema),
@@ -234,10 +236,16 @@ function AddressForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="country">Country</Label>
-          <Input
-            id="country"
-            {...register("country")}
-            className={errors.country ? "border-destructive" : ""}
+          <Controller
+            control={control}
+            name="country"
+            render={({ field }) => (
+              <CountrySelect
+                value={field.value}
+                onValueChange={field.onChange}
+                error={!!errors.country}
+              />
+            )}
           />
           {errors.country && (
             <p className="text-sm text-destructive">{errors.country.message}</p>
