@@ -1,0 +1,293 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+
+export function useIsAdmin() {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ["is-admin", user?.id],
+    queryFn: async () => {
+      if (!user) return false;
+      
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+
+      if (error) {
+        console.error("Error checking admin role:", error);
+        return false;
+      }
+
+      return data === true;
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+}
+
+// Dashboard stats
+export function useAdminStats() {
+  return useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: async () => {
+      const [products, collections, orders, customers, messages] = await Promise.all([
+        supabase.from("products").select("id", { count: "exact", head: true }),
+        supabase.from("collections").select("id", { count: "exact", head: true }),
+        supabase.from("orders").select("id, status", { count: "exact" }),
+        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("contact_messages").select("id, is_read", { count: "exact" }),
+      ]);
+
+      const ordersByStatus = orders.data?.reduce((acc, order) => {
+        acc[order.status] = (acc[order.status] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+      const unreadMessages = messages.data?.filter(m => !m.is_read).length || 0;
+
+      return {
+        productsCount: products.count || 0,
+        collectionsCount: collections.count || 0,
+        ordersCount: orders.count || 0,
+        customersCount: customers.count || 0,
+        messagesCount: messages.count || 0,
+        unreadMessagesCount: unreadMessages,
+        ordersByStatus,
+      };
+    },
+  });
+}
+
+// Recent orders
+export function useRecentOrders(limit = 5) {
+  return useQuery({
+    queryKey: ["admin-recent-orders", limit],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("id, order_number, status, total, created_at, shipping_first_name, shipping_last_name")
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Recent messages
+export function useRecentMessages(limit = 5) {
+  return useQuery({
+    queryKey: ["admin-recent-messages", limit],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Products list
+export function useAdminProducts() {
+  return useQuery({
+    queryKey: ["admin-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          *,
+          category:categories(id, name),
+          product_images(id, image_url, is_primary, display_order),
+          product_collections(collection_id, collections(id, name))
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Single product
+export function useAdminProduct(id: string | undefined) {
+  return useQuery({
+    queryKey: ["admin-product", id],
+    queryFn: async () => {
+      if (!id) return null;
+      
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          *,
+          category:categories(id, name),
+          product_images(id, image_url, alt_text, is_primary, display_order),
+          product_variants(id, name, sku, price_adjustment, stock_quantity, is_active),
+          product_collections(collection_id, collections(id, name))
+        `)
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+}
+
+// Collections
+export function useAdminCollections() {
+  return useQuery({
+    queryKey: ["admin-collections"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collections")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Categories
+export function useAdminCategories() {
+  return useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Orders
+export function useAdminOrders() {
+  return useQuery({
+    queryKey: ["admin-orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Single order with items
+export function useAdminOrder(id: string | undefined) {
+  return useQuery({
+    queryKey: ["admin-order", id],
+    queryFn: async () => {
+      if (!id) return null;
+      
+      const { data, error } = await supabase
+        .from("orders")
+        .select(`
+          *,
+          order_items(*)
+        `)
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+}
+
+// Customers (profiles)
+export function useAdminCustomers() {
+  return useQuery({
+    queryKey: ["admin-customers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// News
+export function useAdminNews() {
+  return useQuery({
+    queryKey: ["admin-news"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Press entries
+export function useAdminPress() {
+  return useQuery({
+    queryKey: ["admin-press"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("press_entries")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Story sections
+export function useAdminStory() {
+  return useQuery({
+    queryKey: ["admin-story"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("story_sections")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Contact messages
+export function useAdminMessages() {
+  return useQuery({
+    queryKey: ["admin-messages"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
