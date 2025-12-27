@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CartProvider } from "@/contexts/CartContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import Index from "./pages/Index";
@@ -13,6 +14,7 @@ import Celebrities from "./pages/Celebrities";
 import Press from "./pages/Press";
 import Contact from "./pages/Contact";
 import SearchPage from "./pages/Search";
+import Cart from "./pages/Cart";
 import Collection from "./pages/Collection";
 import Product from "./pages/Product";
 import Login from "./pages/account/Login";
@@ -44,20 +46,22 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/story" element={<Story />} />
-            <Route path="/celebrities" element={<Celebrities />} />
-            <Route path="/press" element={<Press />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/shop/collection/:slug" element={<Collection />} />
-            <Route path="/product/:slug" element={<Product />} />
+      <CartProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/story" element={<Story />} />
+              <Route path="/celebrities" element={<Celebrities />} />
+              <Route path="/press" element={<Press />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/shop/collection/:slug" element={<Collection />} />
+              <Route path="/product/:slug" element={<Product />} />
             
             {/* Auth routes */}
             <Route path="/account/login" element={<Login />} />
@@ -92,8 +96,9 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+    </CartProvider>
+  </AuthProvider>
+</QueryClientProvider>
 );
 
 export default App;

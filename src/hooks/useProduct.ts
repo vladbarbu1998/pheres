@@ -25,6 +25,12 @@ export function useProduct(slug: string) {
               slug
             )
           ),
+          product_variants (
+            id,
+            name,
+            price_adjustment,
+            is_active
+          ),
           categories (
             id,
             name,

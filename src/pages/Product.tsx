@@ -103,6 +103,7 @@ export default function ProductPage() {
               <ProductInfoSkeleton />
             ) : (
               <ProductInfo
+                productId={product!.id}
                 name={product!.name}
                 price={Number(product!.base_price)}
                 compareAtPrice={product!.compare_at_price ? Number(product!.compare_at_price) : null}
@@ -118,6 +119,7 @@ export default function ProductPage() {
                 stoneType={product!.stone_type}
                 certification={product!.certification}
                 isNew={product!.is_new}
+                variants={(product as any).product_variants || []}
               />
             )}
           </div>

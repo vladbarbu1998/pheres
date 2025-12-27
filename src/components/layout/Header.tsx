@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { SearchDialog } from "@/components/search/SearchDialog";
 
 const navigation = [
@@ -19,11 +20,9 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { user } = useAuth();
+  const { itemCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // TODO: Replace with real cart count from cart context/state
-  const cartItemCount = 0;
 
   const handleAccountClick = () => {
     if (user) {
@@ -123,9 +122,9 @@ export function Header() {
               onClick={handleCartClick}
             >
               <ShoppingBag className="h-5 w-5" />
-              {cartItemCount > 0 && (
+              {itemCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                  {cartItemCount > 9 ? "9+" : cartItemCount}
+                  {itemCount > 9 ? "9+" : itemCount}
                 </span>
               )}
             </Button>
@@ -195,9 +194,9 @@ export function Header() {
               >
                 <ShoppingBag className="h-5 w-5" />
                 Cart
-                {cartItemCount > 0 && (
+                {itemCount > 0 && (
                   <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                    {cartItemCount}
+                    {itemCount}
                   </span>
                 )}
               </button>
