@@ -1,20 +1,41 @@
-import { Link } from "react-router-dom";
-import { Heart, Search, ShoppingBag, Menu, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart, Search, ShoppingBag, Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Shop", href: "/shop" },
-  { name: "Collections", href: "/shop" },
   { name: "Our Story", href: "/story" },
-  { name: "Press", href: "/press" },
+  { name: "Celebrities & Press", href: "/press" },
   { name: "Contact", href: "/contact" },
 ];
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // TODO: Replace with real cart count from cart context/state
+  const cartItemCount = 0;
+
+  const handleAccountClick = () => {
+    if (user) {
+      navigate("/account");
+    } else {
+      navigate("/account/login");
+    }
+  };
+
+  const handleFavoritesClick = () => {
+    if (user) {
+      navigate("/account/favorites");
+    } else {
+      navigate("/account/login");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -58,11 +79,29 @@ export function Header() {
           <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Search">
             <Search className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Wishlist">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            aria-label="Favorites"
+            onClick={handleFavoritesClick}
+          >
             <Heart className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Cart">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            aria-label="Account"
+            onClick={handleAccountClick}
+          >
+            <User className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" aria-label="Cart" className="relative">
             <ShoppingBag className="h-5 w-5" />
+            {cartItemCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                {cartItemCount > 9 ? "9+" : cartItemCount}
+              </span>
+            )}
           </Button>
         </div>
       </nav>
@@ -71,7 +110,7 @@ export function Header() {
       <div
         className={cn(
           "lg:hidden overflow-hidden transition-all duration-300 ease-out",
-          mobileMenuOpen ? "max-h-96" : "max-h-0"
+          mobileMenuOpen ? "max-h-[28rem]" : "max-h-0"
         )}
       >
         <div className="container py-4 space-y-1">
@@ -85,6 +124,41 @@ export function Header() {
               {item.name}
             </Link>
           ))}
+          <div className="border-t border-border/50 pt-4 mt-4 space-y-1">
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleAccountClick();
+              }}
+              className="flex w-full items-center gap-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <User className="h-5 w-5" />
+              {user ? "My Account" : "Sign In"}
+            </button>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleFavoritesClick();
+              }}
+              className="flex w-full items-center gap-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Heart className="h-5 w-5" />
+              Favorites
+            </button>
+            <Link
+              to="/cart"
+              className="flex items-center gap-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <ShoppingBag className="h-5 w-5" />
+              Cart
+              {cartItemCount > 0 && (
+                <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                  {cartItemCount}
+                </span>
+              )}
+            </Link>
+          </div>
         </div>
       </div>
     </header>
