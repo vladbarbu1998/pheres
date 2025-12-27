@@ -198,9 +198,25 @@ export default function ProductForm() {
       let productId = id;
 
       const productData = {
-        ...data,
+        name: data.name,
+        slug: data.slug,
+        base_price: data.base_price,
+        short_description: data.short_description || null,
+        description: data.description || null,
+        metal_type: data.metal_type || null,
+        metal_weight: data.metal_weight || null,
+        stone_type: data.stone_type || null,
+        stone_carat: data.stone_carat || null,
+        stone_clarity: data.stone_clarity || null,
+        stone_color: data.stone_color || null,
+        stone_cut: data.stone_cut || null,
+        certification: data.certification || null,
         compare_at_price: data.compare_at_price || null,
         category_id: data.category_id || null,
+        is_active: data.is_active ?? true,
+        is_featured: data.is_featured ?? false,
+        is_new: data.is_new ?? false,
+        is_bestseller: data.is_bestseller ?? false,
       };
 
       if (isNew) {
