@@ -1,4 +1,7 @@
 project_id = "sbyfgresripeilehcoru"
 
+[functions.create-order]
+verify_jwt = false
+
 [functions.order-emails]
 verify_jwt = false
