@@ -31,6 +31,7 @@ import AdminNews from "./pages/admin/News";
 import AdminPress from "./pages/admin/Press";
 import AdminStory from "./pages/admin/Story";
 import AdminInbox from "./pages/admin/Inbox";
+import AdminSettings from "./pages/admin/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -75,7 +76,7 @@ const App = () => (
             <Route path="/admin/press" element={<AdminProtectedRoute><AdminPress /></AdminProtectedRoute>} />
             <Route path="/admin/story" element={<AdminProtectedRoute><AdminStory /></AdminProtectedRoute>} />
             <Route path="/admin/inbox" element={<AdminProtectedRoute><AdminInbox /></AdminProtectedRoute>} />
-            
+            <Route path="/admin/settings" element={<AdminProtectedRoute><AdminSettings /></AdminProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
