@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Logo } from "@/components/layout/Logo";
 
 const footerLinks = {
   shop: [
@@ -16,20 +17,20 @@ const footerLinks = {
     { name: "Care Guide", href: "/care" },
     { name: "FAQ", href: "/faq" },
   ],
+  legal: [
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Terms & Conditions", href: "/terms" },
+  ],
 };
 
 export function Footer() {
   return (
     <footer className="border-t border-border bg-secondary/30">
       <div className="container py-12 lg:py-16">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link to="/" className="inline-block">
-              <span className="font-display text-xl font-semibold tracking-[0.2em] text-foreground">
-                PHERES
-              </span>
-            </Link>
+            <Logo />
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
               Exquisite jewelry crafted with passion, precision, and timeless elegance.
             </p>
@@ -91,12 +92,42 @@ export function Footer() {
               ))}
             </ul>
           </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="font-display text-sm font-semibold tracking-wide text-foreground">
+              Legal
+            </h3>
+            <ul className="mt-4 space-y-3">
+              {footerLinks.legal.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    to={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <div className="mt-12 border-t border-border pt-8">
-          <p className="text-center text-xs text-muted-foreground">
+        <div className="mt-12 border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Pheres. All rights reserved.
           </p>
+          <div className="flex items-center gap-4">
+            {footerLinks.legal.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>
