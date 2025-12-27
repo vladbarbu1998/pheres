@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useFavoriteToggle } from "@/hooks/useFavoriteToggle";
 
 interface ProductCardProps {
   id: string;
@@ -47,11 +48,11 @@ export function ProductCard({
   style,
 }: ProductCardProps) {
   const { addItem } = useCart();
+  const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(id);
   const [isAdding, setIsAdding] = useState(false);
   const [showVariantDialog, setShowVariantDialog] = useState(false);
   const [variants, setVariants] = useState<Variant[]>([]);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
-  const [isLoadingVariants, setIsLoadingVariants] = useState(false);
 
   const hasDiscount = compareAtPrice && compareAtPrice > price;
   const discountPercent = hasDiscount
@@ -149,10 +150,19 @@ export function ProductCard({
               <Button
                 variant="secondary"
                 size="icon"
-                className="h-9 w-9 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus:opacity-100"
-                aria-label="Add to wishlist"
+                className={cn(
+                  "h-9 w-9 transition-opacity duration-200",
+                  isFavorited ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus:opacity-100"
+                )}
+                aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFavorite();
+                }}
+                disabled={isToggling}
               >
-                <Heart className="h-4 w-4" />
+                <Heart className={cn("h-4 w-4", isFavorited && "fill-primary text-primary")} />
               </Button>
             </div>
 
