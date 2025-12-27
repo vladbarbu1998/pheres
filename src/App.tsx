@@ -21,6 +21,7 @@ import Collection from "./pages/Collection";
 import Product from "./pages/Product";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
+import Returns from "./pages/Returns";
 import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
 import ForgotPassword from "./pages/account/ForgotPassword";
@@ -70,6 +71,8 @@ const App = () => (
               <Route path="/product/:slug" element={<Product />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/returns" element={<Returns />} />
+              <Route path="/shipping" element={<Returns />} />
             
             {/* Auth routes */}
             <Route path="/account/login" element={<Login />} />
