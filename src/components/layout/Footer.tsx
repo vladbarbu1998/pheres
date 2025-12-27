@@ -112,21 +112,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-12 border-t border-border pt-8 flex items-center justify-center">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Pheres. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
-            {footerLinks.legal.map((link) => (
-              <Link
-                key={link.name}
-                to={link.href}
-                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
     </footer>

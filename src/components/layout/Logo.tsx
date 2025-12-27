@@ -11,7 +11,7 @@ export function Logo({ className }: LogoProps) {
       <img 
         src={logoImage} 
         alt="Pheres" 
-        className="h-8 w-auto lg:h-10" 
+        className="h-6 w-auto lg:h-7" 
       />
     </Link>
   );
