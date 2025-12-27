@@ -243,6 +243,7 @@ export function CountrySelect({ value, onValueChange, error }: CountrySelectProp
         align="start"
         side="bottom"
         sideOffset={4}
+        avoidCollisions={false}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <Command>

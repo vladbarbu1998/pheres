@@ -293,6 +293,7 @@ export function PhoneInput({ value = "", onValueChange, error, placeholder = "Ph
           align="start"
           side="bottom"
           sideOffset={4}
+          avoidCollisions={false}
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command>
