@@ -20,7 +20,7 @@ import OrderDetail from "./pages/account/OrderDetail";
 import Addresses from "./pages/account/Addresses";
 import Favorites from "./pages/account/Favorites";
 import Details from "./pages/account/Details";
-import AdminDashboard from "./pages/admin/Dashboard";
+import AdminEntry from "./pages/admin/AdminEntry";
 import AdminProducts from "./pages/admin/Products";
 import AdminProductForm from "./pages/admin/ProductForm";
 import AdminCollections from "./pages/admin/Collections";
@@ -65,7 +65,7 @@ const App = () => (
             <Route path="/account/details" element={<ProtectedRoute><Details /></ProtectedRoute>} />
             
             {/* Admin routes */}
-            <Route path="/admin" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+            <Route path="/admin" element={<AdminEntry />} />
             <Route path="/admin/products" element={<AdminProtectedRoute><AdminProducts /></AdminProtectedRoute>} />
             <Route path="/admin/products/new" element={<AdminProtectedRoute><AdminProductForm /></AdminProtectedRoute>} />
             <Route path="/admin/products/:id" element={<AdminProtectedRoute><AdminProductForm /></AdminProtectedRoute>} />
