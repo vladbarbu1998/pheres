@@ -149,7 +149,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       {/* Lightbox Dialog */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent 
-          className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 bg-background/95 backdrop-blur-md border-none"
+          className="max-w-3xl max-h-[80vh] p-0 bg-background border overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -157,79 +157,66 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             <DialogTitle>{productName} - Image Gallery</DialogTitle>
           </VisuallyHidden>
           
-          {/* Close button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
-            onClick={() => setLightboxOpen(false)}
-            aria-label="Close gallery"
-          >
-            <X className="h-5 w-5" />
-          </Button>
-
           {/* Navigation buttons */}
           {sortedImages.length > 1 && (
             <>
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-50 h-12 w-12 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
                 onClick={handlePrevious}
                 aria-label="Previous image"
               >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="h-5 w-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-50 h-12 w-12 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
                 onClick={handleNext}
                 aria-label="Next image"
               >
-                <ChevronRight className="h-6 w-6" />
+                <ChevronRight className="h-5 w-5" />
               </Button>
             </>
           )}
 
           {/* Main image */}
-          <div className="flex items-center justify-center h-full p-8 md:p-16">
+          <div className="flex items-center justify-center p-6">
             <img
               src={sortedImages[selectedIndex]?.image_url}
               alt={sortedImages[selectedIndex]?.alt_text || productName}
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-[60vh] object-contain"
             />
           </div>
 
-          {/* Thumbnails at bottom */}
+          {/* Thumbnails and counter at bottom */}
           {sortedImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-background/80 backdrop-blur-sm rounded-lg max-w-[90vw] overflow-x-auto">
-              {sortedImages.map((image, index) => (
-                <button
-                  key={image.id}
-                  onClick={() => setSelectedIndex(index)}
-                  className={cn(
-                    "relative h-12 w-12 flex-shrink-0 overflow-hidden rounded transition-all duration-200",
-                    selectedIndex === index
-                      ? "ring-2 ring-primary"
-                      : "opacity-60 hover:opacity-100"
-                  )}
-                  aria-label={`View image ${index + 1}`}
-                >
-                  <img
-                    src={image.image_url}
-                    alt={image.alt_text || `${productName} - Image ${index + 1}`}
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Image counter */}
-          {sortedImages.length > 1 && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 text-sm font-medium bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full">
-              {selectedIndex + 1} / {sortedImages.length}
+            <div className="border-t bg-muted/30 px-4 py-3 flex items-center justify-center gap-4">
+              <span className="text-sm text-muted-foreground">
+                {selectedIndex + 1} / {sortedImages.length}
+              </span>
+              <div className="flex gap-2 overflow-x-auto max-w-md">
+                {sortedImages.map((image, index) => (
+                  <button
+                    key={image.id}
+                    onClick={() => setSelectedIndex(index)}
+                    className={cn(
+                      "relative h-10 w-10 flex-shrink-0 overflow-hidden rounded transition-all duration-200",
+                      selectedIndex === index
+                        ? "ring-2 ring-primary"
+                        : "opacity-60 hover:opacity-100"
+                    )}
+                    aria-label={`View image ${index + 1}`}
+                  >
+                    <img
+                      src={image.image_url}
+                      alt={image.alt_text || `${productName} - Image ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </DialogContent>
