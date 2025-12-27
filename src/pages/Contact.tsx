@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Mail, MapPin, Phone, Clock, Instagram, Facebook, Linkedin, Send, CheckCircle } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, Instagram, Send, CheckCircle } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,9 +50,7 @@ const locations = [
 ];
 
 const socialLinks = [
-  { name: "Instagram", icon: Instagram, href: "https://instagram.com/pheres" },
-  { name: "Facebook", icon: Facebook, href: "https://facebook.com/pheres" },
-  { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com/company/pheres" },
+  { name: "Instagram", icon: Instagram, href: "https://www.instagram.com/pheresofficial/" },
 ];
 
 export default function Contact() {
