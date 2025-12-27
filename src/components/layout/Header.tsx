@@ -5,6 +5,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
+  { name: "Home", href: "/" },
   { name: "Shop", href: "/shop" },
   { name: "Collections", href: "/shop" },
   { name: "Our Story", href: "/story" },
