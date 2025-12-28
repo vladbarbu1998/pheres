@@ -20,6 +20,18 @@ export function useProducts({
   return useQuery({
     queryKey: ["products", filters, sortBy, collectionSlug, page, pageSize],
     queryFn: async () => {
+      // If filtering by stone type, we need to get product IDs from product_stones first
+      let stoneProductIds: string[] | null = null;
+      if (filters?.stoneType) {
+        const { data: stoneProducts, error: stoneError } = await supabase
+          .from("product_stones")
+          .select("product_id")
+          .eq("stone_type", filters.stoneType);
+
+        if (stoneError) throw stoneError;
+        stoneProductIds = stoneProducts?.map((sp) => sp.product_id) || [];
+      }
+
       let query = supabase
         .from("products")
         .select(
@@ -83,9 +95,15 @@ export function useProducts({
         query = query.eq("metal_type", filters.metalType);
       }
 
-      if (filters?.stoneType) {
-        // Filter by stone_type on product OR in product_stones table
-        query = query.or(`stone_type.eq.${filters.stoneType},product_stones.stone_type.eq.${filters.stoneType}`);
+      // Filter by stone type - check both product.stone_type AND product_stones table
+      if (filters?.stoneType && stoneProductIds !== null) {
+        // Build OR filter: products where stone_type matches OR id is in stoneProductIds
+        if (stoneProductIds.length > 0) {
+          query = query.or(`stone_type.eq.${filters.stoneType},id.in.(${stoneProductIds.join(",")})`);
+        } else {
+          // No products in product_stones, just filter by stone_type on product
+          query = query.eq("stone_type", filters.stoneType);
+        }
       }
 
       // Apply sorting
