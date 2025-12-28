@@ -1,6 +1,7 @@
 interface ProductSpecsProps {
   metalType?: string | null;
   metalWeight?: string | null;
+  grossWeight?: string | null;
   stoneCarat?: string | null;
   stoneClarity?: string | null;
   stoneColor?: string | null;
@@ -27,6 +28,7 @@ function SpecItem({ label, value }: SpecItemProps) {
 export function ProductSpecs({
   metalType,
   metalWeight,
+  grossWeight,
   stoneCarat,
   stoneClarity,
   stoneColor,
@@ -38,6 +40,7 @@ export function ProductSpecs({
   const specs = [
     { label: "Metal", value: metalType },
     { label: "Metal Weight", value: metalWeight },
+    { label: "Gross Weight", value: grossWeight },
     { label: "Stone", value: stoneType },
     { label: "Carat", value: stoneCarat },
     { label: "Clarity", value: stoneClarity },

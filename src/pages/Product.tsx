@@ -112,6 +112,7 @@ export default function ProductPage() {
                 collectionSlug={primaryCollection?.slug || null}
                 metalType={product!.metal_type}
                 metalWeight={product!.metal_weight}
+                grossWeight={(product as any).gross_weight}
                 stoneCarat={product!.stone_carat}
                 stoneClarity={product!.stone_clarity}
                 stoneColor={product!.stone_color}

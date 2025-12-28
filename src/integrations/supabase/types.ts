@@ -673,6 +673,7 @@ export type Database = {
           compare_at_price: number | null
           created_at: string
           description: string | null
+          gross_weight: string | null
           id: string
           is_active: boolean
           is_bestseller: boolean
@@ -699,6 +700,7 @@ export type Database = {
           compare_at_price?: number | null
           created_at?: string
           description?: string | null
+          gross_weight?: string | null
           id?: string
           is_active?: boolean
           is_bestseller?: boolean
@@ -725,6 +727,7 @@ export type Database = {
           compare_at_price?: number | null
           created_at?: string
           description?: string | null
+          gross_weight?: string | null
           id?: string
           is_active?: boolean
           is_bestseller?: boolean

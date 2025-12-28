@@ -32,6 +32,7 @@ interface ProductInfoProps {
   collectionSlug?: string | null;
   metalType?: string | null;
   metalWeight?: string | null;
+  grossWeight?: string | null;
   stoneCarat?: string | null;
   stoneClarity?: string | null;
   stoneColor?: string | null;
@@ -52,6 +53,7 @@ export function ProductInfo({
   collectionSlug,
   metalType,
   metalWeight,
+  grossWeight,
   stoneCarat,
   stoneClarity,
   stoneColor,
@@ -209,6 +211,7 @@ export function ProductInfo({
         <ProductSpecs
           metalType={metalType}
           metalWeight={metalWeight}
+          grossWeight={grossWeight}
           stoneCarat={stoneCarat}
           stoneClarity={stoneClarity}
           stoneColor={stoneColor}
