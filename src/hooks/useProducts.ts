@@ -48,6 +48,9 @@ export function useProducts({
               name,
               slug
             )
+          ),
+          product_stones (
+            stone_type
           )
         `,
           { count: "exact" }
@@ -81,7 +84,8 @@ export function useProducts({
       }
 
       if (filters?.stoneType) {
-        query = query.eq("stone_type", filters.stoneType);
+        // Filter by stone_type on product OR in product_stones table
+        query = query.or(`stone_type.eq.${filters.stoneType},product_stones.stone_type.eq.${filters.stoneType}`);
       }
 
       // Apply sorting
@@ -175,7 +179,7 @@ export function useProductFilterOptions() {
   return useQuery({
     queryKey: ["product-filter-options"],
     queryFn: async () => {
-      // Fetch all active products with their metal_type, stone_type, and collections
+      // Fetch all active products with their metal_type, stone_type, collections, and product_stones
       const { data: products, error } = await supabase
         .from("products")
         .select(`
@@ -183,6 +187,9 @@ export function useProductFilterOptions() {
           stone_type,
           product_collections (
             collection_id
+          ),
+          product_stones (
+            stone_type
           )
         `)
         .eq("is_active", true);
@@ -198,13 +205,17 @@ export function useProductFilterOptions() {
         )
       ).sort();
 
-      // Extract distinct stone types
+      // Extract distinct stone types from both product.stone_type and product_stones table
+      const stoneTypesFromProducts = (products || [])
+        .map((p) => p.stone_type)
+        .filter((s): s is string => !!s && s.trim() !== "");
+
+      const stoneTypesFromStones = (products || [])
+        .flatMap((p) => p.product_stones?.map((ps) => ps.stone_type) || [])
+        .filter((s): s is string => !!s && s.trim() !== "");
+
       const stoneTypes = Array.from(
-        new Set(
-          (products || [])
-            .map((p) => p.stone_type)
-            .filter((s): s is string => !!s && s.trim() !== "")
-        )
+        new Set([...stoneTypesFromProducts, ...stoneTypesFromStones])
       ).sort();
 
       // Extract distinct collection IDs that have active products
