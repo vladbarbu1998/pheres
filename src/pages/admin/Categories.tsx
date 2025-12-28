@@ -289,17 +289,19 @@ export default function AdminCategories() {
                 filteredCategories?.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>
-                      {item.image_url ? (
-                        <img
-                          src={item.image_url}
-                          alt={item.name}
-                          className="h-10 w-10 object-cover rounded"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 bg-muted rounded flex items-center justify-center">
-                          <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                      )}
+                      <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
+                        {item.image_url ? (
+                          <img
+                            src={item.image_url}
+                            alt={item.name}
+                            className="h-full w-full object-cover object-center"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center">
+                            <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell className="text-muted-foreground">{item.slug}</TableCell>

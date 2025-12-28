@@ -135,17 +135,19 @@ export default function AdminProducts() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    {getPrimaryImage(product) ? (
-                      <img
-                        src={getPrimaryImage(product)}
-                        alt={product.name}
-                        className="h-10 w-10 rounded object-cover"
-                      />
-                    ) : (
-                      <div className="h-10 w-10 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
-                        No img
-                      </div>
-                    )}
+                    <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
+                      {getPrimaryImage(product) ? (
+                        <img
+                          src={getPrimaryImage(product)}
+                          alt={product.name}
+                          className="h-full w-full object-cover object-center"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
+                          —
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div>
