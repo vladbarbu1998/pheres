@@ -23,8 +23,18 @@ import { useAdminProduct, useAdminCategories, useAdminCollections } from "@/hook
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Loader2, Trash2, Image as ImageIcon, Star } from "lucide-react";
+import { Loader2, Trash2, Image as ImageIcon, Star, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface ProductStone {
+  id?: string;
+  stone_type: string;
+  stone_carat: string;
+  stone_color: string;
+  stone_clarity: string;
+  stone_cut: string;
+  display_order: number;
+}
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -37,11 +47,6 @@ const productSchema = z.object({
   metal_type: z.string().optional(),
   metal_weight: z.string().optional(),
   gross_weight: z.string().optional(),
-  stone_type: z.string().optional(),
-  stone_carat: z.string().optional(),
-  stone_clarity: z.string().optional(),
-  stone_color: z.string().optional(),
-  stone_cut: z.string().optional(),
   certification: z.string().optional(),
   category_id: z.string().optional().nullable(),
   is_active: z.boolean(),
@@ -73,6 +78,7 @@ export default function ProductForm() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [images, setImages] = useState<ProductImage[]>([]);
+  const [stones, setStones] = useState<ProductStone[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
   const [isDraggingImage, setIsDraggingImage] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
@@ -123,11 +129,6 @@ export default function ProductForm() {
         metal_type: product.metal_type || "",
         metal_weight: product.metal_weight || "",
         gross_weight: (product as any).gross_weight || "",
-        stone_type: product.stone_type || "",
-        stone_carat: product.stone_carat || "",
-        stone_clarity: product.stone_clarity || "",
-        stone_color: product.stone_color || "",
-        stone_cut: product.stone_cut || "",
         certification: product.certification || "",
         category_id: product.category_id,
         is_active: product.is_active,
@@ -147,6 +148,23 @@ export default function ProductForm() {
       setSelectedCollections(
         product.product_collections?.map((pc: any) => pc.collection_id) || []
       );
+      // Load stones from product_stones
+      const productStones = (product as any).product_stones;
+      if (productStones && productStones.length > 0) {
+        setStones(
+          productStones.map((s: any, i: number) => ({
+            id: s.id,
+            stone_type: s.stone_type || "",
+            stone_carat: s.stone_carat || "",
+            stone_color: s.stone_color || "",
+            stone_clarity: s.stone_clarity || "",
+            stone_cut: s.stone_cut || "",
+            display_order: s.display_order ?? i,
+          }))
+        );
+      } else {
+        setStones([]);
+      }
     }
   }, [product, reset]);
 
@@ -261,11 +279,6 @@ export default function ProductForm() {
         metal_type: data.metal_type || null,
         metal_weight: data.metal_weight || null,
         gross_weight: data.gross_weight || null,
-        stone_type: data.stone_type || null,
-        stone_carat: data.stone_carat || null,
-        stone_clarity: data.stone_clarity || null,
-        stone_color: data.stone_color || null,
-        stone_cut: data.stone_cut || null,
         certification: data.certification || null,
         compare_at_price: data.compare_at_price || null,
         category_id: data.category_id || null,
@@ -294,6 +307,7 @@ export default function ProductForm() {
 
         await supabase.from("product_images").delete().eq("product_id", id);
         await supabase.from("product_collections").delete().eq("product_id", id);
+        await supabase.from("product_stones").delete().eq("product_id", id);
       }
 
       if (images.length > 0) {
@@ -317,6 +331,23 @@ export default function ProductForm() {
           }))
         );
         if (colError) throw colError;
+      }
+
+      // Save stones
+      const validStones = stones.filter((s) => s.stone_type.trim() !== "");
+      if (validStones.length > 0) {
+        const { error: stoneError } = await supabase.from("product_stones").insert(
+          validStones.map((stone, i) => ({
+            product_id: productId,
+            stone_type: stone.stone_type,
+            stone_carat: stone.stone_carat || null,
+            stone_color: stone.stone_color || null,
+            stone_clarity: stone.stone_clarity || null,
+            stone_cut: stone.stone_cut || null,
+            display_order: i,
+          }))
+        );
+        if (stoneError) throw stoneError;
       }
 
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
@@ -715,30 +746,144 @@ export default function ProductForm() {
                   <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="stone_type" className="text-sm font-normal">Stone Type</Label>
-                  <Input id="stone_type" placeholder="Diamond" {...register("stone_type")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="stone_carat" className="text-sm font-normal">Stone Carat</Label>
-                  <Input id="stone_carat" placeholder="1.5ct" {...register("stone_carat")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="stone_clarity" className="text-sm font-normal">Stone Clarity</Label>
-                  <Input id="stone_clarity" placeholder="VVS1" {...register("stone_clarity")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="stone_color" className="text-sm font-normal">Stone Color</Label>
-                  <Input id="stone_color" placeholder="D" {...register("stone_color")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="stone_cut" className="text-sm font-normal">Stone Cut</Label>
-                  <Input id="stone_cut" placeholder="Excellent" {...register("stone_cut")} />
-                </div>
-                <div className="space-y-2">
                   <Label htmlFor="certification" className="text-sm font-normal">Certification</Label>
                   <Input id="certification" placeholder="GIA" {...register("certification")} />
                 </div>
               </div>
+            </div>
+
+            {/* Stones Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-base">Stones</Label>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Add one or more stones (e.g., Diamond, White Sapphire).
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setStones((prev) => [
+                      ...prev,
+                      {
+                        stone_type: "",
+                        stone_carat: "",
+                        stone_color: "",
+                        stone_clarity: "",
+                        stone_cut: "",
+                        display_order: prev.length,
+                      },
+                    ])
+                  }
+                >
+                  <Plus className="mr-1 h-4 w-4" />
+                  Add Stone
+                </Button>
+              </div>
+
+              {stones.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic py-4 text-center border border-dashed rounded-lg">
+                  No stones added yet. Click "Add Stone" to add one.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {stones.map((stone, index) => (
+                    <div key={index} className="border rounded-lg p-4 space-y-4 relative">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Stone {index + 1}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() =>
+                            setStones((prev) => prev.filter((_, i) => i !== index))
+                          }
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-normal">Stone Type *</Label>
+                          <Input
+                            placeholder="Diamond"
+                            value={stone.stone_type}
+                            onChange={(e) =>
+                              setStones((prev) =>
+                                prev.map((s, i) =>
+                                  i === index ? { ...s, stone_type: e.target.value } : s
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-normal">Weight / Carat</Label>
+                          <Input
+                            placeholder="7.94 ct"
+                            value={stone.stone_carat}
+                            onChange={(e) =>
+                              setStones((prev) =>
+                                prev.map((s, i) =>
+                                  i === index ? { ...s, stone_carat: e.target.value } : s
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-normal">Color</Label>
+                          <Input
+                            placeholder="D"
+                            value={stone.stone_color}
+                            onChange={(e) =>
+                              setStones((prev) =>
+                                prev.map((s, i) =>
+                                  i === index ? { ...s, stone_color: e.target.value } : s
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-normal">Clarity</Label>
+                          <Input
+                            placeholder="VVS1"
+                            value={stone.stone_clarity}
+                            onChange={(e) =>
+                              setStones((prev) =>
+                                prev.map((s, i) =>
+                                  i === index ? { ...s, stone_clarity: e.target.value } : s
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-normal">Cut</Label>
+                          <Input
+                            placeholder="Excellent"
+                            value={stone.stone_cut}
+                            onChange={(e) =>
+                              setStones((prev) =>
+                                prev.map((s, i) =>
+                                  i === index ? { ...s, stone_cut: e.target.value } : s
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
