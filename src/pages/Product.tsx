@@ -128,10 +128,12 @@ export default function ProductPage() {
 
         {/* Details section */}
         {!productLoading && product && (
-          <ProductDetails
-            description={product.description}
-            certification={product.certification}
-          />
+          <div className="mt-12 lg:mt-16">
+            <ProductDetails
+              description={product.description}
+              certification={product.certification}
+            />
+          </div>
         )}
 
         {/* Related products */}
