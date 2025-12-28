@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductGrid } from "@/components/shop/ProductGrid";
@@ -11,7 +11,7 @@ import {
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
 import { Pagination } from "@/components/shop/Pagination";
-import { useProducts, useCategories, useCollections } from "@/hooks/useProducts";
+import { useProducts, useCategories, useCollections, useProductFilterOptions } from "@/hooks/useProducts";
 
 const initialFilters: FilterState = {
   categoryId: null,
@@ -32,6 +32,7 @@ export default function ShopPage() {
 
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
   const { data: collectionsData, isLoading: collectionsLoading } = useCollections();
+  const { data: filterOptionsData, isLoading: filterOptionsLoading } = useProductFilterOptions();
   const {
     data: productsData,
     isLoading: productsLoading,
@@ -65,12 +66,23 @@ export default function ShopPage() {
   };
 
   const categories = categoriesData || [];
-  const collections = collectionsData || [];
+  const allCollections = collectionsData || [];
   const products = productsData?.products || [];
   const totalCount = productsData?.totalCount || 0;
   const totalPages = productsData?.totalPages || 1;
 
-  const isLoading = productsLoading || categoriesLoading || collectionsLoading;
+  // Filter collections to only show those with active products
+  const activeCollectionIds = filterOptionsData?.activeCollectionIds || [];
+  const collections = useMemo(
+    () => allCollections.filter((c) => activeCollectionIds.includes(c.id)),
+    [allCollections, activeCollectionIds]
+  );
+
+  // Get dynamic metal and stone types from active products
+  const metalTypes = filterOptionsData?.metalTypes || [];
+  const stoneTypes = filterOptionsData?.stoneTypes || [];
+
+  const isLoading = productsLoading || categoriesLoading || collectionsLoading || filterOptionsLoading;
   const hasActiveFilters = Object.values(filters).some((v) => v !== null);
 
   return (
@@ -101,6 +113,8 @@ export default function ShopPage() {
           collections={collections}
           productCount={totalCount}
           isLoading={isLoading}
+          metalTypes={metalTypes}
+          stoneTypes={stoneTypes}
         />
 
         {/* Content Grid */}
@@ -111,6 +125,8 @@ export default function ShopPage() {
             onFiltersChange={handleFiltersChange}
             categories={categories}
             collections={collections}
+            metalTypes={metalTypes}
+            stoneTypes={stoneTypes}
           />
 
           {/* Products */}
