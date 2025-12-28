@@ -178,7 +178,7 @@ export default function AdminCollections() {
                   value={formData.image_url}
                   onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url }))}
                   folder="collections"
-                  aspectRatio="landscape"
+                  aspectRatio="square"
                   placeholder="Drag & drop a collection image"
                 />
               </div>

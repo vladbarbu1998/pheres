@@ -100,7 +100,7 @@ export default function Index() {
                   className="group block rounded-sm border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-lg animate-fade-in"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                  <div className="relative aspect-square overflow-hidden bg-muted">
                     {collection.image_url ? (
                       <img
                         src={collection.image_url}
