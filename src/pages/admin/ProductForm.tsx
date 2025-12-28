@@ -672,7 +672,7 @@ export default function ProductForm() {
           <CardContent className="space-y-6">
             {/* Short Description */}
             <div className="space-y-2">
-              <Label htmlFor="short_description">Short Description *</Label>
+              <Label htmlFor="short_description">Short Description</Label>
               <Input
                 id="short_description"
                 {...register("short_description")}
