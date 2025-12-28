@@ -32,7 +32,7 @@ const productSchema = z.object({
   sku: z.string().optional(),
   base_price: z.coerce.number().min(0, "Price must be positive"),
   compare_at_price: z.coerce.number().optional().nullable(),
-  short_description: z.string().min(1, "Short description is required"),
+  short_description: z.string().optional(),
   description: z.string().optional(),
   metal_type: z.string().optional(),
   metal_weight: z.string().optional(),
