@@ -139,7 +139,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
   if (sortedImages.length === 0) {
     return (
-      <div className="aspect-[3/4] w-full bg-secondary/50 flex items-center justify-center">
+      <div className="aspect-square w-full bg-secondary/50 flex items-center justify-center">
         <span className="font-display text-2xl text-muted-foreground/30">PHERES</span>
       </div>
     );
@@ -157,7 +157,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               {sortedImages.map((image, index) => (
                 <div
                   key={image.id}
-                  className="relative aspect-[3/4] flex-[0_0_100%] min-w-0 bg-secondary/30"
+                  className="relative aspect-square flex-[0_0_100%] min-w-0 bg-secondary/30"
                 >
                   <button
                     onClick={() => setLightboxOpen(true)}
@@ -167,7 +167,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                     <img
                       src={image.image_url}
                       alt={image.alt_text || `${productName} - Image ${index + 1}`}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover object-center"
                       draggable={false}
                     />
                   </button>
@@ -335,7 +335,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 export function ProductGallerySkeleton() {
   return (
     <div className="flex flex-col gap-4">
-      <Skeleton className="aspect-[3/4] w-full" />
+      <Skeleton className="aspect-square w-full" />
       <div className="grid grid-cols-4 gap-2">
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="aspect-square w-full" />
