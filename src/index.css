@@ -187,3 +187,19 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Mobile toast positioning - move to bottom on small screens */
+@media (max-width: 767px) {
+  [data-sonner-toaster] {
+    top: auto !important;
+    bottom: 80px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
+  
+  [data-sonner-toaster] [data-sonner-toast] {
+    width: calc(100vw - 32px) !important;
+    max-width: 400px !important;
+  }
+}
