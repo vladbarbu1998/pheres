@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -22,7 +23,7 @@ import { useAdminProduct, useAdminCategories, useAdminCollections } from "@/hook
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Upload, Image as ImageIcon } from "lucide-react";
+import { Loader2, Trash2, Image as ImageIcon, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const productSchema = z.object({
@@ -31,7 +32,7 @@ const productSchema = z.object({
   sku: z.string().optional(),
   base_price: z.coerce.number().min(0, "Price must be positive"),
   compare_at_price: z.coerce.number().optional().nullable(),
-  short_description: z.string().optional(),
+  short_description: z.string().min(1, "Short description is required"),
   description: z.string().optional(),
   metal_type: z.string().optional(),
   metal_weight: z.string().optional(),
@@ -63,7 +64,7 @@ export default function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const isNew = !id; // No id param means new product
+  const isNew = !id;
 
   const { data: product, isLoading: productLoading } = useAdminProduct(isNew ? undefined : id);
   const { data: categories } = useAdminCategories();
@@ -90,6 +91,7 @@ export default function ProductForm() {
       is_featured: false,
       is_new: false,
       is_bestseller: false,
+      short_description: "",
     },
   });
 
@@ -150,7 +152,6 @@ export default function ProductForm() {
     setIsUploadingImages(true);
     
     for (const file of Array.from(files)) {
-      // Validate file
       if (!file.type.startsWith("image/")) {
         toast.error(`${file.name} is not an image`);
         continue;
@@ -220,7 +221,6 @@ export default function ProductForm() {
   const removeImage = (index: number) => {
     setImages((prev) => {
       const updated = prev.filter((_, i) => i !== index);
-      // If we removed the primary, make the first one primary
       if (prev[index].is_primary && updated.length > 0) {
         updated[0].is_primary = true;
       }
@@ -238,6 +238,12 @@ export default function ProductForm() {
   };
 
   const onSubmit = async (data: ProductFormData) => {
+    // Validate at least one image
+    if (images.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -283,12 +289,10 @@ export default function ProductForm() {
 
         if (error) throw error;
 
-        // Delete existing images and collections to replace them
         await supabase.from("product_images").delete().eq("product_id", id);
         await supabase.from("product_collections").delete().eq("product_id", id);
       }
 
-      // Insert images
       if (images.length > 0) {
         const { error: imgError } = await supabase.from("product_images").insert(
           images.map((img, i) => ({
@@ -302,7 +306,6 @@ export default function ProductForm() {
         if (imgError) throw imgError;
       }
 
-      // Insert collection relations
       if (selectedCollections.length > 0) {
         const { error: colError } = await supabase.from("product_collections").insert(
           selectedCollections.map((collectionId) => ({
@@ -337,24 +340,29 @@ export default function ProductForm() {
     );
   }
 
+  const primaryImage = images.find((img) => img.is_primary);
+  const galleryImages = images.filter((img) => !img.is_primary);
+
   return (
     <AdminLayout
       title={isNew ? "New Product" : "Edit Product"}
       backLink="/admin/products"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        {/* Basic info */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
+        {/* Section 1: Basic Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle>Basic Info</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+          <CardContent className="space-y-6">
+            {/* Name & Slug */}
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name *</Label>
                 <Input
                   id="name"
                   {...register("name")}
+                  placeholder="e.g., Diamond Eternity Ring"
                   className={errors.name ? "border-destructive" : ""}
                 />
                 {errors.name && (
@@ -366,6 +374,7 @@ export default function ProductForm() {
                 <Input
                   id="slug"
                   {...register("slug")}
+                  placeholder="diamond-eternity-ring"
                   className={errors.slug ? "border-destructive" : ""}
                 />
                 {errors.slug && (
@@ -374,13 +383,14 @@ export default function ProductForm() {
               </div>
             </div>
 
+            {/* SKU & Price */}
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="sku">SKU</Label>
                 <Input
                   id="sku"
                   {...register("sku")}
-                  placeholder="e.g., PH-RNG-001"
+                  placeholder="PH-RNG-001"
                 />
               </div>
               <div className="space-y-2">
@@ -390,6 +400,7 @@ export default function ProductForm() {
                   type="number"
                   step="0.01"
                   {...register("base_price")}
+                  placeholder="0.00"
                   className={errors.base_price ? "border-destructive" : ""}
                 />
                 {errors.base_price && (
@@ -403,148 +414,12 @@ export default function ProductForm() {
                   type="number"
                   step="0.01"
                   {...register("compare_at_price")}
+                  placeholder="0.00"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="short_description">Short Description</Label>
-              <Input id="short_description" {...register("short_description")} />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Full Description</Label>
-              <Textarea id="description" rows={4} {...register("description")} />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Images */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Images</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 sm:grid-cols-4">
-              {images.map((img, i) => (
-                <div key={i} className="relative group aspect-square">
-                  <img
-                    src={img.image_url}
-                    alt={img.alt_text || "Product image"}
-                    className="h-full w-full object-cover rounded-lg border"
-                  />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={img.is_primary ? "default" : "secondary"}
-                      onClick={() => setPrimaryImage(i)}
-                    >
-                      {img.is_primary ? "Primary" : "Set Primary"}
-                    </Button>
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="destructive"
-                      onClick={() => removeImage(i)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  {img.is_primary && (
-                    <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded">
-                      Primary
-                    </div>
-                  )}
-                </div>
-              ))}
-              <label
-                onDragOver={handleImageDragOver}
-                onDragLeave={handleImageDragLeave}
-                onDrop={handleImageDrop}
-                className={cn(
-                  "aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors",
-                  isDraggingImage
-                    ? "border-primary bg-primary/5"
-                    : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
-                  isUploadingImages && "cursor-not-allowed opacity-50"
-                )}
-              >
-                {isUploadingImages ? (
-                  <>
-                    <Loader2 className="h-6 w-6 text-muted-foreground mb-2 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Uploading...</span>
-                  </>
-                ) : (
-                  <>
-                    <ImageIcon className="h-6 w-6 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground text-center px-2">
-                      Drag & drop or click to upload
-                    </span>
-                  </>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleImageUpload}
-                  disabled={isUploadingImages}
-                />
-              </label>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Specifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Specifications</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="space-y-2">
-                <Label htmlFor="metal_type">Metal Type</Label>
-                <Input id="metal_type" placeholder="e.g., 18K Rose Gold" {...register("metal_type")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="metal_weight">Metal Weight</Label>
-                <Input id="metal_weight" placeholder="e.g., 4.5g" {...register("metal_weight")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="stone_type">Stone Type</Label>
-                <Input id="stone_type" placeholder="e.g., Diamond" {...register("stone_type")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="stone_carat">Stone Carat</Label>
-                <Input id="stone_carat" placeholder="e.g., 1.5ct" {...register("stone_carat")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="stone_clarity">Stone Clarity</Label>
-                <Input id="stone_clarity" placeholder="e.g., VVS1" {...register("stone_clarity")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="stone_color">Stone Color</Label>
-                <Input id="stone_color" placeholder="e.g., D" {...register("stone_color")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="stone_cut">Stone Cut</Label>
-                <Input id="stone_cut" placeholder="e.g., Excellent" {...register("stone_cut")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="certification">Certification</Label>
-                <Input id="certification" placeholder="e.g., GIA" {...register("certification")} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Organization */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Organization</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            {/* Category & Collection */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>Category</Label>
@@ -572,7 +447,7 @@ export default function ProductForm() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Collections</Label>
+                <Label>Collection</Label>
                 <div className="flex flex-wrap gap-2">
                   {collections?.map((col) => (
                     <Button
@@ -583,7 +458,7 @@ export default function ProductForm() {
                       onClick={() =>
                         setSelectedCollections((prev) =>
                           prev.includes(col.id)
-                            ? prev.filter((id) => id !== col.id)
+                            ? prev.filter((cid) => cid !== col.id)
                             : [...prev, col.id]
                         )
                       }
@@ -591,51 +466,272 @@ export default function ProductForm() {
                       {col.name}
                     </Button>
                   ))}
+                  {(!collections || collections.length === 0) && (
+                    <p className="text-sm text-muted-foreground">No collections available</p>
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-6">
+            {/* Active toggle + checkboxes */}
+            <div className="flex flex-wrap items-center gap-6 pt-2">
               <Controller
                 control={control}
                 name="is_active"
                 render={({ field }) => (
                   <div className="flex items-center gap-2">
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>Active</Label>
+                    <Label className="font-normal">Active</Label>
                   </div>
                 )}
               />
-              <Controller
-                control={control}
-                name="is_featured"
-                render={({ field }) => (
-                  <div className="flex items-center gap-2">
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>Featured</Label>
+              <div className="flex items-center gap-6">
+                <Controller
+                  control={control}
+                  name="is_featured"
+                  render={({ field }) => (
+                    <div className="flex items-center gap-2">
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <Label className="font-normal">Featured</Label>
+                    </div>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="is_new"
+                  render={({ field }) => (
+                    <div className="flex items-center gap-2">
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <Label className="font-normal">New</Label>
+                    </div>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="is_bestseller"
+                  render={({ field }) => (
+                    <div className="flex items-center gap-2">
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <Label className="font-normal">Bestseller</Label>
+                    </div>
+                  )}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 2: Images */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Images</CardTitle>
+            <CardDescription>
+              Recommended: 1000×1000px square images. First image will be the main image.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Main Image */}
+            <div className="space-y-2">
+              <Label>Main Image *</Label>
+              {primaryImage ? (
+                <div className="relative w-full max-w-xs aspect-square group">
+                  <img
+                    src={primaryImage.image_url}
+                    alt="Main product"
+                    className="h-full w-full object-cover rounded-lg border"
+                  />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="destructive"
+                      onClick={() => removeImage(images.findIndex((img) => img.is_primary))}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                )}
-              />
-              <Controller
-                control={control}
-                name="is_new"
-                render={({ field }) => (
-                  <div className="flex items-center gap-2">
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>New</Label>
+                  <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded flex items-center gap-1">
+                    <Star className="h-3 w-3" /> Primary
                   </div>
-                )}
+                </div>
+              ) : (
+                <label
+                  onDragOver={handleImageDragOver}
+                  onDragLeave={handleImageDragLeave}
+                  onDrop={handleImageDrop}
+                  className={cn(
+                    "flex flex-col items-center justify-center w-full max-w-xs aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                    isDraggingImage
+                      ? "border-primary bg-primary/5"
+                      : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
+                    isUploadingImages && "cursor-not-allowed opacity-50"
+                  )}
+                >
+                  {isUploadingImages ? (
+                    <>
+                      <Loader2 className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
+                      <span className="text-sm text-muted-foreground">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                      <span className="text-sm text-muted-foreground text-center px-4">
+                        Drag & drop an image here, or click to browse
+                      </span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={isUploadingImages}
+                  />
+                </label>
+              )}
+            </div>
+
+            {/* Gallery Images */}
+            <div className="space-y-2">
+              <Label>Gallery Images</Label>
+              <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
+                {galleryImages.map((img, i) => {
+                  const realIndex = images.findIndex((im) => im === img);
+                  return (
+                    <div key={i} className="relative group aspect-square">
+                      <img
+                        src={img.image_url}
+                        alt="Gallery"
+                        className="h-full w-full object-cover rounded-lg border"
+                      />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => setPrimaryImage(realIndex)}
+                        >
+                          Set Primary
+                        </Button>
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => removeImage(realIndex)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+                <label
+                  onDragOver={handleImageDragOver}
+                  onDragLeave={handleImageDragLeave}
+                  onDrop={handleImageDrop}
+                  className={cn(
+                    "aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors",
+                    isDraggingImage
+                      ? "border-primary bg-primary/5"
+                      : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
+                    isUploadingImages && "cursor-not-allowed opacity-50"
+                  )}
+                >
+                  {isUploadingImages ? (
+                    <Loader2 className="h-5 w-5 text-muted-foreground animate-spin" />
+                  ) : (
+                    <>
+                      <ImageIcon className="h-5 w-5 text-muted-foreground mb-1" />
+                      <span className="text-xs text-muted-foreground text-center px-2">
+                        Add more
+                      </span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={isUploadingImages}
+                  />
+                </label>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 3: Content & Specifications */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Content & Specifications</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Short Description */}
+            <div className="space-y-2">
+              <Label htmlFor="short_description">Short Description *</Label>
+              <Input
+                id="short_description"
+                {...register("short_description")}
+                placeholder="A brief tagline shown near the top of the product page"
+                className={errors.short_description ? "border-destructive" : ""}
               />
-              <Controller
-                control={control}
-                name="is_bestseller"
-                render={({ field }) => (
-                  <div className="flex items-center gap-2">
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label>Bestseller</Label>
-                  </div>
-                )}
+              {errors.short_description && (
+                <p className="text-sm text-destructive">{errors.short_description.message}</p>
+              )}
+            </div>
+
+            {/* Full Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">Full Description</Label>
+              <Textarea
+                id="description"
+                rows={4}
+                {...register("description")}
+                placeholder="Detailed description of the product (optional)"
               />
+            </div>
+
+            {/* Specifications Grid */}
+            <div className="space-y-3">
+              <Label className="text-base">Specifications</Label>
+              <p className="text-sm text-muted-foreground">
+                Only filled specifications will be shown on the storefront.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="space-y-2">
+                  <Label htmlFor="metal_type" className="text-sm font-normal">Metal Type</Label>
+                  <Input id="metal_type" placeholder="18K Rose Gold" {...register("metal_type")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="metal_weight" className="text-sm font-normal">Metal Weight</Label>
+                  <Input id="metal_weight" placeholder="4.5g" {...register("metal_weight")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stone_type" className="text-sm font-normal">Stone Type</Label>
+                  <Input id="stone_type" placeholder="Diamond" {...register("stone_type")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stone_carat" className="text-sm font-normal">Stone Carat</Label>
+                  <Input id="stone_carat" placeholder="1.5ct" {...register("stone_carat")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stone_clarity" className="text-sm font-normal">Stone Clarity</Label>
+                  <Input id="stone_clarity" placeholder="VVS1" {...register("stone_clarity")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stone_color" className="text-sm font-normal">Stone Color</Label>
+                  <Input id="stone_color" placeholder="D" {...register("stone_color")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stone_cut" className="text-sm font-normal">Stone Cut</Label>
+                  <Input id="stone_cut" placeholder="Excellent" {...register("stone_cut")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="certification" className="text-sm font-normal">Certification</Label>
+                  <Input id="certification" placeholder="GIA" {...register("certification")} />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
