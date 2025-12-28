@@ -58,38 +58,49 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Collections Highlight */}
+      {/* Collections Highlight - Card-based design */}
       <section className="border-t border-border/50 bg-secondary/30">
         <div className="container py-16 md:py-24">
-          <div className="mb-12 text-center">
-            <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-primary">
-              Curated Collections
-            </p>
-            <h2 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
-              Worlds of Wonder
-            </h2>
+          <div className="mb-12 flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+            <div>
+              <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
+                Curated Collections
+              </p>
+              <h2 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
+                Worlds of Wonder
+              </h2>
+            </div>
+            <Button asChild variant="outline" className="group">
+              <Link to="/shop">
+                View All Collections
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
           </div>
 
           {collectionsLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="space-y-4">
-                  <Skeleton className="aspect-[3/4] w-full rounded-sm" />
-                  <Skeleton className="h-5 w-2/3" />
-                  <Skeleton className="h-4 w-full" />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="rounded-sm border border-border bg-card overflow-hidden">
+                  <Skeleton className="aspect-[4/3] w-full" />
+                  <div className="p-5 space-y-3">
+                    <Skeleton className="h-5 w-2/3" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
                 </div>
               ))}
             </div>
           ) : displayCollections.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {displayCollections.map((collection, index) => (
                 <Link
                   key={collection.id}
                   to={`/shop/collection/${collection.slug}`}
-                  className="group block animate-fade-in"
+                  className="group block rounded-sm border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-lg animate-fade-in"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-muted">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                     {collection.image_url ? (
                       <img
                         src={collection.image_url}
@@ -98,22 +109,26 @@ export default function Index() {
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                        <span className="font-display text-2xl font-semibold text-primary/40">
+                        <span className="font-display text-3xl font-semibold text-primary/40">
                           {collection.name.charAt(0)}
                         </span>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   </div>
-                  <div className="mt-4 space-y-1">
-                    <h3 className="font-display text-lg font-medium text-foreground group-hover:text-primary transition-colors">
+                  <div className="p-5 space-y-2">
+                    <h3 className="font-display text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                       {collection.name}
                     </h3>
                     {collection.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2">
+                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                         {collection.description}
                       </p>
                     )}
+                    <span className="inline-flex items-center text-sm font-medium text-primary group-hover:underline">
+                      Explore Collection
+                      <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+                    </span>
                   </div>
                 </Link>
               ))}
@@ -126,38 +141,6 @@ export default function Index() {
             </div>
           )}
         </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="container py-16 md:py-24">
-        <div className="mb-12 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <div>
-            <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
-              Featured Pieces
-            </p>
-            <h2 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
-              The Extraordinary
-            </h2>
-          </div>
-          <Button asChild variant="outline" className="group">
-            <Link to="/shop">
-              View All Pieces
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
-        </div>
-
-        {productsLoading ? (
-          <ProductGrid products={[]} isLoading={true} skeletonCount={4} />
-        ) : productsData && productsData.products.length > 0 ? (
-          <ProductGrid products={productsData.products} />
-        ) : (
-          <div className="rounded-sm border border-dashed border-border bg-card/50 p-12 text-center">
-            <p className="text-muted-foreground">
-              Our collection is being curated. Extraordinary pieces arriving soon.
-            </p>
-          </div>
-        )}
       </section>
 
       {/* Press Teaser */}

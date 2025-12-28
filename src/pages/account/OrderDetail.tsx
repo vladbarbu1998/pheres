@@ -29,7 +29,7 @@ function OrderStatusTimeline({ currentStatus }: { currentStatus: string }) {
   if (isCancelled) {
     return (
       <div className="flex items-center gap-3 py-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10 shrink-0">
           <XCircle className="h-5 w-5 text-destructive" />
         </div>
         <div>
@@ -41,7 +41,7 @@ function OrderStatusTimeline({ currentStatus }: { currentStatus: string }) {
   }
 
   return (
-    <div className="flex items-center justify-between py-4">
+    <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
       {statusSteps.map((step, index) => {
         const isCompleted = index <= currentIndex;
         const isCurrent = index === currentIndex;
@@ -58,17 +58,17 @@ function OrderStatusTimeline({ currentStatus }: { currentStatus: string }) {
             <div className="flex flex-col items-center">
               <div
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors",
+                  "flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border-2 transition-colors shrink-0",
                   isCompleted
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background text-muted-foreground"
                 )}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <p
                 className={cn(
-                  "mt-2 text-xs capitalize",
+                  "mt-2 text-xs capitalize text-center",
                   isCurrent ? "font-medium text-foreground" : "text-muted-foreground"
                 )}
               >
@@ -78,7 +78,7 @@ function OrderStatusTimeline({ currentStatus }: { currentStatus: string }) {
             {index < statusSteps.length - 1 && (
               <div
                 className={cn(
-                  "mx-2 h-0.5 flex-1",
+                  "mx-2 h-0.5 flex-1 hidden sm:block",
                   index < currentIndex ? "bg-primary" : "bg-border"
                 )}
               />
@@ -124,7 +124,7 @@ export default function OrderDetailPage() {
 
   return (
     <AccountLayout title="Order Details">
-      <div className="space-y-6">
+      <div className="space-y-6 overflow-x-hidden">
         {/* Back link */}
         <Button asChild variant="ghost" size="sm">
           <Link to="/account/orders">
@@ -135,12 +135,12 @@ export default function OrderDetailPage() {
 
         {/* Order header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h2 className="font-display text-xl font-semibold">{order.order_number}</h2>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="font-display text-lg sm:text-xl font-semibold break-all">{order.order_number}</h2>
               <Badge
                 variant="secondary"
-                className={cn("capitalize", statusColors[order.status])}
+                className={cn("capitalize shrink-0", statusColors[order.status])}
               >
                 {order.status}
               </Badge>
@@ -149,7 +149,7 @@ export default function OrderDetailPage() {
               Placed on {format(new Date(order.created_at), "MMMM d, yyyy 'at' h:mm a")}
             </p>
           </div>
-          <p className="font-display text-2xl font-semibold">
+          <p className="font-display text-xl sm:text-2xl font-semibold shrink-0">
             ${Number(order.total).toLocaleString()}
           </p>
         </div>
@@ -159,11 +159,11 @@ export default function OrderDetailPage() {
           <CardHeader>
             <CardTitle className="text-base">Order Status</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             <OrderStatusTimeline currentStatus={order.status} />
             {order.tracking_number && (
               <div className="mt-4 pt-4 border-t border-border">
-                <p className="text-sm">
+                <p className="text-sm break-all">
                   <span className="text-muted-foreground">Tracking: </span>
                   {order.tracking_url ? (
                     <a
@@ -191,8 +191,8 @@ export default function OrderDetailPage() {
           <CardContent>
             <div className="divide-y divide-border">
               {order.order_items?.map((item) => (
-                <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
-                  <div className="h-20 w-20 shrink-0 overflow-hidden bg-secondary/50">
+                <div key={item.id} className="flex gap-3 sm:gap-4 py-4 first:pt-0 last:pb-0">
+                  <div className="h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden bg-secondary/50">
                     {item.image_url ? (
                       <img
                         src={item.image_url}
@@ -205,14 +205,14 @@ export default function OrderDetailPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <p className="font-medium">{item.product_name}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base truncate">{item.product_name}</p>
                     {item.variant_name && (
-                      <p className="text-sm text-muted-foreground">{item.variant_name}</p>
+                      <p className="text-sm text-muted-foreground truncate">{item.variant_name}</p>
                     )}
                     <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                   </div>
-                  <p className="font-medium">
+                  <p className="font-medium text-sm sm:text-base shrink-0">
                     ${Number(item.total_price).toLocaleString()}
                   </p>
                 </div>
@@ -232,7 +232,7 @@ export default function OrderDetailPage() {
               <p className="font-medium">
                 {order.shipping_first_name} {order.shipping_last_name}
               </p>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-muted-foreground mt-1 break-words">
                 {order.shipping_address_line_1}
                 {order.shipping_address_line_2 && (
                   <>, {order.shipping_address_line_2}</>

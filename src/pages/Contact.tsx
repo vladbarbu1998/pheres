@@ -8,13 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -22,7 +15,6 @@ const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must be less than 100 characters"),
   email: z.string().trim().email("Please enter a valid email address").max(255, "Email must be less than 255 characters"),
   subject: z.string().optional(),
-  inquiryType: z.string().optional(),
   message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000, "Message must be less than 2000 characters"),
 });
 
@@ -61,7 +53,6 @@ export default function Contact() {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
@@ -71,14 +62,10 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      const subjectLine = data.inquiryType 
-        ? `[${data.inquiryType}] ${data.subject || "No subject"}`
-        : data.subject || null;
-
       const { error } = await supabase.from("contact_messages").insert({
         name: data.name,
         email: data.email,
-        subject: subjectLine,
+        subject: data.subject || null,
         message: data.message,
       });
 
@@ -171,31 +158,13 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="inquiryType">How can we help?</Label>
-                    <Select onValueChange={(value) => setValue("inquiryType", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select inquiry type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="General Inquiry">General Inquiry</SelectItem>
-                        <SelectItem value="Order Question">Order Question</SelectItem>
-                        <SelectItem value="Press">Press</SelectItem>
-                        <SelectItem value="Private Viewing">Private Viewing</SelectItem>
-                        <SelectItem value="Bespoke Creation">Bespoke Creation</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject</Label>
-                    <Input
-                      id="subject"
-                      placeholder="Subject of your message"
-                      {...register("subject")}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Subject</Label>
+                  <Input
+                    id="subject"
+                    placeholder="Subject of your message"
+                    {...register("subject")}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -305,9 +274,6 @@ export default function Contact() {
                   </a>
                 ))}
               </div>
-              <p className="mt-3 text-xs text-muted-foreground">
-                {/* TODO: Replace with actual social media URLs */}
-              </p>
             </div>
           </div>
         </div>

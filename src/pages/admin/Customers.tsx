@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { useAdminCustomers } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,9 +20,17 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, User, Mail, Phone, ShoppingBag } from "lucide-react";
+import { Search, User, Mail, ShoppingBag, DollarSign, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+
+interface Customer {
+  email: string;
+  name: string;
+  order_count: number;
+  total_spent: number;
+  last_order_date: string;
+}
 
 interface CustomerOrder {
   id: string;
@@ -33,10 +40,58 @@ interface CustomerOrder {
   created_at: string;
 }
 
+// Custom hook to fetch customers from orders (not from profiles)
+function useOrderCustomers() {
+  return useQuery({
+    queryKey: ["admin-order-customers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("customer_email, shipping_first_name, shipping_last_name, total, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Aggregate by email
+      const customerMap = new Map<string, Customer>();
+      
+      for (const order of data || []) {
+        const email = order.customer_email || "unknown";
+        const existing = customerMap.get(email);
+        
+        if (existing) {
+          existing.order_count += 1;
+          existing.total_spent += Number(order.total) || 0;
+          // Keep the most recent order date
+          if (new Date(order.created_at) > new Date(existing.last_order_date)) {
+            existing.last_order_date = order.created_at;
+            // Update name if current is empty
+            if (!existing.name && (order.shipping_first_name || order.shipping_last_name)) {
+              existing.name = `${order.shipping_first_name || ""} ${order.shipping_last_name || ""}`.trim();
+            }
+          }
+        } else {
+          customerMap.set(email, {
+            email,
+            name: `${order.shipping_first_name || ""} ${order.shipping_last_name || ""}`.trim(),
+            order_count: 1,
+            total_spent: Number(order.total) || 0,
+            last_order_date: order.created_at,
+          });
+        }
+      }
+
+      return Array.from(customerMap.values()).sort(
+        (a, b) => new Date(b.last_order_date).getTime() - new Date(a.last_order_date).getTime()
+      );
+    },
+  });
+}
+
 export default function AdminCustomers() {
-  const { data: customers, isLoading, error } = useAdminCustomers();
+  const { data: customers, isLoading, error } = useOrderCustomers();
   const [search, setSearch] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
 
@@ -44,12 +99,11 @@ export default function AdminCustomers() {
     const searchLower = search.toLowerCase();
     return (
       customer.email?.toLowerCase().includes(searchLower) ||
-      customer.first_name?.toLowerCase().includes(searchLower) ||
-      customer.last_name?.toLowerCase().includes(searchLower)
+      customer.name?.toLowerCase().includes(searchLower)
     );
   });
 
-  const handleViewOrders = async (customer: any) => {
+  const handleViewOrders = async (customer: Customer) => {
     setSelectedCustomer(customer);
     setLoadingOrders(true);
     
@@ -57,7 +111,7 @@ export default function AdminCustomers() {
       const { data, error } = await supabase
         .from("orders")
         .select("id, order_number, status, total, created_at")
-        .eq("user_id", customer.user_id)
+        .eq("customer_email", customer.email)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -72,13 +126,13 @@ export default function AdminCustomers() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      pending: "bg-yellow-100 text-yellow-800",
-      paid: "bg-blue-100 text-blue-800",
-      processing: "bg-purple-100 text-purple-800",
-      shipped: "bg-indigo-100 text-indigo-800",
-      delivered: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      refunded: "bg-gray-100 text-gray-800",
+      pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+      paid: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+      processing: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+      shipped: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
+      delivered: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+      cancelled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+      refunded: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
@@ -98,7 +152,7 @@ export default function AdminCustomers() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-semibold">Customers</h1>
-          <p className="text-muted-foreground">Manage your customer accounts</p>
+          <p className="text-muted-foreground">Customers who have placed orders</p>
         </div>
 
         {/* Search */}
@@ -113,14 +167,15 @@ export default function AdminCustomers() {
         </div>
 
         {/* Table */}
-        <div className="border rounded-lg">
+        <div className="border rounded-lg overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Customer</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Joined</TableHead>
+                <TableHead className="text-center">Orders</TableHead>
+                <TableHead className="text-right">Total Spent</TableHead>
+                <TableHead>Last Order</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -130,50 +185,45 @@ export default function AdminCustomers() {
                   <TableRow key={i}>
                     <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12 mx-auto" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-20 ml-auto" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                     <TableCell><Skeleton className="h-8 w-20 ml-auto" /></TableCell>
                   </TableRow>
                 ))
               ) : filteredCustomers?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
-                    {search ? "No customers match your search." : "No customers yet."}
+                  <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                    {search ? "No customers match your search." : "No customers with orders yet."}
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredCustomers?.map((customer) => (
-                  <TableRow key={customer.id}>
+                  <TableRow key={customer.email}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
                           <User className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <span className="font-medium">
-                          {customer.first_name || customer.last_name
-                            ? `${customer.first_name || ""} ${customer.last_name || ""}`.trim()
-                            : "—"}
+                          {customer.name || "—"}
                         </span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        {customer.email}
+                        <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+                        <span className="truncate max-w-[200px]">{customer.email}</span>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {customer.phone ? (
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-muted-foreground" />
-                          {customer.phone}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
+                    <TableCell className="text-center">
+                      <Badge variant="secondary">{customer.order_count}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
+                      ${customer.total_spent.toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      {format(new Date(customer.created_at), "MMM d, yyyy")}
+                      {format(new Date(customer.last_order_date), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -194,16 +244,27 @@ export default function AdminCustomers() {
 
         {/* Customer Orders Dialog */}
         <Dialog open={!!selectedCustomer} onOpenChange={() => setSelectedCustomer(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                Orders for {selectedCustomer?.first_name} {selectedCustomer?.last_name}
+                Orders for {selectedCustomer?.name || selectedCustomer?.email}
               </DialogTitle>
             </DialogHeader>
             
             <div className="space-y-4">
-              <div className="text-sm text-muted-foreground">
-                {selectedCustomer?.email}
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Mail className="h-4 w-4" />
+                  {selectedCustomer?.email}
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <ShoppingBag className="h-4 w-4" />
+                  {selectedCustomer?.order_count} orders
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <DollarSign className="h-4 w-4" />
+                  ${selectedCustomer?.total_spent.toLocaleString()} total
+                </div>
               </div>
 
               {loadingOrders ? (
@@ -217,36 +278,38 @@ export default function AdminCustomers() {
                   No orders found for this customer.
                 </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Order</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {customerOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          {order.order_number}
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(order.created_at), "MMM d, yyyy")}
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(order.status)}>
-                            {order.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          ${Number(order.total).toLocaleString()}
-                        </TableCell>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Order</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Total</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {customerOrders.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-medium">
+                            {order.order_number}
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(order.created_at), "MMM d, yyyy")}
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getStatusColor(order.status)}>
+                              {order.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${Number(order.total).toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </div>
           </DialogContent>

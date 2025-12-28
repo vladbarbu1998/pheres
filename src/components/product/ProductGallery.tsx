@@ -95,11 +95,11 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full max-w-full">
         {/* Main image */}
         <button
           onClick={() => setLightboxOpen(true)}
-          className="relative aspect-[3/4] w-full overflow-hidden bg-secondary/30 cursor-zoom-in group"
+          className="relative aspect-[3/4] w-full max-w-full overflow-hidden bg-secondary/30 cursor-zoom-in group"
           aria-label="Open image gallery"
         >
           <img
@@ -116,8 +116,8 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
         {/* Thumbnails */}
         {sortedImages.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {sortedImages.map((image, index) => (
+          <div className="grid grid-cols-4 gap-2 w-full">
+            {sortedImages.slice(0, 4).map((image, index) => (
               <button
                 key={image.id}
                 onClick={() => {
@@ -128,7 +128,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                   setLightboxOpen(true);
                 }}
                 className={cn(
-                  "relative h-20 w-20 flex-shrink-0 overflow-hidden bg-secondary/30 transition-all duration-200",
+                  "relative aspect-square w-full overflow-hidden bg-secondary/30 transition-all duration-200",
                   selectedIndex === index
                     ? "ring-2 ring-primary ring-offset-2"
                     : "opacity-70 hover:opacity-100"
