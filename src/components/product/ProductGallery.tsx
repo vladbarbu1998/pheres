@@ -216,17 +216,9 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           )}
         </div>
 
-        {/* Counter + Thumbnails */}
+        {/* Thumbnails */}
         {hasMultipleImages && (
           <div className="flex flex-col gap-3">
-            {/* Image counter */}
-            <div className="flex justify-center">
-              <span className="text-sm text-muted-foreground">
-                {selectedIndex + 1} / {sortedImages.length}
-              </span>
-            </div>
-
-            {/* Thumbnails */}
             <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-2 w-full">
               {sortedImages.map((image, index) => (
                 <button
@@ -308,12 +300,9 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             )}
           </div>
 
-          {/* Thumbnails and counter at bottom */}
+          {/* Thumbnails at bottom */}
           {hasMultipleImages && (
-            <div className="border-t bg-muted/30 px-4 py-3 flex items-center justify-center gap-4">
-              <span className="text-sm text-muted-foreground">
-                {selectedIndex + 1} / {sortedImages.length}
-              </span>
+            <div className="border-t bg-muted/30 px-4 py-3 flex items-center justify-center">
               <div className="flex gap-2 overflow-x-auto max-w-md">
                 {sortedImages.map((image, index) => (
                   <button
@@ -347,9 +336,6 @@ export function ProductGallerySkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="aspect-[3/4] w-full" />
-      <div className="flex justify-center">
-        <Skeleton className="h-4 w-12" />
-      </div>
       <div className="grid grid-cols-4 gap-2">
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="aspect-square w-full" />
