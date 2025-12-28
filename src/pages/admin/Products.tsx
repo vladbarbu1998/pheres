@@ -106,6 +106,7 @@ export default function AdminProducts() {
         sku: product.sku || "",
         name: product.name,
         category_names: (product as any).category?.name || "",
+        collection_names: getCollectionNames(product) || "",
         price: Number(product.base_price).toFixed(2),
         currency: "USD",
         stock_quantity: (product as any).product_variants?.reduce(
@@ -122,6 +123,7 @@ export default function AdminProducts() {
         { key: "sku" as const, header: "SKU" },
         { key: "name" as const, header: "Name" },
         { key: "category_names" as const, header: "Category" },
+        { key: "collection_names" as const, header: "Collection" },
         { key: "price" as const, header: "Price" },
         { key: "currency" as const, header: "Currency" },
         { key: "stock_quantity" as const, header: "Stock Quantity" },
