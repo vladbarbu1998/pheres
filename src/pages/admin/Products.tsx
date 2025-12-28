@@ -1,10 +1,17 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -23,7 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useAdminProducts } from "@/hooks/useAdmin";
+import { useAdminProducts, useAdminCategories, useAdminCollections } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { exportToCsv } from "@/lib/exportCsv";
@@ -32,11 +39,52 @@ import { Plus, Search, Trash2, Pencil, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 export default function AdminProducts() {
-  const { data: products, isLoading, isError, refetch } = useAdminProducts();
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Read filters from URL
+  const categoryId = searchParams.get("category") || "";
+  const collectionId = searchParams.get("collection") || "";
+  const initialSearch = searchParams.get("q") || "";
+
+  const [search, setSearch] = useState(initialSearch);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const queryClient = useQueryClient();
+
+  // Fetch products with filters
+  const { data: products, isLoading, isError, refetch } = useAdminProducts({
+    categoryId: categoryId || undefined,
+    collectionId: collectionId || undefined,
+  });
+
+  // Fetch categories and collections for dropdowns
+  const { data: categories } = useAdminCategories();
+  const { data: collections } = useAdminCollections();
+
+  // Update URL when filters change
+  const updateFilters = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set(key, value);
+    } else {
+      newParams.delete(key);
+    }
+    setSearchParams(newParams, { replace: true });
+  };
+
+  // Sync search to URL with debounce
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const newParams = new URLSearchParams(searchParams);
+      if (search) {
+        newParams.set("q", search);
+      } else {
+        newParams.delete("q");
+      }
+      setSearchParams(newParams, { replace: true });
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   const filteredProducts = products?.filter(
     (product) =>
@@ -121,30 +169,72 @@ export default function AdminProducts() {
 
   return (
     <AdminLayout title="Products" description="Manage your product catalog">
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search products..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
+      {/* Filters row */}
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3">
+          {/* Category filter */}
+          <Select
+            value={categoryId}
+            onValueChange={(value) => updateFilters("category", value === "all" ? "" : value)}
+          >
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {categories?.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Collection filter */}
+          <Select
+            value={collectionId}
+            onValueChange={(value) => updateFilters("collection", value === "all" ? "" : value)}
+          >
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="All collections" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All collections</SelectItem>
+              {collections?.map((col) => (
+                <SelectItem key={col.id} value={col.id}>
+                  {col.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+
+          {/* Actions */}
+          <Button variant="outline" onClick={handleExport} disabled={isExporting || isLoading}>
+            {isExporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            Export CSV
+          </Button>
+          <Button asChild>
+            <Link to="/admin/products/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Product
+            </Link>
+          </Button>
         </div>
-        <Button variant="outline" onClick={handleExport} disabled={isExporting || isLoading}>
-          {isExporting ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Download className="mr-2 h-4 w-4" />
-          )}
-          Export CSV
-        </Button>
-        <Button asChild>
-          <Link to="/admin/products/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
-          </Link>
-        </Button>
       </div>
 
       {isLoading ? (
@@ -163,9 +253,11 @@ export default function AdminProducts() {
       ) : filteredProducts?.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
-            {search ? "No products match your search." : "No products yet."}
+            {search || categoryId || collectionId
+              ? "No products match your filters."
+              : "No products yet."}
           </p>
-          {!search && (
+          {!search && !categoryId && !collectionId && (
             <Button asChild className="mt-4">
               <Link to="/admin/products/new">Add your first product</Link>
             </Button>
