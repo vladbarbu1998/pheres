@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,7 +29,7 @@ import { useAdminCollections } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Loader2, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 
 interface CollectionFormData {
   name: string;
@@ -83,27 +84,6 @@ export default function AdminCollections() {
     });
     setEditingId(collection.id);
     setIsDialogOpen(true);
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const fileName = `${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage
-      .from("admin-uploads")
-      .upload(`collections/${fileName}`, file);
-
-    if (error) {
-      toast.error("Failed to upload image");
-      return;
-    }
-
-    const { data: urlData } = supabase.storage
-      .from("admin-uploads")
-      .getPublicUrl(data.path);
-
-    setFormData((prev) => ({ ...prev, image_url: urlData.publicUrl }));
   };
 
   const handleSave = async () => {
@@ -194,14 +174,13 @@ export default function AdminCollections() {
               </div>
               <div className="space-y-2">
                 <Label>Hero Image</Label>
-                {formData.image_url && (
-                  <img src={formData.image_url} alt="Preview" className="h-24 w-full object-cover rounded-lg mb-2" />
-                )}
-                <label className="flex items-center justify-center gap-2 border-2 border-dashed rounded-lg p-4 cursor-pointer hover:border-primary">
-                  <Upload className="h-4 w-4" />
-                  <span className="text-sm">Upload image</span>
-                  <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-                </label>
+                <ImageUploadField
+                  value={formData.image_url}
+                  onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url }))}
+                  folder="collections"
+                  aspectRatio="landscape"
+                  placeholder="Drag & drop a collection image"
+                />
               </div>
               <div className="flex gap-6">
                 <div className="flex items-center gap-2">

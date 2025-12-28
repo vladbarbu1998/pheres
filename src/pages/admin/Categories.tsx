@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useAdminCategories } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -74,7 +75,7 @@ export default function AdminCategories() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>(defaultFormData);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  
 
   const filteredCategories = categories?.filter((cat) =>
     cat.name?.toLowerCase().includes(search.toLowerCase())
@@ -117,35 +118,6 @@ export default function AdminCategories() {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `categories/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("admin-uploads")
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("admin-uploads")
-        .getPublicUrl(fileName);
-
-      setFormData({ ...formData, image_url: publicUrl });
-      toast.success("Image uploaded");
-    } catch (err) {
-      console.error("Upload error:", err);
-      toast.error("Failed to upload image");
-    } finally {
-      setUploadingImage(false);
-    }
   };
 
   const handleSave = async () => {
@@ -414,28 +386,13 @@ export default function AdminCategories() {
 
               <div className="space-y-2">
                 <Label>Image</Label>
-                <div className="flex items-center gap-4">
-                  {formData.image_url ? (
-                    <img
-                      src={formData.image_url}
-                      alt="Category"
-                      className="h-16 w-16 object-cover rounded"
-                    />
-                  ) : (
-                    <div className="h-16 w-16 bg-muted rounded flex items-center justify-center">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploadingImage}
-                    />
-                    {uploadingImage && <p className="text-sm text-muted-foreground mt-1">Uploading...</p>}
-                  </div>
-                </div>
+                <ImageUploadField
+                  value={formData.image_url}
+                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  folder="categories"
+                  aspectRatio="square"
+                  placeholder="Drag & drop a category image"
+                />
               </div>
 
               <div className="flex items-center gap-2">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +22,8 @@ import { useAdminProduct, useAdminCategories, useAdminCollections } from "@/hook
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Upload, GripVertical } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, Image as ImageIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -71,6 +72,8 @@ export default function ProductForm() {
   const [isSaving, setIsSaving] = useState(false);
   const [images, setImages] = useState<ProductImage[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
 
   const {
     register,
@@ -143,12 +146,21 @@ export default function ProductForm() {
     }
   }, [product, reset]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
+  const uploadImages = async (files: FileList | File[]) => {
+    setIsUploadingImages(true);
+    
     for (const file of Array.from(files)) {
-      const fileName = `${Date.now()}-${file.name}`;
+      // Validate file
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} is not an image`);
+        continue;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name} is too large (max 10MB)`);
+        continue;
+      }
+
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}-${file.name}`;
       const { data, error } = await supabase.storage
         .from("admin-uploads")
         .upload(`products/${fileName}`, file);
@@ -171,7 +183,39 @@ export default function ProductForm() {
         },
       ]);
     }
+    
+    setIsUploadingImages(false);
+    toast.success("Images uploaded");
   };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    await uploadImages(files);
+  };
+
+  const handleImageDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(true);
+  }, []);
+
+  const handleImageDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(false);
+  }, []);
+
+  const handleImageDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      await uploadImages(files);
+    }
+  }, []);
 
   const removeImage = (index: number) => {
     setImages((prev) => {
@@ -383,11 +427,11 @@ export default function ProductForm() {
           <CardContent>
             <div className="grid gap-4 sm:grid-cols-4">
               {images.map((img, i) => (
-                <div key={i} className="relative group">
+                <div key={i} className="relative group aspect-square">
                   <img
                     src={img.image_url}
                     alt={img.alt_text || "Product image"}
-                    className="h-32 w-full object-cover rounded-lg border"
+                    className="h-full w-full object-cover rounded-lg border"
                   />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
                     <Button
@@ -407,17 +451,45 @@ export default function ProductForm() {
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
+                  {img.is_primary && (
+                    <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded">
+                      Primary
+                    </div>
+                  )}
                 </div>
               ))}
-              <label className="h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors">
-                <Upload className="h-6 w-6 text-muted-foreground mb-2" />
-                <span className="text-sm text-muted-foreground">Upload</span>
+              <label
+                onDragOver={handleImageDragOver}
+                onDragLeave={handleImageDragLeave}
+                onDrop={handleImageDrop}
+                className={cn(
+                  "aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors",
+                  isDraggingImage
+                    ? "border-primary bg-primary/5"
+                    : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
+                  isUploadingImages && "cursor-not-allowed opacity-50"
+                )}
+              >
+                {isUploadingImages ? (
+                  <>
+                    <Loader2 className="h-6 w-6 text-muted-foreground mb-2 animate-spin" />
+                    <span className="text-sm text-muted-foreground">Uploading...</span>
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon className="h-6 w-6 text-muted-foreground mb-2" />
+                    <span className="text-sm text-muted-foreground text-center px-2">
+                      Drag & drop or click to upload
+                    </span>
+                  </>
+                )}
                 <input
                   type="file"
                   accept="image/*"
                   multiple
                   className="hidden"
                   onChange={handleImageUpload}
+                  disabled={isUploadingImages}
                 />
               </label>
             </div>
