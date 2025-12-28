@@ -94,12 +94,12 @@ export function useRecentMessages(limit = 5) {
   });
 }
 
-// Products list
-export function useAdminProducts() {
+// Products list with optional filters
+export function useAdminProducts(filters?: { categoryId?: string; collectionId?: string }) {
   return useQuery({
-    queryKey: ["admin-products"],
+    queryKey: ["admin-products", filters?.categoryId, filters?.collectionId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("products")
         .select(`
           *,
@@ -109,7 +109,25 @@ export function useAdminProducts() {
         `)
         .order("created_at", { ascending: false });
 
+      // Filter by category
+      if (filters?.categoryId) {
+        query = query.eq("category_id", filters.categoryId);
+      }
+
+      // Filter by collection - need to filter after fetch since it's a join
+      const { data, error } = await query;
+
       if (error) throw error;
+
+      // Client-side filter for collection (Supabase doesn't support filtering on nested joins easily)
+      if (filters?.collectionId && data) {
+        return data.filter((product: any) =>
+          product.product_collections?.some(
+            (pc: any) => pc.collection_id === filters.collectionId
+          )
+        );
+      }
+
       return data;
     },
   });
