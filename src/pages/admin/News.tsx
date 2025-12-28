@@ -268,17 +268,19 @@ export default function AdminNews() {
                 filteredNews?.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>
-                      {item.image_url ? (
-                        <img
-                          src={item.image_url}
-                          alt={item.title}
-                          className="h-10 w-10 object-cover rounded"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 bg-muted rounded flex items-center justify-center">
-                          <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                      )}
+                      <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
+                        {item.image_url ? (
+                          <img
+                            src={item.image_url}
+                            alt={item.title}
+                            className="h-full w-full object-cover object-center"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center">
+                            <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="font-medium">{item.title}</TableCell>
                     <TableCell>

@@ -255,13 +255,19 @@ export default function AdminCollections() {
           {collections?.map((col) => (
             <Card key={col.id}>
               <CardContent className="p-4">
-                {col.image_url && (
+              <div className="aspect-square w-full mb-3 overflow-hidden rounded-lg bg-muted">
+                {col.image_url ? (
                   <img
                     src={col.image_url}
                     alt={col.name}
-                    className="h-24 w-full object-cover rounded-lg mb-3"
+                    className="h-full w-full object-cover object-center"
                   />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center">
+                    <span className="text-xs text-muted-foreground">No image</span>
+                  </div>
                 )}
+              </div>
                 <h3 className="font-medium">{col.name}</h3>
                 <p className="text-sm text-muted-foreground truncate">{col.description}</p>
                 <div className="flex items-center gap-2 mt-3">
