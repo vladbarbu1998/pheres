@@ -44,7 +44,6 @@ export function ProductSpecs({
     { label: "Metal Weight", value: metalWeight },
     { label: "Gross Weight", value: grossWeight },
     { label: "Certification", value: certification },
-    { label: "Collection", value: collectionName },
   ].filter((spec) => spec.value);
 
   // Build stone specs - each stone gets its own lines
@@ -87,7 +86,10 @@ export function ProductSpecs({
     }
   });
 
-  const allSpecs = [...baseSpecs.slice(0, 3), ...stoneSpecs, ...baseSpecs.slice(3)];
+  // Collection always last
+  const collectionSpec = collectionName ? [{ label: "Collection", value: collectionName }] : [];
+
+  const allSpecs = [...baseSpecs, ...stoneSpecs, ...collectionSpec];
 
   if (allSpecs.length === 0) {
     return null;
