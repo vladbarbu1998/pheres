@@ -113,11 +113,7 @@ export default function ProductPage() {
                 metalType={product!.metal_type}
                 metalWeight={product!.metal_weight}
                 grossWeight={(product as any).gross_weight}
-                stoneCarat={product!.stone_carat}
-                stoneClarity={product!.stone_clarity}
-                stoneColor={product!.stone_color}
-                stoneCut={product!.stone_cut}
-                stoneType={product!.stone_type}
+                stones={(product as any).product_stones || []}
                 certification={product!.certification}
                 isNew={product!.is_new}
                 variants={(product as any).product_variants || []}

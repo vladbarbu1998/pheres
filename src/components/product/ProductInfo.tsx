@@ -22,6 +22,16 @@ interface Variant {
   is_active: boolean;
 }
 
+interface ProductStone {
+  id?: string;
+  stone_type: string;
+  stone_carat?: string | null;
+  stone_color?: string | null;
+  stone_clarity?: string | null;
+  stone_cut?: string | null;
+  display_order?: number;
+}
+
 interface ProductInfoProps {
   productId: string;
   name: string;
@@ -33,11 +43,7 @@ interface ProductInfoProps {
   metalType?: string | null;
   metalWeight?: string | null;
   grossWeight?: string | null;
-  stoneCarat?: string | null;
-  stoneClarity?: string | null;
-  stoneColor?: string | null;
-  stoneCut?: string | null;
-  stoneType?: string | null;
+  stones?: ProductStone[];
   certification?: string | null;
   isNew?: boolean;
   variants?: Variant[];
@@ -54,11 +60,7 @@ export function ProductInfo({
   metalType,
   metalWeight,
   grossWeight,
-  stoneCarat,
-  stoneClarity,
-  stoneColor,
-  stoneCut,
-  stoneType,
+  stones = [],
   certification,
   isNew,
   variants = [],
@@ -212,11 +214,7 @@ export function ProductInfo({
           metalType={metalType}
           metalWeight={metalWeight}
           grossWeight={grossWeight}
-          stoneCarat={stoneCarat}
-          stoneClarity={stoneClarity}
-          stoneColor={stoneColor}
-          stoneCut={stoneCut}
-          stoneType={stoneType}
+          stones={stones}
           certification={certification}
           collectionName={collectionName}
         />

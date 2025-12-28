@@ -1,12 +1,18 @@
+interface ProductStone {
+  id?: string;
+  stone_type: string;
+  stone_carat?: string | null;
+  stone_color?: string | null;
+  stone_clarity?: string | null;
+  stone_cut?: string | null;
+  display_order?: number;
+}
+
 interface ProductSpecsProps {
   metalType?: string | null;
   metalWeight?: string | null;
   grossWeight?: string | null;
-  stoneCarat?: string | null;
-  stoneClarity?: string | null;
-  stoneColor?: string | null;
-  stoneCut?: string | null;
-  stoneType?: string | null;
+  stones?: ProductStone[];
   certification?: string | null;
   collectionName?: string | null;
 }
@@ -29,28 +35,61 @@ export function ProductSpecs({
   metalType,
   metalWeight,
   grossWeight,
-  stoneCarat,
-  stoneClarity,
-  stoneColor,
-  stoneCut,
-  stoneType,
+  stones = [],
   certification,
   collectionName,
 }: ProductSpecsProps) {
-  const specs = [
+  const baseSpecs = [
     { label: "Metal", value: metalType },
     { label: "Metal Weight", value: metalWeight },
     { label: "Gross Weight", value: grossWeight },
-    { label: "Stone", value: stoneType },
-    { label: "Carat", value: stoneCarat },
-    { label: "Clarity", value: stoneClarity },
-    { label: "Color Grade", value: stoneColor },
-    { label: "Cut", value: stoneCut },
     { label: "Certification", value: certification },
     { label: "Collection", value: collectionName },
   ].filter((spec) => spec.value);
 
-  if (specs.length === 0) {
+  // Build stone specs - each stone gets its own lines
+  const stoneSpecs: { label: string; value: string }[] = [];
+  
+  stones.forEach((stone) => {
+    if (stone.stone_type) {
+      // Main line: "{Stone Type} Weight: {carat}" or just "{Stone Type}"
+      if (stone.stone_carat) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Weight`,
+          value: stone.stone_carat,
+        });
+      } else {
+        stoneSpecs.push({
+          label: "Stone",
+          value: stone.stone_type,
+        });
+      }
+
+      // Additional stone properties
+      if (stone.stone_color) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Color`,
+          value: stone.stone_color,
+        });
+      }
+      if (stone.stone_clarity) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Clarity`,
+          value: stone.stone_clarity,
+        });
+      }
+      if (stone.stone_cut) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Cut`,
+          value: stone.stone_cut,
+        });
+      }
+    }
+  });
+
+  const allSpecs = [...baseSpecs.slice(0, 3), ...stoneSpecs, ...baseSpecs.slice(3)];
+
+  if (allSpecs.length === 0) {
     return null;
   }
 
@@ -60,8 +99,8 @@ export function ProductSpecs({
         Specifications
       </h3>
       <div className="divide-y divide-border">
-        {specs.map((spec) => (
-          <SpecItem key={spec.label} label={spec.label} value={spec.value!} />
+        {allSpecs.map((spec, index) => (
+          <SpecItem key={`${spec.label}-${index}`} label={spec.label} value={spec.value!} />
         ))}
       </div>
     </div>

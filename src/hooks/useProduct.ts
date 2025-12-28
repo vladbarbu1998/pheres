@@ -31,6 +31,15 @@ export function useProduct(slug: string) {
             price_adjustment,
             is_active
           ),
+          product_stones (
+            id,
+            stone_type,
+            stone_carat,
+            stone_color,
+            stone_clarity,
+            stone_cut,
+            display_order
+          ),
           categories (
             id,
             name,

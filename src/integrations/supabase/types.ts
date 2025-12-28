@@ -621,6 +621,50 @@ export type Database = {
           },
         ]
       }
+      product_stones: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          product_id: string
+          stone_carat: string | null
+          stone_clarity: string | null
+          stone_color: string | null
+          stone_cut: string | null
+          stone_type: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          product_id: string
+          stone_carat?: string | null
+          stone_clarity?: string | null
+          stone_color?: string | null
+          stone_cut?: string | null
+          stone_type: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          product_id?: string
+          stone_carat?: string | null
+          stone_clarity?: string | null
+          stone_color?: string | null
+          stone_cut?: string | null
+          stone_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_stones_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_variants: {
         Row: {
           created_at: string
