@@ -36,6 +36,7 @@ const productSchema = z.object({
   description: z.string().optional(),
   metal_type: z.string().optional(),
   metal_weight: z.string().optional(),
+  gross_weight: z.string().optional(),
   stone_type: z.string().optional(),
   stone_carat: z.string().optional(),
   stone_clarity: z.string().optional(),
@@ -121,6 +122,7 @@ export default function ProductForm() {
         description: product.description || "",
         metal_type: product.metal_type || "",
         metal_weight: product.metal_weight || "",
+        gross_weight: (product as any).gross_weight || "",
         stone_type: product.stone_type || "",
         stone_carat: product.stone_carat || "",
         stone_clarity: product.stone_clarity || "",
@@ -258,6 +260,7 @@ export default function ProductForm() {
         description: data.description || null,
         metal_type: data.metal_type || null,
         metal_weight: data.metal_weight || null,
+        gross_weight: data.gross_weight || null,
         stone_type: data.stone_type || null,
         stone_carat: data.stone_carat || null,
         stone_clarity: data.stone_clarity || null,
@@ -706,6 +709,10 @@ export default function ProductForm() {
                 <div className="space-y-2">
                   <Label htmlFor="metal_weight" className="text-sm font-normal">Metal Weight</Label>
                   <Input id="metal_weight" placeholder="4.5g" {...register("metal_weight")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gross_weight" className="text-sm font-normal">Gross Weight</Label>
+                  <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="stone_type" className="text-sm font-normal">Stone Type</Label>
