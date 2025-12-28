@@ -20,15 +20,19 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, User, Mail, ShoppingBag, DollarSign, Calendar } from "lucide-react";
+import { exportToCsv } from "@/lib/exportCsv";
+import { Search, User, Mail, ShoppingBag, DollarSign, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
 interface Customer {
   email: string;
   name: string;
+  first_name: string;
+  last_name: string;
   order_count: number;
   total_spent: number;
+  first_order_date: string;
   last_order_date: string;
 }
 
@@ -58,6 +62,8 @@ function useOrderCustomers() {
       for (const order of data || []) {
         const email = order.customer_email || "unknown";
         const existing = customerMap.get(email);
+        const firstName = order.shipping_first_name || "";
+        const lastName = order.shipping_last_name || "";
         
         if (existing) {
           existing.order_count += 1;
@@ -66,16 +72,25 @@ function useOrderCustomers() {
           if (new Date(order.created_at) > new Date(existing.last_order_date)) {
             existing.last_order_date = order.created_at;
             // Update name if current is empty
-            if (!existing.name && (order.shipping_first_name || order.shipping_last_name)) {
-              existing.name = `${order.shipping_first_name || ""} ${order.shipping_last_name || ""}`.trim();
+            if (!existing.name && (firstName || lastName)) {
+              existing.name = `${firstName} ${lastName}`.trim();
+              existing.first_name = firstName;
+              existing.last_name = lastName;
             }
+          }
+          // Keep the oldest order as first_order_date
+          if (new Date(order.created_at) < new Date(existing.first_order_date)) {
+            existing.first_order_date = order.created_at;
           }
         } else {
           customerMap.set(email, {
             email,
-            name: `${order.shipping_first_name || ""} ${order.shipping_last_name || ""}`.trim(),
+            name: `${firstName} ${lastName}`.trim(),
+            first_name: firstName,
+            last_name: lastName,
             order_count: 1,
             total_spent: Number(order.total) || 0,
+            first_order_date: order.created_at,
             last_order_date: order.created_at,
           });
         }
@@ -94,6 +109,7 @@ export default function AdminCustomers() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const filteredCustomers = customers?.filter((customer) => {
     const searchLower = search.toLowerCase();
@@ -102,6 +118,51 @@ export default function AdminCustomers() {
       customer.name?.toLowerCase().includes(searchLower)
     );
   });
+
+  const handleExport = () => {
+    if (!filteredCustomers?.length) {
+      toast.error("No customers to export");
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const exportData = filteredCustomers.map((customer) => ({
+        customer_id: customer.email,
+        first_name: customer.first_name || "",
+        last_name: customer.last_name || "",
+        email: customer.email,
+        country: "",
+        total_orders: customer.order_count,
+        total_spent: customer.total_spent.toFixed(2),
+        first_order_date: format(new Date(customer.first_order_date), "yyyy-MM-dd HH:mm"),
+        last_order_date: format(new Date(customer.last_order_date), "yyyy-MM-dd HH:mm"),
+        created_at: format(new Date(customer.first_order_date), "yyyy-MM-dd HH:mm"),
+      }));
+
+      const columns = [
+        { key: "customer_id" as const, header: "Customer ID" },
+        { key: "first_name" as const, header: "First Name" },
+        { key: "last_name" as const, header: "Last Name" },
+        { key: "email" as const, header: "Email" },
+        { key: "country" as const, header: "Country" },
+        { key: "total_orders" as const, header: "Total Orders" },
+        { key: "total_spent" as const, header: "Total Spent" },
+        { key: "first_order_date" as const, header: "First Order Date" },
+        { key: "last_order_date" as const, header: "Last Order Date" },
+        { key: "created_at" as const, header: "Created At" },
+      ];
+
+      const filename = `pheres-customers-${format(new Date(), "yyyy-MM-dd")}.csv`;
+      exportToCsv(exportData, columns, filename);
+      toast.success(`Exported ${exportData.length} customers`);
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Failed to export customers");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleViewOrders = async (customer: Customer) => {
     setSelectedCustomer(customer);
@@ -150,9 +211,19 @@ export default function AdminCustomers() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Customers</h1>
-          <p className="text-muted-foreground">Customers who have placed orders</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Customers</h1>
+            <p className="text-muted-foreground">Customers who have placed orders</p>
+          </div>
+          <Button variant="outline" onClick={handleExport} disabled={isExporting || isLoading}>
+            {isExporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            Export CSV
+          </Button>
         </div>
 
         {/* Search */}
