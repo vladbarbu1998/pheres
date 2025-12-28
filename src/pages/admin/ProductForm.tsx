@@ -25,6 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2, Trash2, Image as ImageIcon, Star, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StoneTypeCombobox } from "@/components/admin/StoneTypeCombobox";
 
 interface ProductStone {
   id?: string;
@@ -352,6 +353,8 @@ export default function ProductForm() {
 
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       queryClient.invalidateQueries({ queryKey: ["admin-product", id] });
+      queryClient.invalidateQueries({ queryKey: ["all-stone-types"] });
+      queryClient.invalidateQueries({ queryKey: ["product-filter-options"] });
       toast.success(isNew ? "Product created" : "Product updated");
       navigate("/admin/products");
     } catch (error) {
@@ -811,16 +814,16 @@ export default function ProductForm() {
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                         <div className="space-y-2">
                           <Label className="text-sm font-normal">Stone Type *</Label>
-                          <Input
-                            placeholder="Diamond"
+                          <StoneTypeCombobox
                             value={stone.stone_type}
-                            onChange={(e) =>
+                            onChange={(newType) =>
                               setStones((prev) =>
                                 prev.map((s, i) =>
-                                  i === index ? { ...s, stone_type: e.target.value } : s
+                                  i === index ? { ...s, stone_type: newType } : s
                                 )
                               )
                             }
+                            placeholder="Select or create..."
                           />
                         </div>
                         <div className="space-y-2">

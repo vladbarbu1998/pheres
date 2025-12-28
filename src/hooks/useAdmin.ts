@@ -310,3 +310,44 @@ export function useAdminMessages() {
     },
   });
 }
+
+// Get all distinct stone types from product_stones table (for admin combobox)
+export function useAllStoneTypes() {
+  return useQuery({
+    queryKey: ["all-stone-types"],
+    queryFn: async () => {
+      // Get stone types from product_stones table
+      const { data: stonesData, error: stonesError } = await supabase
+        .from("product_stones")
+        .select("stone_type");
+
+      if (stonesError) throw stonesError;
+
+      // Get stone types from products table (legacy field)
+      const { data: productsData, error: productsError } = await supabase
+        .from("products")
+        .select("stone_type")
+        .not("stone_type", "is", null);
+
+      if (productsError) throw productsError;
+
+      // Combine and deduplicate
+      const allTypes = new Set<string>();
+      
+      stonesData?.forEach((s) => {
+        if (s.stone_type?.trim()) {
+          allTypes.add(s.stone_type.trim());
+        }
+      });
+
+      productsData?.forEach((p) => {
+        if (p.stone_type?.trim()) {
+          allTypes.add(p.stone_type.trim());
+        }
+      });
+
+      return Array.from(allTypes).sort();
+    },
+    staleTime: 2 * 60 * 1000, // Cache for 2 minutes
+  });
+}
