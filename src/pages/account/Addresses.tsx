@@ -159,117 +159,119 @@ function AddressForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="label">Label (optional)</Label>
-        <Input id="label" placeholder="e.g., Home, Office" {...register("label")} />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-full">
+      <div className="space-y-4 flex-1 overflow-y-auto overscroll-contain -mx-6 px-6 pb-4">
         <div className="space-y-2">
-          <Label htmlFor="first_name">First Name</Label>
+          <Label htmlFor="label">Label (optional)</Label>
+          <Input id="label" placeholder="e.g., Home, Office" {...register("label")} />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="first_name">First Name</Label>
+            <Input
+              id="first_name"
+              {...register("first_name")}
+              className={errors.first_name ? "border-destructive" : ""}
+            />
+            {errors.first_name && (
+              <p className="text-sm text-destructive">{errors.first_name.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="last_name">Last Name</Label>
+            <Input
+              id="last_name"
+              {...register("last_name")}
+              className={errors.last_name ? "border-destructive" : ""}
+            />
+            {errors.last_name && (
+              <p className="text-sm text-destructive">{errors.last_name.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="address_line_1">Address</Label>
           <Input
-            id="first_name"
-            {...register("first_name")}
-            className={errors.first_name ? "border-destructive" : ""}
+            id="address_line_1"
+            {...register("address_line_1")}
+            className={errors.address_line_1 ? "border-destructive" : ""}
           />
-          {errors.first_name && (
-            <p className="text-sm text-destructive">{errors.first_name.message}</p>
+          {errors.address_line_1 && (
+            <p className="text-sm text-destructive">{errors.address_line_1.message}</p>
           )}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="last_name">Last Name</Label>
-          <Input
-            id="last_name"
-            {...register("last_name")}
-            className={errors.last_name ? "border-destructive" : ""}
-          />
-          {errors.last_name && (
-            <p className="text-sm text-destructive">{errors.last_name.message}</p>
-          )}
-        </div>
-      </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="address_line_1">Address</Label>
-        <Input
-          id="address_line_1"
-          {...register("address_line_1")}
-          className={errors.address_line_1 ? "border-destructive" : ""}
-        />
-        {errors.address_line_1 && (
-          <p className="text-sm text-destructive">{errors.address_line_1.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="address_line_2">Apartment, suite, etc. (optional)</Label>
-        <Input id="address_line_2" {...register("address_line_2")} />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="city">City</Label>
-          <Input
-            id="city"
-            {...register("city")}
-            className={errors.city ? "border-destructive" : ""}
-          />
-          {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
+          <Label htmlFor="address_line_2">Apartment, suite, etc. (optional)</Label>
+          <Input id="address_line_2" {...register("address_line_2")} />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="state">State / Province (optional)</Label>
-          <Input id="state" {...register("state")} />
-        </div>
-      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="postal_code">Postal Code</Label>
-          <Input
-            id="postal_code"
-            {...register("postal_code")}
-            className={errors.postal_code ? "border-destructive" : ""}
-          />
-          {errors.postal_code && (
-            <p className="text-sm text-destructive">{errors.postal_code.message}</p>
-          )}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="city">City</Label>
+            <Input
+              id="city"
+              {...register("city")}
+              className={errors.city ? "border-destructive" : ""}
+            />
+            {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="state">State / Province (optional)</Label>
+            <Input id="state" {...register("state")} />
+          </div>
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="postal_code">Postal Code</Label>
+            <Input
+              id="postal_code"
+              {...register("postal_code")}
+              className={errors.postal_code ? "border-destructive" : ""}
+            />
+            {errors.postal_code && (
+              <p className="text-sm text-destructive">{errors.postal_code.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="country">Country</Label>
+            <Controller
+              control={control}
+              name="country"
+              render={({ field }) => (
+                <CountrySelect
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  error={!!errors.country}
+                />
+              )}
+            />
+            {errors.country && (
+              <p className="text-sm text-destructive">{errors.country.message}</p>
+            )}
+          </div>
+        </div>
+
         <div className="space-y-2">
-          <Label htmlFor="country">Country</Label>
+          <Label>Phone (optional)</Label>
           <Controller
             control={control}
-            name="country"
+            name="phone"
             render={({ field }) => (
-              <CountrySelect
-                value={field.value}
+              <PhoneInput
+                value={field.value || ""}
                 onValueChange={field.onChange}
-                error={!!errors.country}
+                placeholder="Phone number"
               />
             )}
           />
-          {errors.country && (
-            <p className="text-sm text-destructive">{errors.country.message}</p>
-          )}
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label>Phone (optional)</Label>
-        <Controller
-          control={control}
-          name="phone"
-          render={({ field }) => (
-            <PhoneInput
-              value={field.value || ""}
-              onValueChange={field.onChange}
-              placeholder="Phone number"
-            />
-          )}
-        />
-      </div>
-
-      <div className="flex justify-end gap-3 pt-4">
+      <div className="flex justify-end gap-3 pt-4 border-t mt-4 -mx-6 px-6 bg-background sticky bottom-0">
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
