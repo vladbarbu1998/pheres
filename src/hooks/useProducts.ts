@@ -20,7 +20,19 @@ export function useProducts({
   return useQuery({
     queryKey: ["products", filters, sortBy, collectionSlug, page, pageSize],
     queryFn: async () => {
-      // If filtering by stone type, we need to get product IDs from product_stones first
+      // If filtering by collection, get product IDs from product_collections first
+      let collectionProductIds: string[] | null = null;
+      if (filters?.collectionId) {
+        const { data: collectionProducts, error: collectionError } = await supabase
+          .from("product_collections")
+          .select("product_id")
+          .eq("collection_id", filters.collectionId);
+
+        if (collectionError) throw collectionError;
+        collectionProductIds = collectionProducts?.map((cp) => cp.product_id) || [];
+      }
+
+      // If filtering by stone type, get product IDs from product_stones first
       let stoneProductIds: string[] | null = null;
       if (filters?.stoneType) {
         const { data: stoneProducts, error: stoneError } = await supabase
@@ -69,9 +81,22 @@ export function useProducts({
         )
         .eq("is_active", true);
 
-      // Filter by collection slug
+      // Filter by collection slug (for collection page)
       if (collectionSlug) {
-        query = query.eq("product_collections.collections.slug", collectionSlug);
+        // Get product IDs for the collection slug
+        const { data: slugProducts, error: slugError } = await supabase
+          .from("product_collections")
+          .select("product_id, collections!inner(slug)")
+          .eq("collections.slug", collectionSlug);
+
+        if (slugError) throw slugError;
+        const slugProductIds = slugProducts?.map((sp) => sp.product_id) || [];
+        if (slugProductIds.length > 0) {
+          query = query.in("id", slugProductIds);
+        } else {
+          // No products in this collection, return empty
+          query = query.eq("id", "00000000-0000-0000-0000-000000000000");
+        }
       }
 
       // Apply filters
@@ -79,8 +104,14 @@ export function useProducts({
         query = query.eq("category_id", filters.categoryId);
       }
 
-      if (filters?.collectionId) {
-        query = query.eq("product_collections.collection_id", filters.collectionId);
+      // Filter by collection ID
+      if (filters?.collectionId && collectionProductIds !== null) {
+        if (collectionProductIds.length > 0) {
+          query = query.in("id", collectionProductIds);
+        } else {
+          // No products in this collection, return empty
+          query = query.eq("id", "00000000-0000-0000-0000-000000000000");
+        }
       }
 
       if (filters?.minPrice !== null && filters?.minPrice !== undefined) {
