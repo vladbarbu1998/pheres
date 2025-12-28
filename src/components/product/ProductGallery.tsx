@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -35,25 +35,29 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const selectedImage = sortedImages[selectedIndex];
 
+  const canGoPrevious = selectedIndex > 0;
+  const canGoNext = selectedIndex < sortedImages.length - 1;
+
   const handlePrevious = useCallback(() => {
-    setSelectedIndex((prev) => (prev > 0 ? prev - 1 : sortedImages.length - 1));
-  }, [sortedImages.length]);
+    if (canGoPrevious) {
+      setSelectedIndex((prev) => prev - 1);
+    }
+  }, [canGoPrevious]);
 
   const handleNext = useCallback(() => {
-    setSelectedIndex((prev) => (prev < sortedImages.length - 1 ? prev + 1 : 0));
-  }, [sortedImages.length]);
+    if (canGoNext) {
+      setSelectedIndex((prev) => prev + 1);
+    }
+  }, [canGoNext]);
 
-  // Keyboard navigation
+  // Keyboard navigation for main carousel
   useEffect(() => {
-    if (!lightboxOpen) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxOpen) return; // Let lightbox handle its own keys
       if (e.key === "ArrowLeft") {
         handlePrevious();
       } else if (e.key === "ArrowRight") {
         handleNext();
-      } else if (e.key === "Escape") {
-        setLightboxOpen(false);
       }
     };
 
@@ -93,55 +97,110 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     );
   }
 
+  const hasMultipleImages = sortedImages.length > 1;
+
   return (
     <>
       <div className="flex flex-col gap-4 w-full max-w-full">
-        {/* Main image */}
-        <button
-          onClick={() => setLightboxOpen(true)}
-          className="relative aspect-[3/4] w-full max-w-full overflow-hidden bg-secondary/30 cursor-zoom-in group"
-          aria-label="Open image gallery"
+        {/* Main image carousel */}
+        <div
+          className="relative aspect-[3/4] w-full max-w-full overflow-hidden bg-secondary/30 group"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          <img
-            src={selectedImage?.image_url}
-            alt={selectedImage?.alt_text || productName}
-            className="h-full w-full object-cover transition-opacity duration-300"
-          />
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/10">
-            <div className="bg-background/80 backdrop-blur-sm rounded-full p-3">
-              <ZoomIn className="h-5 w-5 text-foreground" />
+          {/* Image */}
+          <button
+            onClick={() => setLightboxOpen(true)}
+            className="w-full h-full cursor-zoom-in"
+            aria-label="Open image gallery"
+          >
+            <img
+              src={selectedImage?.image_url}
+              alt={selectedImage?.alt_text || productName}
+              className="h-full w-full object-cover transition-opacity duration-300"
+            />
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/10 pointer-events-none">
+              <div className="bg-background/80 backdrop-blur-sm rounded-full p-3">
+                <ZoomIn className="h-5 w-5 text-foreground" />
+              </div>
             </div>
-          </div>
-        </button>
+          </button>
 
-        {/* Thumbnails */}
-        {sortedImages.length > 1 && (
-          <div className="grid grid-cols-4 gap-2 w-full">
-            {sortedImages.slice(0, 4).map((image, index) => (
-              <button
-                key={image.id}
-                onClick={() => {
-                  setSelectedIndex(index);
-                }}
-                onDoubleClick={() => {
-                  setSelectedIndex(index);
-                  setLightboxOpen(true);
-                }}
+          {/* Navigation arrows */}
+          {hasMultipleImages && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
                 className={cn(
-                  "relative aspect-square w-full overflow-hidden bg-secondary/30 transition-all duration-200",
-                  selectedIndex === index
-                    ? "ring-2 ring-primary ring-offset-2"
-                    : "opacity-70 hover:opacity-100"
+                  "absolute left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm transition-opacity",
+                  !canGoPrevious && "opacity-40 cursor-not-allowed"
                 )}
-                aria-label={`View image ${index + 1}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrevious();
+                }}
+                disabled={!canGoPrevious}
+                aria-label="Previous image"
               >
-                <img
-                  src={image.image_url}
-                  alt={image.alt_text || `${productName} - Image ${index + 1}`}
-                  className="h-full w-full object-cover"
-                />
-              </button>
-            ))}
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "absolute right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm transition-opacity",
+                  !canGoNext && "opacity-40 cursor-not-allowed"
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNext();
+                }}
+                disabled={!canGoNext}
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </>
+          )}
+        </div>
+
+        {/* Counter + Thumbnails */}
+        {hasMultipleImages && (
+          <div className="flex flex-col gap-3">
+            {/* Image counter */}
+            <div className="flex justify-center">
+              <span className="text-sm text-muted-foreground">
+                {selectedIndex + 1} / {sortedImages.length}
+              </span>
+            </div>
+
+            {/* Thumbnails */}
+            <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-2 w-full">
+              {sortedImages.map((image, index) => (
+                <button
+                  key={image.id}
+                  onClick={() => setSelectedIndex(index)}
+                  onDoubleClick={() => {
+                    setSelectedIndex(index);
+                    setLightboxOpen(true);
+                  }}
+                  className={cn(
+                    "relative aspect-square w-full overflow-hidden bg-secondary/30 transition-all duration-200",
+                    selectedIndex === index
+                      ? "ring-2 ring-primary ring-offset-2"
+                      : "opacity-70 hover:opacity-100"
+                  )}
+                  aria-label={`View image ${index + 1}`}
+                >
+                  <img
+                    src={image.image_url}
+                    alt={image.alt_text || `${productName} - Image ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -158,13 +217,17 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           </VisuallyHidden>
           
           {/* Navigation buttons */}
-          {sortedImages.length > 1 && (
+          {hasMultipleImages && (
             <>
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                className={cn(
+                  "absolute left-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background",
+                  !canGoPrevious && "opacity-40 cursor-not-allowed"
+                )}
                 onClick={handlePrevious}
+                disabled={!canGoPrevious}
                 aria-label="Previous image"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -172,8 +235,12 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                className={cn(
+                  "absolute right-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background",
+                  !canGoNext && "opacity-40 cursor-not-allowed"
+                )}
                 onClick={handleNext}
+                disabled={!canGoNext}
                 aria-label="Next image"
               >
                 <ChevronRight className="h-5 w-5" />
@@ -191,7 +258,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           </div>
 
           {/* Thumbnails and counter at bottom */}
-          {sortedImages.length > 1 && (
+          {hasMultipleImages && (
             <div className="border-t bg-muted/30 px-4 py-3 flex items-center justify-center gap-4">
               <span className="text-sm text-muted-foreground">
                 {selectedIndex + 1} / {sortedImages.length}
@@ -229,9 +296,12 @@ export function ProductGallerySkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="aspect-[3/4] w-full" />
-      <div className="flex gap-2">
+      <div className="flex justify-center">
+        <Skeleton className="h-4 w-12" />
+      </div>
+      <div className="grid grid-cols-4 gap-2">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-20 w-20 flex-shrink-0" />
+          <Skeleton key={i} className="aspect-square w-full" />
         ))}
       </div>
     </div>
