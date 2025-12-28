@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useAdminPress } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Table,
@@ -77,7 +77,7 @@ export default function AdminPress() {
   const [selectedPress, setSelectedPress] = useState<string | null>(null);
   const [formData, setFormData] = useState<PressFormData>(defaultFormData);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  
 
   const filteredPress = press?.filter((item) => {
     const searchLower = search.toLowerCase();
@@ -124,35 +124,6 @@ export default function AdminPress() {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `press/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("admin-uploads")
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("admin-uploads")
-        .getPublicUrl(fileName);
-
-      setFormData({ ...formData, image_url: publicUrl });
-      toast.success("Image uploaded");
-    } catch (err) {
-      console.error("Upload error:", err);
-      toast.error("Failed to upload image");
-    } finally {
-      setUploadingImage(false);
-    }
   };
 
   const handleSave = async () => {
@@ -441,29 +412,13 @@ export default function AdminPress() {
 
               <div className="space-y-2">
                 <Label>Image</Label>
-                <div className="flex items-center gap-4">
-                  {formData.image_url ? (
-                    <img
-                      src={formData.image_url}
-                      alt="Press"
-                      className="h-20 w-32 object-cover rounded"
-                    />
-                  ) : (
-                    <div className="h-20 w-32 bg-muted rounded flex items-center justify-center">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploadingImage}
-                      className="max-w-xs"
-                    />
-                    {uploadingImage && <p className="text-sm text-muted-foreground mt-1">Uploading...</p>}
-                  </div>
-                </div>
+                <ImageUploadField
+                  value={formData.image_url}
+                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  folder="press"
+                  aspectRatio="landscape"
+                  placeholder="Drag & drop a press image"
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-4">

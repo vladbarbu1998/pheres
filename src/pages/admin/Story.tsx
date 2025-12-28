@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useAdminStory } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Table,
@@ -63,7 +63,7 @@ export default function AdminStory() {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [formData, setFormData] = useState<StoryFormData>(defaultFormData);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  
 
   const handleCreate = () => {
     setFormData({
@@ -88,35 +88,6 @@ export default function AdminStory() {
   const handleDelete = (id: string) => {
     setSelectedSection(id);
     setIsDeleteDialogOpen(true);
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `story/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("admin-uploads")
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("admin-uploads")
-        .getPublicUrl(fileName);
-
-      setFormData({ ...formData, image_url: publicUrl });
-      toast.success("Image uploaded");
-    } catch (err) {
-      console.error("Upload error:", err);
-      toast.error("Failed to upload image");
-    } finally {
-      setUploadingImage(false);
-    }
   };
 
   const handleSave = async () => {
@@ -332,38 +303,13 @@ export default function AdminStory() {
 
               <div className="space-y-2">
                 <Label>Image (optional)</Label>
-                <div className="flex items-center gap-4">
-                  {formData.image_url ? (
-                    <img
-                      src={formData.image_url}
-                      alt="Section"
-                      className="h-20 w-32 object-cover rounded"
-                    />
-                  ) : (
-                    <div className="h-20 w-32 bg-muted rounded flex items-center justify-center">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploadingImage}
-                    />
-                    {uploadingImage && <p className="text-sm text-muted-foreground mt-1">Uploading...</p>}
-                    {formData.image_url && (
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-destructive p-0 h-auto mt-1"
-                        onClick={() => setFormData({ ...formData, image_url: "" })}
-                      >
-                        Remove image
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                <ImageUploadField
+                  value={formData.image_url}
+                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  folder="story"
+                  aspectRatio="landscape"
+                  placeholder="Drag & drop a section image"
+                />
               </div>
 
               <div className="flex items-center gap-2">
