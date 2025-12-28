@@ -169,3 +169,59 @@ export function useCollection(slug: string) {
     enabled: !!slug,
   });
 }
+
+// Hook to get distinct filter options from active products
+export function useProductFilterOptions() {
+  return useQuery({
+    queryKey: ["product-filter-options"],
+    queryFn: async () => {
+      // Fetch all active products with their metal_type, stone_type, and collections
+      const { data: products, error } = await supabase
+        .from("products")
+        .select(`
+          metal_type,
+          stone_type,
+          product_collections (
+            collection_id
+          )
+        `)
+        .eq("is_active", true);
+
+      if (error) throw error;
+
+      // Extract distinct metal types
+      const metalTypes = Array.from(
+        new Set(
+          (products || [])
+            .map((p) => p.metal_type)
+            .filter((m): m is string => !!m && m.trim() !== "")
+        )
+      ).sort();
+
+      // Extract distinct stone types
+      const stoneTypes = Array.from(
+        new Set(
+          (products || [])
+            .map((p) => p.stone_type)
+            .filter((s): s is string => !!s && s.trim() !== "")
+        )
+      ).sort();
+
+      // Extract distinct collection IDs that have active products
+      const collectionIds = Array.from(
+        new Set(
+          (products || [])
+            .flatMap((p) => p.product_collections?.map((pc) => pc.collection_id) || [])
+            .filter((id): id is string => !!id)
+        )
+      );
+
+      return {
+        metalTypes,
+        stoneTypes,
+        activeCollectionIds: collectionIds,
+      };
+    },
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+}

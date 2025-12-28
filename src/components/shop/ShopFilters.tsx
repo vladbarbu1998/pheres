@@ -51,6 +51,8 @@ interface ShopFiltersProps {
   collections: Collection[];
   productCount: number;
   isLoading?: boolean;
+  metalTypes?: string[];
+  stoneTypes?: string[];
 }
 
 const priceRanges = [
@@ -60,9 +62,6 @@ const priceRanges = [
   { label: "$10,000 - $25,000", min: 10000, max: 25000 },
   { label: "Over $25,000", min: 25000, max: null },
 ];
-
-const metalTypes = ["18K White Gold", "18K Yellow Gold", "18K Rose Gold", "Platinum"];
-const stoneTypes = ["Diamond", "Sapphire", "Ruby", "Emerald"];
 
 function FilterSection({
   title,
@@ -86,7 +85,9 @@ function FilterContent({
   onFiltersChange,
   categories,
   collections,
-}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections">) {
+  metalTypes = [],
+  stoneTypes = [],
+}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "metalTypes" | "stoneTypes">) {
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
     onFiltersChange({
       ...filters,
@@ -199,50 +200,54 @@ function FilterContent({
       </FilterSection>
 
       {/* Metal Type */}
-      <FilterSection title="Metal">
-        <div className="space-y-2">
-          {metalTypes.map((metal) => (
-            <div key={metal} className="flex items-center gap-2">
-              <Checkbox
-                id={`metal-${metal}`}
-                checked={filters.metalType === metal}
-                onCheckedChange={(checked) =>
-                  handleMetalChange(metal, checked as boolean)
-                }
-              />
-              <Label
-                htmlFor={`metal-${metal}`}
-                className="text-sm font-normal text-muted-foreground cursor-pointer"
-              >
-                {metal}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
+      {metalTypes.length > 0 && (
+        <FilterSection title="Metal">
+          <div className="space-y-2">
+            {metalTypes.map((metal) => (
+              <div key={metal} className="flex items-center gap-2">
+                <Checkbox
+                  id={`metal-${metal}`}
+                  checked={filters.metalType === metal}
+                  onCheckedChange={(checked) =>
+                    handleMetalChange(metal, checked as boolean)
+                  }
+                />
+                <Label
+                  htmlFor={`metal-${metal}`}
+                  className="text-sm font-normal text-muted-foreground cursor-pointer"
+                >
+                  {metal}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
       {/* Stone Type */}
-      <FilterSection title="Stone">
-        <div className="space-y-2">
-          {stoneTypes.map((stone) => (
-            <div key={stone} className="flex items-center gap-2">
-              <Checkbox
-                id={`stone-${stone}`}
-                checked={filters.stoneType === stone}
-                onCheckedChange={(checked) =>
-                  handleStoneChange(stone, checked as boolean)
-                }
-              />
-              <Label
-                htmlFor={`stone-${stone}`}
-                className="text-sm font-normal text-muted-foreground cursor-pointer"
-              >
-                {stone}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
+      {stoneTypes.length > 0 && (
+        <FilterSection title="Stone">
+          <div className="space-y-2">
+            {stoneTypes.map((stone) => (
+              <div key={stone} className="flex items-center gap-2">
+                <Checkbox
+                  id={`stone-${stone}`}
+                  checked={filters.stoneType === stone}
+                  onCheckedChange={(checked) =>
+                    handleStoneChange(stone, checked as boolean)
+                  }
+                />
+                <Label
+                  htmlFor={`stone-${stone}`}
+                  className="text-sm font-normal text-muted-foreground cursor-pointer"
+                >
+                  {stone}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </FilterSection>
+      )}
     </div>
   );
 }
@@ -256,6 +261,8 @@ export function ShopFilters({
   collections,
   productCount,
   isLoading,
+  metalTypes = [],
+  stoneTypes = [],
 }: ShopFiltersProps) {
   const hasActiveFilters =
     filters.categoryId ||
@@ -302,6 +309,8 @@ export function ShopFilters({
                 onFiltersChange={onFiltersChange}
                 categories={categories}
                 collections={collections}
+                metalTypes={metalTypes}
+                stoneTypes={stoneTypes}
               />
               {hasActiveFilters && (
                 <Button
@@ -367,7 +376,9 @@ export function ShopFiltersSidebar({
   onFiltersChange,
   categories,
   collections,
-}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections">) {
+  metalTypes = [],
+  stoneTypes = [],
+}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "metalTypes" | "stoneTypes">) {
   const hasActiveFilters =
     filters.categoryId ||
     filters.collectionId ||
@@ -403,6 +414,8 @@ export function ShopFiltersSidebar({
           onFiltersChange={onFiltersChange}
           categories={categories}
           collections={collections}
+          metalTypes={metalTypes}
+          stoneTypes={stoneTypes}
         />
       </div>
     </aside>
