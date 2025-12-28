@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -33,61 +34,108 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const selectedImage = sortedImages[selectedIndex];
 
-  const canGoPrevious = selectedIndex > 0;
-  const canGoNext = selectedIndex < sortedImages.length - 1;
+  // Embla carousel for main image
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    dragFree: false,
+    containScroll: "trimSnaps",
+  });
 
-  const handlePrevious = useCallback(() => {
-    if (canGoPrevious) {
-      setSelectedIndex((prev) => prev - 1);
+  // Embla carousel for lightbox
+  const [lightboxEmblaRef, lightboxEmblaApi] = useEmblaCarousel({
+    loop: false,
+    dragFree: false,
+    containScroll: "trimSnaps",
+    startIndex: selectedIndex,
+  });
+
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  // Sync lightbox carousel with main carousel when opened
+  useEffect(() => {
+    if (lightboxOpen && lightboxEmblaApi) {
+      lightboxEmblaApi.scrollTo(selectedIndex, true);
     }
-  }, [canGoPrevious]);
+  }, [lightboxOpen, lightboxEmblaApi, selectedIndex]);
 
-  const handleNext = useCallback(() => {
-    if (canGoNext) {
-      setSelectedIndex((prev) => prev + 1);
-    }
-  }, [canGoNext]);
+  // Sync lightbox selection back to main
+  useEffect(() => {
+    if (!lightboxEmblaApi) return;
+    const onLightboxSelect = () => {
+      const index = lightboxEmblaApi.selectedScrollSnap();
+      setSelectedIndex(index);
+      emblaApi?.scrollTo(index);
+    };
+    lightboxEmblaApi.on("select", onLightboxSelect);
+    return () => {
+      lightboxEmblaApi.off("select", onLightboxSelect);
+    };
+  }, [lightboxEmblaApi, emblaApi]);
 
-  // Keyboard navigation for main carousel
+  const scrollPrev = useCallback(() => {
+    emblaApi?.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    emblaApi?.scrollNext();
+  }, [emblaApi]);
+
+  const scrollTo = useCallback(
+    (index: number) => {
+      emblaApi?.scrollTo(index);
+    },
+    [emblaApi]
+  );
+
+  const lightboxScrollPrev = useCallback(() => {
+    lightboxEmblaApi?.scrollPrev();
+  }, [lightboxEmblaApi]);
+
+  const lightboxScrollNext = useCallback(() => {
+    lightboxEmblaApi?.scrollNext();
+  }, [lightboxEmblaApi]);
+
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (lightboxOpen) return; // Let lightbox handle its own keys
-      if (e.key === "ArrowLeft") {
-        handlePrevious();
-      } else if (e.key === "ArrowRight") {
-        handleNext();
+      if (lightboxOpen) {
+        if (e.key === "ArrowLeft") {
+          lightboxEmblaApi?.scrollPrev();
+        } else if (e.key === "ArrowRight") {
+          lightboxEmblaApi?.scrollNext();
+        }
+      } else {
+        if (e.key === "ArrowLeft") {
+          emblaApi?.scrollPrev();
+        } else if (e.key === "ArrowRight") {
+          emblaApi?.scrollNext();
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [lightboxOpen, handlePrevious, handleNext]);
-
-  // Touch/swipe support
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStart === null) return;
-    
-    const touchEnd = e.changedTouches[0].clientX;
-    const diff = touchStart - touchEnd;
-    
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        handleNext();
-      } else {
-        handlePrevious();
-      }
-    }
-    
-    setTouchStart(null);
-  };
+  }, [emblaApi, lightboxEmblaApi, lightboxOpen]);
 
   if (sortedImages.length === 0) {
     return (
@@ -103,28 +151,37 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     <>
       <div className="flex flex-col gap-4 w-full max-w-full">
         {/* Main image carousel */}
-        <div
-          className="relative aspect-[3/4] w-full max-w-full overflow-hidden bg-secondary/30 group"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* Image */}
-          <button
-            onClick={() => setLightboxOpen(true)}
-            className="w-full h-full cursor-zoom-in"
-            aria-label="Open image gallery"
-          >
-            <img
-              src={selectedImage?.image_url}
-              alt={selectedImage?.alt_text || productName}
-              className="h-full w-full object-cover transition-opacity duration-300"
-            />
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/10 pointer-events-none">
-              <div className="bg-background/80 backdrop-blur-sm rounded-full p-3">
-                <ZoomIn className="h-5 w-5 text-foreground" />
-              </div>
+        <div className="relative w-full max-w-full overflow-hidden group">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {sortedImages.map((image, index) => (
+                <div
+                  key={image.id}
+                  className="relative aspect-[3/4] flex-[0_0_100%] min-w-0 bg-secondary/30"
+                >
+                  <button
+                    onClick={() => setLightboxOpen(true)}
+                    className="w-full h-full cursor-zoom-in"
+                    aria-label="Open image gallery"
+                  >
+                    <img
+                      src={image.image_url}
+                      alt={image.alt_text || `${productName} - Image ${index + 1}`}
+                      className="h-full w-full object-cover"
+                      draggable={false}
+                    />
+                  </button>
+                </div>
+              ))}
             </div>
-          </button>
+          </div>
+
+          {/* Zoom indicator */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/10 pointer-events-none">
+            <div className="bg-background/80 backdrop-blur-sm rounded-full p-3">
+              <ZoomIn className="h-5 w-5 text-foreground" />
+            </div>
+          </div>
 
           {/* Navigation arrows */}
           {hasMultipleImages && (
@@ -134,13 +191,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 size="icon"
                 className={cn(
                   "absolute left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm transition-opacity",
-                  !canGoPrevious && "opacity-40 cursor-not-allowed"
+                  !canScrollPrev && "opacity-40 cursor-not-allowed"
                 )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePrevious();
-                }}
-                disabled={!canGoPrevious}
+                onClick={scrollPrev}
+                disabled={!canScrollPrev}
                 aria-label="Previous image"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -150,13 +204,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 size="icon"
                 className={cn(
                   "absolute right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm transition-opacity",
-                  !canGoNext && "opacity-40 cursor-not-allowed"
+                  !canScrollNext && "opacity-40 cursor-not-allowed"
                 )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleNext();
-                }}
-                disabled={!canGoNext}
+                onClick={scrollNext}
+                disabled={!canScrollNext}
                 aria-label="Next image"
               >
                 <ChevronRight className="h-5 w-5" />
@@ -180,9 +231,9 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               {sortedImages.map((image, index) => (
                 <button
                   key={image.id}
-                  onClick={() => setSelectedIndex(index)}
+                  onClick={() => scrollTo(index)}
                   onDoubleClick={() => {
-                    setSelectedIndex(index);
+                    scrollTo(index);
                     setLightboxOpen(true);
                   }}
                   className={cn(
@@ -207,54 +258,54 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
       {/* Lightbox Dialog */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent 
-          className="max-w-3xl max-h-[80vh] p-0 bg-background border overflow-hidden"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
+        <DialogContent className="max-w-3xl max-h-[80vh] p-0 bg-background border overflow-hidden">
           <VisuallyHidden>
             <DialogTitle>{productName} - Image Gallery</DialogTitle>
           </VisuallyHidden>
-          
-          {/* Navigation buttons */}
-          {hasMultipleImages && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "absolute left-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background",
-                  !canGoPrevious && "opacity-40 cursor-not-allowed"
-                )}
-                onClick={handlePrevious}
-                disabled={!canGoPrevious}
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "absolute right-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background",
-                  !canGoNext && "opacity-40 cursor-not-allowed"
-                )}
-                onClick={handleNext}
-                disabled={!canGoNext}
-                aria-label="Next image"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </Button>
-            </>
-          )}
 
-          {/* Main image */}
-          <div className="flex items-center justify-center p-6">
-            <img
-              src={sortedImages[selectedIndex]?.image_url}
-              alt={sortedImages[selectedIndex]?.alt_text || productName}
-              className="max-w-full max-h-[60vh] object-contain"
-            />
+          {/* Lightbox carousel */}
+          <div className="relative">
+            <div ref={lightboxEmblaRef} className="overflow-hidden">
+              <div className="flex">
+                {sortedImages.map((image, index) => (
+                  <div
+                    key={image.id}
+                    className="flex-[0_0_100%] min-w-0 flex items-center justify-center p-6"
+                  >
+                    <img
+                      src={image.image_url}
+                      alt={image.alt_text || `${productName} - Image ${index + 1}`}
+                      className="max-w-full max-h-[60vh] object-contain"
+                      draggable={false}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation buttons */}
+            {hasMultipleImages && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                  onClick={lightboxScrollPrev}
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
+                  onClick={lightboxScrollNext}
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Thumbnails and counter at bottom */}
@@ -267,7 +318,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 {sortedImages.map((image, index) => (
                   <button
                     key={image.id}
-                    onClick={() => setSelectedIndex(index)}
+                    onClick={() => lightboxEmblaApi?.scrollTo(index)}
                     className={cn(
                       "relative h-10 w-10 flex-shrink-0 overflow-hidden rounded transition-all duration-200",
                       selectedIndex === index
