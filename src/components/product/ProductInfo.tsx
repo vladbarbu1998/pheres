@@ -168,10 +168,10 @@ export function ProductInfo({
       )}
 
       {/* Actions */}
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex flex-col gap-4 pt-2">
         <Button 
           size="lg" 
-          className="flex-1"
+          className="w-full py-6 text-base"
           onClick={handleAddToCart}
           disabled={!canAddToCart || isAdding}
         >
@@ -195,6 +195,7 @@ export function ProductInfo({
         <Button 
           size="lg" 
           variant="outline"
+          className="w-full py-6 text-base sm:w-auto"
           onClick={toggleFavorite}
           disabled={isToggling}
         >

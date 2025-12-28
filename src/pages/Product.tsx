@@ -74,7 +74,7 @@ export default function ProductPage() {
 
   return (
     <Layout>
-      <div className="container py-8 lg:py-12">
+      <div className="container py-8 lg:py-12 overflow-x-hidden">
         {/* Back link */}
         <Button variant="ghost" size="sm" asChild className="mb-6">
           <Link to="/shop">
@@ -86,7 +86,7 @@ export default function ProductPage() {
         {/* Main product section */}
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Gallery */}
-          <div>
+          <div className="min-w-0">
             {productLoading ? (
               <ProductGallerySkeleton />
             ) : (
@@ -98,7 +98,7 @@ export default function ProductPage() {
           </div>
 
           {/* Info */}
-          <div>
+          <div className="min-w-0">
             {productLoading ? (
               <ProductInfoSkeleton />
             ) : (
