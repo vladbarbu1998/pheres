@@ -256,16 +256,23 @@ export function useProductFilterOptions() {
 
       // Extract distinct stone types from both product.stone_type and product_stones table
       const stoneTypesFromProducts = (products || [])
-        .map((p) => p.stone_type)
-        .filter((s): s is string => !!s && s.trim() !== "");
+        .map((p) => p.stone_type?.trim())
+        .filter((s): s is string => !!s && s !== "");
 
       const stoneTypesFromStones = (products || [])
-        .flatMap((p) => p.product_stones?.map((ps) => ps.stone_type) || [])
-        .filter((s): s is string => !!s && s.trim() !== "");
+        .flatMap((p) => p.product_stones?.map((ps) => ps.stone_type?.trim()) || [])
+        .filter((s): s is string => !!s && s !== "");
 
-      const stoneTypes = Array.from(
-        new Set([...stoneTypesFromProducts, ...stoneTypesFromStones])
-      ).sort();
+      // Deduplicate using a Map to handle case variations
+      const stoneMap = new Map<string, string>();
+      [...stoneTypesFromProducts, ...stoneTypesFromStones].forEach((s) => {
+        const key = s.toLowerCase();
+        // Keep the first occurrence (preserves original casing)
+        if (!stoneMap.has(key)) {
+          stoneMap.set(key, s);
+        }
+      });
+      const stoneTypes = Array.from(stoneMap.values()).sort();
 
       // Extract distinct collection IDs that have active products
       const collectionIds = Array.from(
