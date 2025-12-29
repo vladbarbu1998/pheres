@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Heart, Search, ShoppingBag, Menu, X, User, Sun, Moon } from "lucide-react";
+import { Heart, Search, ShoppingBag, Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -7,8 +7,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { SearchDialog } from "@/components/search/SearchDialog";
 import { Logo } from "@/components/layout/Logo";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { useTheme } from "next-themes";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -25,12 +23,6 @@ export function Header() {
   const { itemCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleAccountClick = () => {
     if (user) {
@@ -50,10 +42,6 @@ export function Header() {
 
   const handleCartClick = () => {
     navigate("/cart");
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   // Close mobile menu on route change
@@ -109,9 +97,6 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </Button>
-            <div className="hidden lg:block">
-              <ThemeToggle />
-            </div>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -235,17 +220,6 @@ export function Header() {
               >
                 <Heart className="h-5 w-5" />
                 Favorites
-              </button>
-              <button
-                onClick={toggleTheme}
-                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {mounted && theme === "dark" ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-                {mounted && theme === "dark" ? "Light Mode" : "Dark Mode"}
               </button>
             </div>
           </div>
