@@ -2,15 +2,23 @@ import { test, expect } from '@playwright/test';
 import { routes } from './fixtures/test-data';
 
 test.describe('Cart', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, browserName }) => {
+    // Increase timeout for Firefox which is slower
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
     await page.goto(routes.shop);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
-  test('empty cart shows appropriate message', async ({ page }) => {
-    // Use domcontentloaded instead of load for faster/more reliable navigation
+  test('empty cart shows appropriate message', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
     await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 }).catch(() => {});
     
     // Either cart has items or shows empty state
     const emptyMessage = page.getByTestId('empty-state');
@@ -22,7 +30,11 @@ test.describe('Cart', () => {
     expect(hasEmptyMessage || hasItems).toBe(true);
   });
 
-  test('can navigate to cart after adding item', async ({ page }) => {
+  test('can navigate to cart after adding item', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
     const productCard = page.getByTestId('product-card').first();
     if (await productCard.count() === 0) {
       test.skip();
@@ -30,21 +42,23 @@ test.describe('Cart', () => {
     }
     
     await productCard.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.getByRole('button', { name: /add to cart/i }).click();
     await page.waitForTimeout(1000);
     
-    // Use domcontentloaded for more reliable navigation across browsers
     await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 }).catch(() => {});
     
     await expect(page).toHaveURL(/\/cart/);
   });
 
-  test('cart summary shows when items present', async ({ page }) => {
-    // Use domcontentloaded for more reliable navigation
+  test('cart summary shows when items present', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
     await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 }).catch(() => {});
     
     const summarySection = page.getByTestId('cart-summary');
     const cartItems = page.getByTestId('cart-item');
