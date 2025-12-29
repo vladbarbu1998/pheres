@@ -22,22 +22,19 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 const locations = [
   {
-    name: "Milan",
-    country: "Italy",
-    address: "Via Monte Napoleone, 8",
-    email: "milan@pheres.com",
+    name: "Hong Kong Studio",
+    address: "World Trust Tower 7C, 50 Stanley Street, Central, Hong Kong",
+    phone: "+852 9211 7727",
   },
   {
-    name: "Hong Kong",
-    country: "China",
-    address: "The Landmark, Central",
-    email: "hongkong@pheres.com",
+    name: "Hong Kong Office",
+    address: "Level 10, Central Building, 1-3 Pedder Street, Central, Hong Kong",
+    phone: "+852 3182 7554",
   },
   {
-    name: "Tokyo",
-    country: "Japan",
-    address: "Ginza District",
-    email: "tokyo@pheres.com",
+    name: "Tokyo Office",
+    address: "1-19-12 Hamamatsucho, Fuji Building 5F, Minato-Ku, Tokyo 105-0013",
+    phone: "+81 3 6452 9491",
   },
 ];
 
@@ -214,13 +211,12 @@ export default function Contact() {
                         <h3 className="font-display font-medium text-foreground">
                           {location.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground">{location.country}</p>
                         <p className="text-sm text-muted-foreground mt-1">{location.address}</p>
                         <a
-                          href={`mailto:${location.email}`}
+                          href={`tel:${location.phone.replace(/\s/g, "")}`}
                           className="text-sm text-primary hover:underline mt-2 inline-block"
                         >
-                          {location.email}
+                          {location.phone}
                         </a>
                       </div>
                     </div>
