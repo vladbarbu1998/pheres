@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAdminProducts, useAdminCategories, useAdminCollections } from "@/hooks/useAdmin";
+import { useStorageCleanup, getProductImageUrls } from "@/hooks/useStorageCleanup";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { exportToCsv } from "@/lib/exportCsv";
@@ -143,8 +144,14 @@ export default function AdminProducts() {
     }
   };
 
+  const storageCleanup = useStorageCleanup();
+
   const handleDelete = async () => {
     if (!deleteId) return;
+    
+    // Get the product to collect image URLs before deletion
+    const productToDelete = products?.find((p: any) => p.id === deleteId);
+    const imageUrls = productToDelete ? getProductImageUrls(productToDelete) : [];
     
     const { error } = await supabase.from("products").delete().eq("id", deleteId);
     
@@ -153,6 +160,20 @@ export default function AdminProducts() {
     } else {
       toast.success("Product deleted");
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      
+      // Cleanup orphaned images in background
+      if (imageUrls.length > 0) {
+        storageCleanup.mutate(imageUrls, {
+          onSuccess: (data) => {
+            if (data.deletedCount > 0) {
+              console.log(`Cleaned up ${data.deletedCount} orphaned image(s)`);
+            }
+          },
+          onError: (err) => {
+            console.error("Image cleanup error:", err);
+          },
+        });
+      }
     }
     setDeleteId(null);
   };
