@@ -22,6 +22,7 @@ import Collection from "./pages/Collection";
 import Category from "./pages/Category";
 import Product from "./pages/Product";
 import ProductRedirect from "./pages/ProductRedirect";
+import ShopAllRedirect from "./pages/ShopAllRedirect";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import Returns from "./pages/Returns";
@@ -73,6 +74,8 @@ const App = () => (
               <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
               <Route path="/shop/collection/:slug" element={<Collection />} />
               <Route path="/shop/category/:slug" element={<Category />} />
+              <Route path="/shop/all/:productSlug" element={<ShopAllRedirect />} />
+              <Route path="/shop/all" element={<ShopAllRedirect />} />
               <Route path="/shop/:categorySlug/:productSlug" element={<Product />} />
               <Route path="/product/:slug" element={<ProductRedirect />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
