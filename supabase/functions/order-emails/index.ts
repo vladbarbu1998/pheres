@@ -4,9 +4,45 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// Security: Restrict CORS to allowed origins
+const ALLOWED_ORIGINS = [
+  "https://lovable.dev",
+  "https://www.lovable.dev",
+  "https://sbyfgresripeilehcoru.lovableproject.com",
+];
+
+const getCorsHeaders = (origin: string | null) => {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => 
+    origin === allowed || origin.endsWith('.lovable.dev') || origin.endsWith('.lovableproject.com')
+  ) ? origin : ALLOWED_ORIGINS[0];
+  
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+};
+
+// URL validation helper
+const isValidHttpUrl = (str: string): boolean => {
+  try {
+    const url = new URL(str);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
+};
+
+// HTML escape helper to prevent XSS in email templates
+const escapeHtml = (str: string): string => {
+  const htmlEscapes: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return str.replace(/[&<>"']/g, (char) => htmlEscapes[char] || char);
 };
 
 // Email templates for each order status
@@ -46,12 +82,12 @@ const emailTemplates = {
             <h1>PHERES</h1>
           </div>
           <div class="content">
-            <p class="greeting">Dear ${order.shipping_first_name},</p>
+            <p class="greeting">Dear ${escapeHtml(order.shipping_first_name)},</p>
             <p class="message">
               Thank you for your order. We're delighted to confirm that we've received your order and it's being prepared with care.
             </p>
             <div class="order-details">
-              <div class="order-number">ORDER ${order.order_number}</div>
+              <div class="order-number">ORDER ${escapeHtml(order.order_number)}</div>
               <div class="detail-row">
                 <span class="detail-label">Subtotal</span>
                 <span class="detail-value">$${Number(order.subtotal).toFixed(2)}</span>
@@ -71,11 +107,11 @@ const emailTemplates = {
               <div class="address-block">
                 <div class="address-title">SHIPPING TO</div>
                 <div class="address">
-                  ${order.shipping_first_name} ${order.shipping_last_name}<br>
-                  ${order.shipping_address_line_1}<br>
-                  ${order.shipping_address_line_2 ? order.shipping_address_line_2 + '<br>' : ''}
-                  ${order.shipping_city}, ${order.shipping_state || ''} ${order.shipping_postal_code}<br>
-                  ${order.shipping_country}
+                  ${escapeHtml(order.shipping_first_name)} ${escapeHtml(order.shipping_last_name)}<br>
+                  ${escapeHtml(order.shipping_address_line_1)}<br>
+                  ${order.shipping_address_line_2 ? escapeHtml(order.shipping_address_line_2) + '<br>' : ''}
+                  ${escapeHtml(order.shipping_city)}, ${order.shipping_state ? escapeHtml(order.shipping_state) : ''} ${escapeHtml(order.shipping_postal_code)}<br>
+                  ${escapeHtml(order.shipping_country)}
                 </div>
               </div>
             </div>
@@ -123,13 +159,13 @@ const emailTemplates = {
             <h1>PHERES</h1>
           </div>
           <div class="content">
-            <p class="greeting">Dear ${order.shipping_first_name},</p>
+            <p class="greeting">Dear ${escapeHtml(order.shipping_first_name)},</p>
             <span class="status-badge">✓ Payment Confirmed</span>
             <p class="message">
               We've received your payment and your order is now being processed. Our artisans are preparing your jewelry with the utmost care.
             </p>
             <div class="order-summary">
-              <div class="order-number">ORDER ${order.order_number}</div>
+              <div class="order-number">ORDER ${escapeHtml(order.order_number)}</div>
               <div class="total">Total Paid: $${Number(order.total).toFixed(2)}</div>
             </div>
             <p class="message" style="margin-top: 30px;">
@@ -174,12 +210,12 @@ const emailTemplates = {
             <h1>PHERES</h1>
           </div>
           <div class="content">
-            <p class="greeting">Dear ${order.shipping_first_name},</p>
+            <p class="greeting">Dear ${escapeHtml(order.shipping_first_name)},</p>
             <span class="status-badge">⏳ Processing</span>
             <p class="message">
               Great news! Your order is now being prepared by our skilled artisans. Each piece is carefully inspected to ensure it meets our exacting standards.
             </p>
-            <p class="order-number">ORDER ${order.order_number}</p>
+            <p class="order-number">ORDER ${escapeHtml(order.order_number)}</p>
             <p class="message" style="margin-top: 30px;">
               You'll receive a shipping notification once your order is on its way.
             </p>
@@ -196,7 +232,13 @@ const emailTemplates = {
 
   shipped: {
     subject: "Your Order Has Shipped! - Pheres",
-    getHtml: (order: OrderData) => `
+    getHtml: (order: OrderData) => {
+      // Validate tracking URL before including it
+      const safeTrackingUrl = order.tracking_url && isValidHttpUrl(order.tracking_url) 
+        ? order.tracking_url 
+        : null;
+      
+      return `
       <!DOCTYPE html>
       <html>
       <head>
@@ -228,23 +270,23 @@ const emailTemplates = {
             <h1>PHERES</h1>
           </div>
           <div class="content">
-            <p class="greeting">Dear ${order.shipping_first_name},</p>
+            <p class="greeting">Dear ${escapeHtml(order.shipping_first_name)},</p>
             <span class="status-badge">📦 Shipped</span>
             <p class="message">
               Your order is on its way! We've carefully packaged your jewelry and it's now en route to you.
             </p>
             <div class="tracking-box">
               <div class="tracking-label">TRACKING NUMBER</div>
-              <div class="tracking-number">${order.tracking_number || 'Tracking information will be available soon'}</div>
-              ${order.tracking_url ? `<a href="${order.tracking_url}" class="tracking-link">Track Your Package</a>` : ''}
+              <div class="tracking-number">${order.tracking_number ? escapeHtml(order.tracking_number) : 'Tracking information will be available soon'}</div>
+              ${safeTrackingUrl ? `<a href="${escapeHtml(safeTrackingUrl)}" class="tracking-link">Track Your Package</a>` : ''}
               <div class="address-block">
                 <div class="address-title">DELIVERING TO</div>
                 <div class="address">
-                  ${order.shipping_first_name} ${order.shipping_last_name}<br>
-                  ${order.shipping_address_line_1}<br>
-                  ${order.shipping_address_line_2 ? order.shipping_address_line_2 + '<br>' : ''}
-                  ${order.shipping_city}, ${order.shipping_state || ''} ${order.shipping_postal_code}<br>
-                  ${order.shipping_country}
+                  ${escapeHtml(order.shipping_first_name)} ${escapeHtml(order.shipping_last_name)}<br>
+                  ${escapeHtml(order.shipping_address_line_1)}<br>
+                  ${order.shipping_address_line_2 ? escapeHtml(order.shipping_address_line_2) + '<br>' : ''}
+                  ${escapeHtml(order.shipping_city)}, ${order.shipping_state ? escapeHtml(order.shipping_state) : ''} ${escapeHtml(order.shipping_postal_code)}<br>
+                  ${escapeHtml(order.shipping_country)}
                 </div>
               </div>
             </div>
@@ -256,7 +298,8 @@ const emailTemplates = {
         </div>
       </body>
       </html>
-    `,
+    `;
+    },
   },
 
   delivered: {
@@ -289,7 +332,7 @@ const emailTemplates = {
             <h1>PHERES</h1>
           </div>
           <div class="content">
-            <p class="greeting">Dear ${order.shipping_first_name},</p>
+            <p class="greeting">Dear ${escapeHtml(order.shipping_first_name)},</p>
             <span class="status-badge">✓ Delivered</span>
             <p class="message">
               Your order has been delivered! We hope you love your new jewelry as much as we loved creating it for you.
@@ -342,13 +385,13 @@ const emailTemplates = {
             <h1>PHERES</h1>
           </div>
           <div class="content">
-            <p class="greeting">Dear ${order.shipping_first_name},</p>
+            <p class="greeting">Dear ${escapeHtml(order.shipping_first_name)},</p>
             <span class="status-badge">✕ Order Cancelled</span>
             <p class="message">
               Your order has been cancelled as requested. We're sorry to see you go.
             </p>
             <div class="order-summary">
-              <div class="order-number">ORDER ${order.order_number}</div>
+              <div class="order-number">ORDER ${escapeHtml(order.order_number)}</div>
               <p class="refund-info">If a payment was made, your refund will be processed within 5-10 business days.</p>
             </div>
             <p class="message">
@@ -396,13 +439,13 @@ const emailTemplates = {
             <h1>PHERES</h1>
           </div>
           <div class="content">
-            <p class="greeting">Dear ${order.shipping_first_name},</p>
+            <p class="greeting">Dear ${escapeHtml(order.shipping_first_name)},</p>
             <span class="status-badge">↩ Refund Processed</span>
             <p class="message">
               Your refund has been processed. The funds will be returned to your original payment method.
             </p>
             <div class="refund-box">
-              <div class="order-number">ORDER ${order.order_number}</div>
+              <div class="order-number">ORDER ${escapeHtml(order.order_number)}</div>
               <div class="refund-amount">$${Number(order.total).toFixed(2)}</div>
               <p class="refund-note">Please allow 5-10 business days for the refund to appear in your account.</p>
             </div>
@@ -448,15 +491,15 @@ const adminOrderNotification = (order: OrderData) => `
       <div class="order-info">
         <div class="row">
           <span class="label">Order Number</span>
-          <span class="value">${order.order_number}</span>
+          <span class="value">${escapeHtml(order.order_number)}</span>
         </div>
         <div class="row">
           <span class="label">Customer</span>
-          <span class="value">${order.shipping_first_name} ${order.shipping_last_name}</span>
+          <span class="value">${escapeHtml(order.shipping_first_name)} ${escapeHtml(order.shipping_last_name)}</span>
         </div>
         <div class="row">
           <span class="label">Email</span>
-          <span class="value">${order.customer_email || 'N/A'}</span>
+          <span class="value">${order.customer_email ? escapeHtml(order.customer_email) : 'N/A'}</span>
         </div>
         <div class="row">
           <span class="label">Total</span>
@@ -464,7 +507,7 @@ const adminOrderNotification = (order: OrderData) => `
         </div>
         <div class="row">
           <span class="label">Status</span>
-          <span class="value"><span class="status ${order.status}">${order.status}</span></span>
+          <span class="value"><span class="status ${escapeHtml(order.status)}">${escapeHtml(order.status)}</span></span>
         </div>
       </div>
       <p style="color: #666; font-size: 14px;">Log in to the admin dashboard to view full order details.</p>
@@ -502,21 +545,121 @@ interface EmailRequest {
   admin_email?: string;
 }
 
+// Valid order statuses
+const VALID_STATUSES = ["pending", "paid", "processing", "shipped", "delivered", "cancelled", "refunded"];
+
 const handler = async (req: Request): Promise<Response> => {
+  const origin = req.headers.get("Origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Only allow POST
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "Method not allowed" }),
+      { status: 405, headers: { "Content-Type": "application/json", ...corsHeaders } }
+    );
+  }
+
   try {
-    const { order_id, status, previous_status, notify_admin, admin_email }: EmailRequest = await req.json();
-
-    console.log(`Processing email for order ${order_id}, status: ${status}, previous: ${previous_status}`);
-
     // Initialize Supabase client with service role for admin access
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // ====== AUTHORIZATION CHECK ======
+    // This function should only be callable by admins or from internal services
+    const authHeader = req.headers.get("Authorization");
+    
+    if (authHeader) {
+      // Verify the caller is an admin
+      const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      
+      const { data: { user } } = await supabaseUser.auth.getUser();
+      
+      if (!user) {
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
+          { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+      
+      // Check if user is admin
+      const { data: isAdmin } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+      
+      if (!isAdmin) {
+        return new Response(
+          JSON.stringify({ error: "Forbidden: Admin access required" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+    } else {
+      // No auth header - reject the request
+      // In production, you might allow internal service calls with a secret
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: Authentication required" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    let body: EmailRequest;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON body" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const { order_id, status, previous_status, notify_admin, admin_email } = body;
+
+    // ====== INPUT VALIDATION ======
+    if (!order_id || typeof order_id !== "string") {
+      return new Response(
+        JSON.stringify({ error: "Invalid order_id" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(order_id)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid order_id format" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    if (!status || !VALID_STATUSES.includes(status)) {
+      return new Response(
+        JSON.stringify({ error: `Invalid status. Must be one of: ${VALID_STATUSES.join(", ")}` }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Validate admin_email if provided
+    if (admin_email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(admin_email)) {
+        return new Response(
+          JSON.stringify({ error: "Invalid admin_email format" }),
+          { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+    }
+
+    console.log(`Processing email for order ${order_id}, status: ${status}, previous: ${previous_status}`);
 
     // Fetch order details
     const { data: order, error: orderError } = await supabase
@@ -565,7 +708,7 @@ const handler = async (req: Request): Promise<Response> => {
       console.log(`Sending ${status} email to customer: ${customerEmail}`);
       
       const emailResponse = await resend.emails.send({
-        from: "Pheres <orders@pheres.com>", // TODO: Update with verified domain
+        from: "Pheres <orders@pheres.com>",
         to: [customerEmail],
         subject: template.subject,
         html: template.getHtml(orderData),
@@ -582,7 +725,7 @@ const handler = async (req: Request): Promise<Response> => {
       console.log(`Sending admin notification to: ${admin_email}`);
       
       const adminEmailResponse = await resend.emails.send({
-        from: "Pheres Orders <orders@pheres.com>", // TODO: Update with verified domain
+        from: "Pheres Orders <orders@pheres.com>",
         to: [admin_email],
         subject: `New Order: ${order.order_number}`,
         html: adminOrderNotification(orderData),
@@ -599,7 +742,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in order-emails function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "An unexpected error occurred" }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
