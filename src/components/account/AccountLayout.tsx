@@ -50,13 +50,15 @@ export function AccountLayout({ children, title, description, isLoading }: Accou
       <Header />
       <main className="flex-1">
         <div className="container py-8 lg:py-12">
-          {/* Page Header - consistent height across all pages */}
-          <div className="mb-8 h-[60px] flex flex-col justify-center">
+          {/* Page Header - fixed height ensures no layout shift */}
+          <div className="mb-8 min-h-[60px]">
             <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
               {title}
             </h1>
-            {description && (
+            {description ? (
               <p className="mt-1 text-sm text-muted-foreground lg:text-base">{description}</p>
+            ) : (
+              <div className="mt-1 h-5 lg:h-6" aria-hidden="true" />
             )}
           </div>
 
