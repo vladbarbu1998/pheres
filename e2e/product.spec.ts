@@ -9,7 +9,7 @@ test.describe('Product Page', () => {
   });
 
   test('can open a product from the shop grid', async ({ page }) => {
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     // Skip if no products
     if (await productCard.count() === 0) {
@@ -24,7 +24,7 @@ test.describe('Product Page', () => {
   });
 
   test('product page displays essential information', async ({ page }) => {
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() === 0) {
       test.skip();
@@ -45,7 +45,7 @@ test.describe('Product Page', () => {
   });
 
   test('quantity controls work with +/- buttons', async ({ page }) => {
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() === 0) {
       test.skip();
@@ -55,28 +55,20 @@ test.describe('Product Page', () => {
     await productCard.click();
     await page.waitForLoadState('networkidle');
     
-    // Find quantity input
-    const quantityInput = page.locator('input[type="text"], input[type="number"]').filter({ hasText: /^1$/ }).or(
-      page.locator('[data-testid="quantity-input"]')
-    );
-    
-    // Find increment button
-    const incrementButton = page.getByRole('button', { name: /\+|increase/i }).or(
-      page.locator('button:has-text("+")')
-    );
+    // Find increment button using stable data-testid
+    const incrementButton = page.getByTestId('quantity-increment').first();
     
     if (await incrementButton.isVisible()) {
       await incrementButton.click();
       
-      // Quantity should increase
-      await expect(page.locator('input').filter({ hasText: /^2$/ }).or(
-        page.locator('[value="2"]')
-      )).toBeVisible();
+      // Quantity should increase - check the input value
+      const quantityInput = page.getByTestId('quantity-input').locator('input');
+      await expect(quantityInput).toHaveValue('2');
     }
   });
 
   test('can add product to cart', async ({ page }) => {
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() === 0) {
       test.skip();
@@ -101,7 +93,7 @@ test.describe('Product Image Gallery', () => {
     await page.goto(routes.shop);
     await page.waitForLoadState('networkidle');
     
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() === 0) {
       test.skip();

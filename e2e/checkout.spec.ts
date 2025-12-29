@@ -7,7 +7,7 @@ test.describe('Checkout Flow (Guest)', () => {
     await page.goto(routes.shop);
     await page.waitForLoadState('networkidle');
     
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() > 0) {
       await productCard.click();
@@ -30,10 +30,8 @@ test.describe('Checkout Flow (Guest)', () => {
     await page.goto(routes.cart);
     await page.waitForLoadState('networkidle');
     
-    // Click checkout button
-    const checkoutButton = page.getByRole('link', { name: /checkout|proceed/i }).or(
-      page.getByRole('button', { name: /checkout|proceed/i })
-    );
+    // Click checkout button using stable data-testid
+    const checkoutButton = page.getByTestId('checkout-button');
     
     if (await checkoutButton.isVisible()) {
       await checkoutButton.click();
@@ -109,7 +107,7 @@ test.describe('Checkout - Order Creation', () => {
     await page.goto(routes.shop);
     await page.waitForLoadState('networkidle');
     
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() === 0) {
       test.skip();

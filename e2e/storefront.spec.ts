@@ -52,9 +52,9 @@ test.describe('Shop Page', () => {
     // Wait for products to load
     await page.waitForLoadState('networkidle');
     
-    // Check for product cards or empty state
-    const productCards = page.locator('[data-testid="product-card"]');
-    const emptyState = page.locator('[data-testid="empty-state"]');
+    // Check for product cards using stable data-testid
+    const productCards = page.getByTestId('product-card');
+    const emptyState = page.getByTestId('empty-state');
     
     // Either products are visible or empty state is shown
     const hasProducts = await productCards.count() > 0;

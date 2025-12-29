@@ -18,7 +18,7 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
+    <div className="flex flex-col items-center justify-center py-16 text-center" data-testid="empty-state">
       <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
         <PackageOpen className="h-8 w-8 text-muted-foreground" />
       </div>

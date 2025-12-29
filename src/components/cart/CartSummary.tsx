@@ -9,7 +9,7 @@ export function CartSummary() {
   const isUpdating = updatingItems.size > 0;
 
   return (
-    <div className="rounded-sm border border-border bg-card p-6 sticky top-24">
+    <div className="rounded-sm border border-border bg-card p-6 sticky top-24" data-testid="cart-summary">
       <h2 className="font-display text-xl font-semibold text-foreground mb-6">
         Order Summary
       </h2>
@@ -44,7 +44,7 @@ export function CartSummary() {
         </span>
       </div>
 
-      <Button asChild className="w-full" size="lg" disabled={isUpdating || itemCount === 0}>
+      <Button asChild className="w-full" size="lg" disabled={isUpdating || itemCount === 0} data-testid="checkout-button">
         <Link to="/checkout">
           Proceed to Checkout
           <ArrowRight className="ml-2 h-4 w-4" />

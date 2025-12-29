@@ -26,6 +26,7 @@ export function CartItem({ item }: CartItemProps) {
         "flex gap-4 py-6 border-b border-border transition-opacity duration-200",
         isUpdating && "opacity-60"
       )}
+      data-testid="cart-item"
     >
       {/* Image */}
       <Link 
@@ -85,6 +86,7 @@ export function CartItem({ item }: CartItemProps) {
             className="text-muted-foreground hover:text-destructive"
             onClick={() => removeItem(item.id)}
             disabled={isUpdating}
+            data-testid="remove-item-button"
           >
             {isUpdating ? (
               <Loader2 className="h-4 w-4 mr-1 animate-spin" />
