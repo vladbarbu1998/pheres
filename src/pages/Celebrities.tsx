@@ -183,7 +183,7 @@ export default function Celebrities() {
               <div className="relative max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <Input
-                  type="search"
+                  type="text"
                   placeholder="Search by name, event or year"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
