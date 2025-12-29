@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAdminCollections } from "@/hooks/useAdmin";
+import { useStorageCleanup, getEntityImageUrl } from "@/hooks/useStorageCleanup";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -118,8 +119,14 @@ export default function AdminCollections() {
     }
   };
 
+  const storageCleanup = useStorageCleanup();
+
   const handleDelete = async () => {
     if (!deleteId) return;
+
+    // Get the collection to collect image URL before deletion
+    const collectionToDelete = collections?.find((c) => c.id === deleteId);
+    const imageUrls = collectionToDelete ? getEntityImageUrl(collectionToDelete) : [];
 
     const { error } = await supabase.from("collections").delete().eq("id", deleteId);
 
@@ -128,6 +135,20 @@ export default function AdminCollections() {
     } else {
       toast.success("Collection deleted");
       queryClient.invalidateQueries({ queryKey: ["admin-collections"] });
+
+      // Cleanup orphaned images in background
+      if (imageUrls.length > 0) {
+        storageCleanup.mutate(imageUrls, {
+          onSuccess: (data) => {
+            if (data.deletedCount > 0) {
+              console.log(`Cleaned up ${data.deletedCount} orphaned image(s)`);
+            }
+          },
+          onError: (err) => {
+            console.error("Image cleanup error:", err);
+          },
+        });
+      }
     }
     setDeleteId(null);
   };

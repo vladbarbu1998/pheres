@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useAdminCategories } from "@/hooks/useAdmin";
+import { useStorageCleanup, getEntityImageUrl } from "@/hooks/useStorageCleanup";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -163,8 +164,14 @@ export default function AdminCategories() {
     }
   };
 
+  const storageCleanup = useStorageCleanup();
+
   const confirmDelete = async () => {
     if (!selectedCategory) return;
+
+    // Get the category to collect image URL before deletion
+    const categoryToDelete = categories?.find((c) => c.id === selectedCategory);
+    const imageUrls = categoryToDelete ? getEntityImageUrl(categoryToDelete) : [];
 
     try {
       const { error } = await supabase
@@ -175,6 +182,20 @@ export default function AdminCategories() {
       if (error) throw error;
       toast.success("Category deleted");
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+
+      // Cleanup orphaned images in background
+      if (imageUrls.length > 0) {
+        storageCleanup.mutate(imageUrls, {
+          onSuccess: (data) => {
+            if (data.deletedCount > 0) {
+              console.log(`Cleaned up ${data.deletedCount} orphaned image(s)`);
+            }
+          },
+          onError: (err) => {
+            console.error("Image cleanup error:", err);
+          },
+        });
+      }
     } catch (err) {
       console.error("Delete error:", err);
       toast.error("Failed to delete category. Make sure no products are using it.");
