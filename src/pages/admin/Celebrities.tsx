@@ -293,7 +293,6 @@ export default function AdminCelebrities() {
                 <TableHead className="w-16">Photo</TableHead>
                 <TableHead>Celebrity</TableHead>
                 <TableHead>Event</TableHead>
-                <TableHead>Section</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -305,14 +304,13 @@ export default function AdminCelebrities() {
                     <TableCell><Skeleton className="h-10 w-10" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                     <TableCell><Skeleton className="h-6 w-20" /></TableCell>
                     <TableCell><Skeleton className="h-8 w-20 ml-auto" /></TableCell>
                   </TableRow>
                 ))
               ) : filteredCelebrities?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                  <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
                     {search ? "No appearances match your search." : "No celebrity appearances yet. Add your first one!"}
                   </TableCell>
                 </TableRow>
@@ -349,13 +347,6 @@ export default function AdminCelebrities() {
                           </span>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      {item.section ? (
-                        <Badge variant="outline">{item.section}</Badge>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
                     </TableCell>
                     <TableCell>
                       <Badge variant={item.is_published ? "default" : "secondary"}>
