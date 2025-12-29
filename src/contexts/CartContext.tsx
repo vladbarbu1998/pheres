@@ -26,6 +26,7 @@ export interface CartItem {
 interface CartContextType {
   items: CartItem[];
   isLoading: boolean;
+  updatingItems: Set<string>; // Track which items are being updated
   itemCount: number;
   subtotal: number;
   addItem: (productId: string, variantId: string | null, quantity?: number) => Promise<void>;
@@ -61,6 +62,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
 
   // Fetch cart items
   const fetchCart = useCallback(async () => {
@@ -262,59 +264,96 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [user, items, fetchCart]);
 
-  // Update quantity
+  // Update quantity with optimistic update
   const updateQuantity = useCallback(async (itemId: string, quantity: number) => {
     if (quantity < 1) return;
 
-    if (user) {
-      const { error } = await supabase
-        .from("cart_items")
-        .update({ quantity })
-        .eq("id", itemId);
+    // Find the item and store previous quantity for rollback
+    const itemIndex = items.findIndex(item => item.id === itemId);
+    if (itemIndex === -1) return;
+    
+    const previousQuantity = items[itemIndex].quantity;
+    
+    // Optimistic update
+    setItems(prev => prev.map(item => 
+      item.id === itemId ? { ...item, quantity } : item
+    ));
+    
+    // Mark as updating
+    setUpdatingItems(prev => new Set(prev).add(itemId));
 
-      if (error) {
-        toast({ title: "Error", description: "Could not update quantity", variant: "destructive" });
-        return;
-      }
+    try {
+      if (user) {
+        const { error } = await supabase
+          .from("cart_items")
+          .update({ quantity })
+          .eq("id", itemId);
 
-      await fetchCart();
-    } else {
-      // Guest cart - itemId is like "guest-0"
-      const index = parseInt(itemId.replace("guest-", ""));
-      const guestCart = getGuestCart();
-      
-      if (guestCart[index]) {
-        guestCart[index].quantity = quantity;
-        setGuestCart(guestCart);
-        await fetchCart();
+        if (error) throw error;
+      } else {
+        // Guest cart - itemId is like "guest-0"
+        const index = parseInt(itemId.replace("guest-", ""));
+        const guestCart = getGuestCart();
+        
+        if (guestCart[index]) {
+          guestCart[index].quantity = quantity;
+          setGuestCart(guestCart);
+        }
       }
+    } catch (error) {
+      // Rollback on error
+      setItems(prev => prev.map(item => 
+        item.id === itemId ? { ...item, quantity: previousQuantity } : item
+      ));
+      toast({ title: "Error", description: "Could not update quantity. Please try again.", variant: "destructive" });
+    } finally {
+      setUpdatingItems(prev => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
     }
-  }, [user, fetchCart]);
+  }, [user, items]);
 
-  // Remove item
+  // Remove item with optimistic update
   const removeItem = useCallback(async (itemId: string) => {
-    if (user) {
-      const { error } = await supabase
-        .from("cart_items")
-        .delete()
-        .eq("id", itemId);
+    // Store previous items for rollback
+    const previousItems = [...items];
+    
+    // Optimistic remove
+    setItems(prev => prev.filter(item => item.id !== itemId));
+    
+    // Mark as updating
+    setUpdatingItems(prev => new Set(prev).add(itemId));
 
-      if (error) {
-        toast({ title: "Error", description: "Could not remove item", variant: "destructive" });
-        return;
+    try {
+      if (user) {
+        const { error } = await supabase
+          .from("cart_items")
+          .delete()
+          .eq("id", itemId);
+
+        if (error) throw error;
+      } else {
+        const index = parseInt(itemId.replace("guest-", ""));
+        const guestCart = getGuestCart();
+        guestCart.splice(index, 1);
+        setGuestCart(guestCart);
       }
-
-      await fetchCart();
+      
       toast({ title: "Removed", description: "Item removed from cart" });
-    } else {
-      const index = parseInt(itemId.replace("guest-", ""));
-      const guestCart = getGuestCart();
-      guestCart.splice(index, 1);
-      setGuestCart(guestCart);
-      await fetchCart();
-      toast({ title: "Removed", description: "Item removed from cart" });
+    } catch (error) {
+      // Rollback on error
+      setItems(previousItems);
+      toast({ title: "Error", description: "Could not remove item. Please try again.", variant: "destructive" });
+    } finally {
+      setUpdatingItems(prev => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
     }
-  }, [user, fetchCart]);
+  }, [user, items]);
 
   // Clear cart
   const clearCart = useCallback(async () => {
@@ -337,6 +376,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value={{
         items,
         isLoading,
+        updatingItems,
         itemCount,
         subtotal,
         addItem,
