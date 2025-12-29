@@ -14,6 +14,7 @@ export interface CartItem {
     slug: string;
     base_price: number;
     image_url: string | null;
+    category_slug: string | null;
   };
   variant?: {
     id: string;
@@ -79,6 +80,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             name,
             slug,
             base_price,
+            categories (
+              slug
+            ),
             product_images (
               image_url,
               is_primary
@@ -112,6 +116,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
               slug: item.products?.slug,
               base_price: item.products?.base_price,
               image_url: primaryImage?.image_url || firstImage?.image_url || null,
+              category_slug: item.products?.categories?.slug || null,
             },
             variant: item.product_variants ? {
               id: item.product_variants.id,
@@ -140,6 +145,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             name,
             slug,
             base_price,
+            categories (
+              slug
+            ),
             product_images (
               image_url,
               is_primary
@@ -175,6 +183,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 slug: product.slug,
                 base_price: product.base_price,
                 image_url: primaryImage?.image_url || firstImage?.image_url || null,
+                category_slug: (product as any).categories?.slug || null,
               },
               variant: variant ? {
                 id: variant.id,

@@ -9,6 +9,11 @@ interface Product {
   base_price: number;
   compare_at_price?: number | null;
   is_new?: boolean;
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
   product_images?: Array<{
     image_url: string;
     is_primary: boolean;
@@ -61,6 +66,7 @@ export function ProductGrid({
         const imageUrl = primaryImage?.image_url || firstImage?.image_url || null;
         
         const collectionName = product.product_collections?.[0]?.collections?.name || null;
+        const categorySlug = product.categories?.slug || null;
 
         return (
           <ProductCard
@@ -72,6 +78,7 @@ export function ProductGrid({
             compareAtPrice={product.compare_at_price ? Number(product.compare_at_price) : null}
             imageUrl={imageUrl}
             collectionName={collectionName}
+            categorySlug={categorySlug}
             isNew={product.is_new}
             className="animate-fade-in-up"
             style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}

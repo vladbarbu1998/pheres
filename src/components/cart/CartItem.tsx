@@ -11,12 +11,17 @@ export function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCart();
   const price = item.product.base_price + (item.variant?.price_adjustment || 0);
   const lineTotal = price * item.quantity;
+  
+  // Build product URL with category
+  const productUrl = item.product.category_slug 
+    ? `/shop/${item.product.category_slug}/${item.product.slug}` 
+    : `/shop/all/${item.product.slug}`;
 
   return (
     <div className="flex gap-4 py-6 border-b border-border">
       {/* Image */}
       <Link 
-        to={`/product/${item.product.slug}`}
+        to={productUrl}
         className="shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-muted rounded-sm overflow-hidden"
       >
         {item.product.image_url ? (
@@ -39,7 +44,7 @@ export function CartItem({ item }: CartItemProps) {
         <div className="flex justify-between gap-4">
           <div>
             <Link 
-              to={`/product/${item.product.slug}`}
+              to={productUrl}
               className="font-display font-medium text-foreground hover:text-primary transition-colors line-clamp-2"
             >
               {item.product.name}

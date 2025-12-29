@@ -19,7 +19,9 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Collection from "./pages/Collection";
+import Category from "./pages/Category";
 import Product from "./pages/Product";
+import ProductRedirect from "./pages/ProductRedirect";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import Returns from "./pages/Returns";
@@ -70,7 +72,9 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
               <Route path="/shop/collection/:slug" element={<Collection />} />
-              <Route path="/product/:slug" element={<Product />} />
+              <Route path="/shop/category/:slug" element={<Category />} />
+              <Route path="/shop/:categorySlug/:productSlug" element={<Product />} />
+              <Route path="/product/:slug" element={<ProductRedirect />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/returns" element={<Returns />} />
