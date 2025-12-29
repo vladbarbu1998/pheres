@@ -13,28 +13,49 @@ test.describe('Storefront Navigation', () => {
     await expect(page.getByRole('link', { name: /our story/i }).first()).toBeVisible();
   });
 
-  test('navigates to Shop page', async ({ page }) => {
+  test('navigates to Shop page', async ({ page, isMobile }) => {
     await page.goto(routes.home);
+    
+    if (isMobile) {
+      // Open mobile menu first
+      await page.getByRole('button', { name: /toggle menu/i }).click();
+      // Wait for menu animation
+      await page.waitForTimeout(350);
+    }
+    
     const shopLink = page.getByRole('link', { name: /shop/i }).first();
-    await shopLink.scrollIntoViewIfNeeded();
     await shopLink.click();
     
     await expect(page).toHaveURL(/\/shop/);
   });
 
-  test('navigates to Our Story page', async ({ page }) => {
+  test('navigates to Our Story page', async ({ page, isMobile }) => {
     await page.goto(routes.home);
+    
+    if (isMobile) {
+      // Open mobile menu first
+      await page.getByRole('button', { name: /toggle menu/i }).click();
+      // Wait for menu animation
+      await page.waitForTimeout(350);
+    }
+    
     const storyLink = page.getByRole('link', { name: /our story/i }).first();
-    await storyLink.scrollIntoViewIfNeeded();
     await storyLink.click();
     
     await expect(page).toHaveURL(/\/story/);
   });
 
-  test('navigates to Contact page', async ({ page }) => {
+  test('navigates to Contact page', async ({ page, isMobile }) => {
     await page.goto(routes.home);
+    
+    if (isMobile) {
+      // Open mobile menu first
+      await page.getByRole('button', { name: /toggle menu/i }).click();
+      // Wait for menu animation
+      await page.waitForTimeout(350);
+    }
+    
     const contactLink = page.getByRole('link', { name: /contact/i }).first();
-    await contactLink.scrollIntoViewIfNeeded();
     await contactLink.click();
     
     await expect(page).toHaveURL(/\/contact/);
