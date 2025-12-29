@@ -29,7 +29,7 @@ export default function Story() {
   return (
     <Layout>
       <PageHero
-        label="Est. 2012"
+        label="PHERES"
         title="Where Heritage Meets Modern Luxury"
         intro="Pheres is a house of fine jewelry dedicated to the art of rarity—creating extraordinary pieces for those who appreciate the exceptional."
       />

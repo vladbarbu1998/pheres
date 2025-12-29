@@ -44,7 +44,7 @@ export default function Checkout() {
   const { data: addresses } = useAddresses();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState<string | "new">("new");
+  const [selectedAddressId, setSelectedAddressId] = useState<string | "new" | null>(null);
 
   const {
     register,
@@ -98,11 +98,13 @@ export default function Checkout() {
 
   // Set default address when loaded
   useEffect(() => {
-    if (addresses && addresses.length > 0) {
+    if (addresses && addresses.length > 0 && selectedAddressId === null) {
       const defaultAddr = addresses.find((a) => a.is_default) || addresses[0];
       setSelectedAddressId(defaultAddr.id);
+    } else if ((!addresses || addresses.length === 0) && selectedAddressId === null) {
+      setSelectedAddressId("new");
     }
-  }, [addresses]);
+  }, [addresses, selectedAddressId]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -223,8 +225,8 @@ export default function Checkout() {
                   <div className="space-y-3">
                     <Label>Saved Addresses</Label>
                     <RadioGroup
-                      value={selectedAddressId}
-                      onValueChange={setSelectedAddressId}
+                      value={selectedAddressId || ""}
+                      onValueChange={(val) => setSelectedAddressId(val as string | "new")}
                       className="space-y-2"
                     >
                       {addresses.map((address) => (
