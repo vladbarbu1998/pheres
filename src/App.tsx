@@ -29,6 +29,7 @@ import Returns from "./pages/Returns";
 import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
 import ForgotPassword from "./pages/account/ForgotPassword";
+import ResetPassword from "./pages/account/ResetPassword";
 import AccountOverview from "./pages/account/Overview";
 import Orders from "./pages/account/Orders";
 import OrderDetail from "./pages/account/OrderDetail";
@@ -88,6 +89,7 @@ const App = () => (
             <Route path="/account/login" element={<Login />} />
             <Route path="/account/register" element={<Register />} />
             <Route path="/account/forgot-password" element={<ForgotPassword />} />
+            <Route path="/account/reset-password" element={<ResetPassword />} />
             
             {/* Protected account routes */}
             <Route path="/account" element={<ProtectedRoute><AccountOverview /></ProtectedRoute>} />
