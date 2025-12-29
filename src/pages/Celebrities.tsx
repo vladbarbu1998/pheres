@@ -124,7 +124,7 @@ export default function Celebrities() {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link to="/press">View Press Coverage</Link>
+              <Link to="/celebrities">View Celebrities</Link>
             </Button>
           </div>
         </div>
