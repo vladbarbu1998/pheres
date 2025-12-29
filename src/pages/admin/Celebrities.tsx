@@ -81,7 +81,7 @@ const defaultFormData: CelebrityFormData = {
   jewelry_photo_url: "",
   notes: "",
   external_link: "",
-  is_published: false,
+  is_published: true,
   is_featured: false,
   display_order: 0,
 };
