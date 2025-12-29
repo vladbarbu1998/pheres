@@ -509,6 +509,10 @@ export type Database = {
           image_url: string | null
           is_featured: boolean
           is_published: boolean
+          jewelry_photo_url: string | null
+          location: string | null
+          notes: string | null
+          section: string | null
           slug: string
           title: string
           updated_at: string
@@ -525,6 +529,10 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean
           is_published?: boolean
+          jewelry_photo_url?: string | null
+          location?: string | null
+          notes?: string | null
+          section?: string | null
           slug: string
           title: string
           updated_at?: string
@@ -541,6 +549,10 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean
           is_published?: boolean
+          jewelry_photo_url?: string | null
+          location?: string | null
+          notes?: string | null
+          section?: string | null
           slug?: string
           title?: string
           updated_at?: string

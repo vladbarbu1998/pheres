@@ -29,7 +29,7 @@ const navItems = [
   { title: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { title: "Customers", href: "/admin/customers", icon: Users },
   { title: "News", href: "/admin/news", icon: Newspaper },
-  { title: "Press", href: "/admin/press", icon: Star },
+  { title: "Celebrities", href: "/admin/celebrities", icon: Star },
   { title: "Story", href: "/admin/story", icon: BookOpen },
   { title: "Inbox", href: "/admin/inbox", icon: Mail },
   { title: "Settings", href: "/admin/settings", icon: Settings },

@@ -44,7 +44,7 @@ import AdminOrders from "./pages/admin/Orders";
 import AdminOrderDetail from "./pages/admin/OrderDetail";
 import AdminCustomers from "./pages/admin/Customers";
 import AdminNews from "./pages/admin/News";
-import AdminPress from "./pages/admin/Press";
+import AdminCelebrities from "./pages/admin/Celebrities";
 import AdminStory from "./pages/admin/Story";
 import AdminInbox from "./pages/admin/Inbox";
 import AdminSettings from "./pages/admin/Settings";
@@ -108,7 +108,7 @@ const App = () => (
             <Route path="/admin/orders/:id" element={<AdminProtectedRoute><AdminOrderDetail /></AdminProtectedRoute>} />
             <Route path="/admin/customers" element={<AdminProtectedRoute><AdminCustomers /></AdminProtectedRoute>} />
             <Route path="/admin/news" element={<AdminProtectedRoute><AdminNews /></AdminProtectedRoute>} />
-            <Route path="/admin/press" element={<AdminProtectedRoute><AdminPress /></AdminProtectedRoute>} />
+            <Route path="/admin/celebrities" element={<AdminProtectedRoute><AdminCelebrities /></AdminProtectedRoute>} />
             <Route path="/admin/story" element={<AdminProtectedRoute><AdminStory /></AdminProtectedRoute>} />
             <Route path="/admin/inbox" element={<AdminProtectedRoute><AdminInbox /></AdminProtectedRoute>} />
             <Route path="/admin/settings" element={<AdminProtectedRoute><AdminSettings /></AdminProtectedRoute>} />
