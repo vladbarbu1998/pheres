@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation, useSearchParams } from "react-router-do
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Loader2, Clock } from "lucide-react";
+import { Eye, EyeOff, Loader2, Clock, Mail } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
+import { supabase } from "@/integrations/supabase/client";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -22,6 +23,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [showResendOption, setShowResendOption] = useState(false);
   const { signIn, user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,6 +58,31 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+  const handleResendVerification = async () => {
+    const emailValue = (document.getElementById("email") as HTMLInputElement)?.value;
+    if (!emailValue) {
+      toast.error("Please enter your email address first.");
+      return;
+    }
+    
+    setIsResending(true);
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: emailValue,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+      },
+    });
+    setIsResending(false);
+    
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Verification email sent! Please check your inbox.");
+      setShowResendOption(false);
+    }
+  };
+
   const onSubmit = async (data: LoginFormData) => {
     // Check rate limit before proceeding
     if (!checkRateLimit()) {
@@ -71,6 +99,9 @@ export default function LoginPage() {
     if (error) {
       if (error.message.includes("Invalid login credentials")) {
         toast.error("Invalid email or password. Please try again.");
+      } else if (error.message.includes("Email not confirmed")) {
+        setShowResendOption(true);
+        toast.error("Please verify your email before signing in. Check your inbox for the verification link.");
       } else {
         toast.error(error.message);
       }
@@ -161,6 +192,23 @@ export default function LoginPage() {
               ) : null}
               {isRateLimited ? `Wait ${Math.ceil(secondsUntilReset / 60)}m` : "Sign In"}
             </Button>
+
+            {showResendOption && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleResendVerification}
+                disabled={isResending}
+              >
+                {isResending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="mr-2 h-4 w-4" />
+                )}
+                Resend Verification Email
+              </Button>
+            )}
           </form>
 
           <p className="text-center text-sm text-muted-foreground">
