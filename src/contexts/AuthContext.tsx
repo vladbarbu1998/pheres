@@ -73,15 +73,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    // Clear local state first for immediate UI feedback
-    setUser(null);
-    setSession(null);
     try {
-      // Attempt global sign out to invalidate session server-side
+      // Sign out from Supabase first - this triggers onAuthStateChange
       await supabase.auth.signOut({ scope: 'global' });
     } catch {
-      // If server sign out fails (e.g., session already expired), that's fine
-      // User is already logged out locally
+      // If server sign out fails, manually clear local state
+      setUser(null);
+      setSession(null);
     }
   };
 
