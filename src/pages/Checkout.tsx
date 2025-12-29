@@ -84,10 +84,12 @@ export default function Checkout() {
       // Only set default if no address is currently selected
       if (selectedAddressId === null) {
         const defaultAddr = addresses.find((a) => a.is_default) || addresses[0];
+        console.log("Setting default address:", defaultAddr.id);
         setSelectedAddressId(defaultAddr.id);
       }
     } else if (addresses && addresses.length === 0) {
       // No saved addresses, default to new
+      console.log("No addresses, defaulting to new");
       setSelectedAddressId("new");
     }
   }, [addresses]);
@@ -229,8 +231,12 @@ export default function Checkout() {
                   <div className="space-y-3">
                     <Label>Saved Addresses</Label>
                     <RadioGroup
+                      key={`address-group-${selectedAddressId}`}
                       value={selectedAddressId}
-                      onValueChange={(val) => setSelectedAddressId(val as string | "new")}
+                      onValueChange={(val) => {
+                        console.log("RadioGroup onValueChange:", val);
+                        setSelectedAddressId(val as string | "new");
+                      }}
                       className="space-y-2"
                     >
                       {addresses.map((address) => (
