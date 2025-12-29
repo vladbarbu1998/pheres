@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { PageHero } from "@/components/layout/PageHero";
 import { useCelebrityAppearances, type CelebrityAppearance } from "@/hooks/usePress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -201,20 +202,11 @@ export default function Celebrities() {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="py-20 md:py-28 lg:py-36">
-        <div className="container max-w-4xl text-center">
-          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-primary animate-fade-in">
-            Worn by Icons
-          </p>
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in text-balance">
-            Celebrities & Red Carpet Moments
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl animate-fade-in leading-relaxed" style={{ animationDelay: "100ms" }}>
-            Pheres jewelry has adorned some of the world's most celebrated figures on the most prestigious stages.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        label="Worn by Icons"
+        title="Celebrities & Red Carpet Moments"
+        intro="Pheres jewelry has adorned some of the world's most celebrated figures on the most prestigious stages."
+      />
 
       {/* Divider */}
       <div className="border-t border-border" />
