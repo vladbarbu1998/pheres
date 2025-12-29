@@ -12,9 +12,9 @@ test.describe('Cart', () => {
     await page.goto(routes.cart);
     await page.waitForLoadState('networkidle');
     
-    // Either cart has items or shows empty state
-    const emptyMessage = page.getByText(/cart is empty|no items/i);
-    const cartItems = page.locator('[data-testid="cart-item"]');
+    // Either cart has items or shows empty state - use stable selectors
+    const emptyMessage = page.getByTestId('empty-state');
+    const cartItems = page.getByTestId('cart-item');
     
     const hasEmptyMessage = await emptyMessage.isVisible().catch(() => false);
     const hasItems = await cartItems.count() > 0;
@@ -23,8 +23,7 @@ test.describe('Cart', () => {
   });
 
   test('can navigate to cart from product page after adding item', async ({ page }) => {
-    const productCard = page.locator('[data-testid="product-card"]').first();
-    
+    const productCard = page.getByTestId('product-card').first();
     if (await productCard.count() === 0) {
       test.skip();
       return;
@@ -49,7 +48,7 @@ test.describe('Cart', () => {
 
   test('quantity can be updated in cart', async ({ page }) => {
     // First add item to cart
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() === 0) {
       test.skip();
@@ -65,8 +64,8 @@ test.describe('Cart', () => {
     await page.goto(routes.cart);
     await page.waitForLoadState('networkidle');
     
-    // Find increment button in cart
-    const incrementButton = page.getByRole('button', { name: /\+|increase/i }).first();
+    // Find increment button using stable data-testid
+    const incrementButton = page.getByTestId('quantity-increment').first();
     
     if (await incrementButton.isVisible()) {
       await incrementButton.click();
@@ -81,7 +80,7 @@ test.describe('Cart', () => {
 
   test('item can be removed from cart', async ({ page }) => {
     // First add item to cart
-    const productCard = page.locator('[data-testid="product-card"]').first();
+    const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() === 0) {
       test.skip();
@@ -97,8 +96,8 @@ test.describe('Cart', () => {
     await page.goto(routes.cart);
     await page.waitForLoadState('networkidle');
     
-    // Find remove button
-    const removeButton = page.getByRole('button', { name: /remove|delete|trash/i }).first();
+    // Find remove button using stable data-testid
+    const removeButton = page.getByTestId('remove-item-button').first();
     
     if (await removeButton.isVisible()) {
       await removeButton.click();
@@ -115,13 +114,9 @@ test.describe('Cart', () => {
     await page.goto(routes.cart);
     await page.waitForLoadState('networkidle');
     
-    // Check for summary section with subtotal/total
-    const summarySection = page.locator('[data-testid="cart-summary"]').or(
-      page.locator('text=/subtotal|total/i')
-    );
-    
-    // Summary should be visible if cart has items
-    const cartItems = page.locator('[data-testid="cart-item"]');
+    // Check for summary section using stable data-testid
+    const summarySection = page.getByTestId('cart-summary');
+    const cartItems = page.getByTestId('cart-item');
     
     if (await cartItems.count() > 0) {
       await expect(summarySection).toBeVisible();

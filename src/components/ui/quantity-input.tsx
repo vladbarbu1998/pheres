@@ -85,7 +85,7 @@ export function QuantityInput({
   const inputSize = isSmall ? "h-8 w-12" : "h-10 w-14";
 
   return (
-    <div className={cn("flex items-center", className)}>
+    <div className={cn("flex items-center", className)} data-testid="quantity-input">
       <Button
         type="button"
         variant="outline"
@@ -94,6 +94,7 @@ export function QuantityInput({
         onClick={handleDecrement}
         disabled={disabled || value <= min}
         aria-label="Decrease quantity"
+        data-testid="quantity-decrement"
       >
         <Minus className={cn(isSmall ? "h-3 w-3" : "h-4 w-4")} />
       </Button>
@@ -122,6 +123,7 @@ export function QuantityInput({
         onClick={handleIncrement}
         disabled={disabled || value >= max}
         aria-label="Increase quantity"
+        data-testid="quantity-increment"
       >
         <Plus className={cn(isSmall ? "h-3 w-3" : "h-4 w-4")} />
       </Button>

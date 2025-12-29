@@ -118,7 +118,7 @@ export function ProductCard({
 
   return (
     <>
-      <article className={cn("group relative", className)} style={style}>
+      <article className={cn("group relative", className)} style={style} data-testid="product-card">
         {/* Image container */}
         <Link to={productUrl} className="block">
           <div className="relative aspect-square overflow-hidden bg-secondary/50">
@@ -180,6 +180,7 @@ export function ProductCard({
                 size="sm"
                 className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
                 onClick={handleQuickAdd}
+                data-testid="quick-add-button"
                 disabled={isAdding}
               >
                 {isAdding ? (
