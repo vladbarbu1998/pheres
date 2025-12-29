@@ -26,6 +26,8 @@ export default function SearchPage() {
     }
   };
 
+  const products = data || [];
+
   return (
     <Layout>
       <div className="container py-8 md:py-12">
@@ -63,9 +65,9 @@ export default function SearchPage() {
             <p className="text-muted-foreground mb-6">
               {isLoading ? (
                 "Searching..."
-              ) : data?.products && data.products.length > 0 ? (
+              ) : products.length > 0 ? (
                 <>
-                  Found <span className="text-foreground font-medium">{data.products.length}</span> result{data.products.length !== 1 ? "s" : ""} for "{queryParam}"
+                  Found <span className="text-foreground font-medium">{products.length}</span> result{products.length !== 1 ? "s" : ""} for "{queryParam}"
                 </>
               ) : (
                 <>No results for "{queryParam}"</>
@@ -79,8 +81,8 @@ export default function SearchPage() {
                   Try Again
                 </Button>
               </div>
-            ) : data?.products && data.products.length > 0 ? (
-              <ProductGrid products={data.products} isLoading={isLoading} />
+            ) : products.length > 0 ? (
+              <ProductGrid products={products} isLoading={isLoading} />
             ) : !isLoading ? (
               <div className="text-center py-16 border border-dashed border-border rounded-sm">
                 <Search className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
