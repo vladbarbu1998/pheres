@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, ShoppingBag, ChevronRight } from "lucide-react";
+import { Loader2, ShoppingBag, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,6 +181,13 @@ export default function Checkout() {
   return (
     <Layout>
       <div className="container mx-auto max-w-6xl px-4 py-8 lg:py-12">
+        <Link
+          to="/cart"
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Cart
+        </Link>
         <h1 className="font-display text-3xl font-semibold tracking-tight mb-8">Checkout</h1>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -467,10 +475,7 @@ export default function Checkout() {
                       Placing Order...
                     </>
                   ) : (
-                    <>
-                      Place Order
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    </>
+                    "Place Order"
                   )}
                 </Button>
 
