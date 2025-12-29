@@ -1,18 +1,42 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
+import { useState, useMemo } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
 import { Pagination } from "@/components/shop/Pagination";
+import {
+  ShopFilters,
+  ShopFiltersSidebar,
+  type FilterState,
+  type SortOption,
+} from "@/components/shop/ShopFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { useCollection, useProducts } from "@/hooks/useProducts";
-import { useState } from "react";
+import {
+  useCollection,
+  useProducts,
+  useCategories,
+  useCollectionFilterOptions,
+} from "@/hooks/useProducts";
+
+const initialFilters: FilterState = {
+  categoryId: null,
+  collectionId: null,
+  minPrice: null,
+  maxPrice: null,
+  stoneType: null,
+};
 
 export default function CollectionPage() {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [page, setPage] = useState(1);
+
+  const sortParam = searchParams.get("sort") as SortOption | null;
+  const sortBy: SortOption = sortParam || "newest";
 
   const {
     data: collection,
@@ -21,6 +45,10 @@ export default function CollectionPage() {
     refetch: refetchCollection,
   } = useCollection(slug || "");
 
+  const { data: allCategories, isLoading: categoriesLoading } = useCategories();
+  const { data: filterOptionsData, isLoading: filterOptionsLoading } =
+    useCollectionFilterOptions(slug || "");
+
   const {
     data: productsData,
     isLoading: productsLoading,
@@ -28,19 +56,49 @@ export default function CollectionPage() {
     refetch: refetchProducts,
   } = useProducts({
     collectionSlug: slug,
+    filters,
+    sortBy,
     page,
     pageSize: 12,
   });
+
+  const handleSortChange = (sort: SortOption) => {
+    setSearchParams({ sort });
+    setPage(1);
+  };
+
+  const handleFiltersChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const isLoading = collectionLoading || productsLoading;
+  const handleClearFilters = () => {
+    setFilters(initialFilters);
+    setPage(1);
+  };
+
+  // Filter categories to only show those with products in this collection
+  const activeCategoryIds = filterOptionsData?.activeCategoryIds || [];
+  const categories = useMemo(
+    () => (allCategories || []).filter((c) => activeCategoryIds.includes(c.id)),
+    [allCategories, activeCategoryIds]
+  );
+
+  // Get stone types from products in this collection
+  const stoneTypes = filterOptionsData?.stoneTypes || [];
+
+  const isLoading =
+    collectionLoading || productsLoading || categoriesLoading || filterOptionsLoading;
   const isError = collectionError || productsError;
   const products = productsData?.products || [];
+  const totalCount = productsData?.totalCount || 0;
   const totalPages = productsData?.totalPages || 1;
+  const hasActiveFilters = Object.values(filters).some((v) => v !== null);
 
   // Collection not found
   if (!collectionLoading && !collection && !collectionError) {
@@ -105,33 +163,66 @@ export default function CollectionPage() {
 
       {/* Products */}
       <section className="container py-8 lg:py-12">
-        {isError ? (
-          <ErrorState
-            onRetry={() => {
-              refetchCollection();
-              refetchProducts();
-            }}
+        {/* Filters Bar */}
+        <ShopFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          sortBy={sortBy}
+          onSortChange={handleSortChange}
+          categories={categories}
+          collections={[]} // Don't show collection filter on collection page
+          productCount={totalCount}
+          isLoading={isLoading}
+          stoneTypes={stoneTypes}
+        />
+
+        {/* Content Grid */}
+        <div className="mt-8 flex gap-8 lg:gap-12">
+          {/* Desktop Sidebar */}
+          <ShopFiltersSidebar
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            categories={categories}
+            collections={[]} // Don't show collection filter on collection page
+            stoneTypes={stoneTypes}
           />
-        ) : isLoading ? (
-          <ProductGrid products={[]} isLoading skeletonCount={8} />
-        ) : products.length === 0 ? (
-          <EmptyState
-            title="No products yet"
-            description="This collection doesn't have any products yet. Check back soon!"
-            actionLabel="Browse all products"
-            actionHref="/shop"
-          />
-        ) : (
-          <>
-            <ProductGrid products={products} />
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              className="mt-12"
-            />
-          </>
-        )}
+
+          {/* Products */}
+          <div className="flex-1">
+            {isError ? (
+              <ErrorState
+                onRetry={() => {
+                  refetchCollection();
+                  refetchProducts();
+                }}
+              />
+            ) : isLoading ? (
+              <ProductGrid products={[]} isLoading skeletonCount={8} />
+            ) : products.length === 0 ? (
+              <EmptyState
+                title="No products found"
+                description={
+                  hasActiveFilters
+                    ? "Try adjusting your filters to find what you're looking for."
+                    : "This collection doesn't have any products yet. Check back soon!"
+                }
+                actionLabel={hasActiveFilters ? "Clear filters" : "Browse all products"}
+                onAction={hasActiveFilters ? handleClearFilters : undefined}
+                actionHref={hasActiveFilters ? undefined : "/shop"}
+              />
+            ) : (
+              <>
+                <ProductGrid products={products} />
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  className="mt-12"
+                />
+              </>
+            )}
+          </div>
+        </div>
       </section>
     </Layout>
   );

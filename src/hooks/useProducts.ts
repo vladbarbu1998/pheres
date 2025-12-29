@@ -311,3 +311,79 @@ export function useProductFilterOptions() {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 }
+
+// Hook to get distinct filter options from products within a specific collection
+export function useCollectionFilterOptions(collectionSlug: string) {
+  return useQuery({
+    queryKey: ["collection-filter-options", collectionSlug],
+    queryFn: async () => {
+      // First, get product IDs for this collection
+      const { data: collectionProducts, error: collectionError } = await supabase
+        .from("product_collections")
+        .select("product_id, collections!inner(slug)")
+        .eq("collections.slug", collectionSlug);
+
+      if (collectionError) throw collectionError;
+
+      const productIds = collectionProducts?.map((cp) => cp.product_id) || [];
+
+      if (productIds.length === 0) {
+        return {
+          stoneTypes: [],
+          activeCategoryIds: [],
+        };
+      }
+
+      // Fetch products in this collection with their details
+      const { data: products, error } = await supabase
+        .from("products")
+        .select(`
+          id,
+          category_id,
+          stone_type,
+          product_stones (
+            stone_type
+          )
+        `)
+        .eq("is_active", true)
+        .in("id", productIds);
+
+      if (error) throw error;
+
+      // Extract distinct category IDs
+      const categoryIds = Array.from(
+        new Set(
+          (products || [])
+            .map((p) => p.category_id)
+            .filter((id): id is string => !!id)
+        )
+      );
+
+      // Extract distinct stone types from both product.stone_type and product_stones table
+      const stoneTypesFromProducts = (products || [])
+        .map((p) => p.stone_type?.trim())
+        .filter((s): s is string => !!s && s !== "");
+
+      const stoneTypesFromStones = (products || [])
+        .flatMap((p) => p.product_stones?.map((ps) => ps.stone_type?.trim()) || [])
+        .filter((s): s is string => !!s && s !== "");
+
+      // Deduplicate using a Map to handle case variations
+      const stoneMap = new Map<string, string>();
+      [...stoneTypesFromProducts, ...stoneTypesFromStones].forEach((s) => {
+        const key = s.toLowerCase();
+        if (!stoneMap.has(key)) {
+          stoneMap.set(key, s);
+        }
+      });
+      const stoneTypes = Array.from(stoneMap.values()).sort();
+
+      return {
+        stoneTypes,
+        activeCategoryIds: categoryIds,
+      };
+    },
+    enabled: !!collectionSlug,
+    staleTime: 5 * 60 * 1000,
+  });
+}
