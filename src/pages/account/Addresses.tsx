@@ -330,14 +330,8 @@ export default function AddressesPage() {
   });
 
   return (
-    <AccountLayout title="Addresses" description="Manage your shipping addresses">
-      {isLoading ? (
-        <div className="space-y-4">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <Skeleton key={i} className="h-32" />
-          ))}
-        </div>
-      ) : isError ? (
+    <AccountLayout title="Addresses" description="Manage your shipping addresses" isLoading={isLoading}>
+      {isError ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">Something went wrong loading your addresses.</p>
           <Button onClick={() => refetch()} variant="outline" className="mt-4">
@@ -345,7 +339,7 @@ export default function AddressesPage() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
+        <>
           {/* Add button */}
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
@@ -481,7 +475,7 @@ export default function AddressesPage() {
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
     </AccountLayout>
   );
