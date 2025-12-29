@@ -73,7 +73,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      // Clear local state first for immediate UI feedback
+      setUser(null);
+      setSession(null);
+      // Then attempt server-side sign out (may fail if session already expired)
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (error) {
+      // Ignore errors - session may already be gone, user is logged out locally
+      console.debug('Sign out completed (session may have already expired)');
+    }
   };
 
   const resetPassword = async (email: string) => {
