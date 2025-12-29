@@ -40,6 +40,40 @@ export function useCelebrityAppearances() {
       
       const appearances = (data || []) as CelebrityAppearance[];
       
+      // Sort by display_order first, then by event_date (newest first)
+      return appearances.sort((a, b) => {
+        // First by display_order
+        if (a.display_order !== b.display_order) {
+          return a.display_order - b.display_order;
+        }
+        // Then by event_date (newest first)
+        if (a.event_date && b.event_date) {
+          return new Date(b.event_date).getTime() - new Date(a.event_date).getTime();
+        }
+        if (a.event_date) return -1;
+        if (b.event_date) return 1;
+        return 0;
+      });
+    },
+  });
+}
+
+// Legacy grouped version (kept for backward compatibility if needed)
+export function useCelebrityAppearancesGrouped() {
+  return useQuery({
+    queryKey: ["celebrity-appearances-grouped"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("press_entries")
+        .select("*")
+        .eq("is_published", true)
+        .not("celebrity_name", "is", null)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      
+      const appearances = (data || []) as CelebrityAppearance[];
+      
       // Group by section
       const grouped: GroupedCelebrities[] = [];
       
@@ -47,11 +81,9 @@ export function useCelebrityAppearances() {
         const sectionAppearances = appearances
           .filter((a) => a.section === section)
           .sort((a, b) => {
-            // First by display_order
             if (a.display_order !== b.display_order) {
               return a.display_order - b.display_order;
             }
-            // Then by event_date (newest first)
             if (a.event_date && b.event_date) {
               return new Date(b.event_date).getTime() - new Date(a.event_date).getTime();
             }
@@ -63,7 +95,6 @@ export function useCelebrityAppearances() {
         }
       }
       
-      // Add entries without a section at the end
       const noSectionAppearances = appearances
         .filter((a) => !a.section || !SECTION_ORDER.includes(a.section as any))
         .sort((a, b) => a.display_order - b.display_order);
