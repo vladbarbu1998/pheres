@@ -225,32 +225,6 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* General Contact */}
-            <div className="rounded-sm border border-border bg-card p-6">
-              <h2 className="font-display text-xl font-semibold text-foreground mb-4">
-                General Inquiries
-              </h2>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Mail className="h-5 w-5 text-primary shrink-0" />
-                  <a
-                    href="mailto:contact@pheres.com"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    contact@pheres.com
-                  </a>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-muted-foreground">+1 (800) PHERES-1</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-muted-foreground">Mon – Fri, 9:00 AM – 6:00 PM CET</span>
-                </div>
-              </div>
-            </div>
-
             {/* Social Links */}
             <div>
               <h2 className="font-display text-xl font-semibold text-foreground mb-4">
