@@ -1,16 +1,40 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, Trash2 } from "lucide-react";
+import { Heart, Trash2, ShoppingBag, Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AccountLayout } from "@/components/account/AccountLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { useFavorites } from "@/hooks/useAccount";
+import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+interface Variant {
+  id: string;
+  name: string;
+  price_adjustment: number;
+  is_active: boolean;
+}
 
 export default function FavoritesPage() {
   const { data: favorites, isLoading, isError, refetch } = useFavorites();
   const queryClient = useQueryClient();
+  const { addItem } = useCart();
+  const [addingProductId, setAddingProductId] = useState<string | null>(null);
+  const [showVariantDialog, setShowVariantDialog] = useState(false);
+  const [variants, setVariants] = useState<Variant[]>([]);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<{ id: string; name: string; price: number } | null>(null);
 
   const removeMutation = useMutation({
     mutationFn: async (favoriteId: string) => {
@@ -25,6 +49,52 @@ export default function FavoritesPage() {
       toast.error("Failed to remove from favorites");
     },
   });
+
+  const handleQuickAdd = async (productId: string, productName: string, productPrice: number) => {
+    if (addingProductId) return;
+    setAddingProductId(productId);
+
+    try {
+      const { data: variantsData, error } = await supabase
+        .from("product_variants")
+        .select("id, name, price_adjustment, is_active")
+        .eq("product_id", productId)
+        .eq("is_active", true);
+
+      if (error) throw error;
+
+      if (variantsData && variantsData.length > 0) {
+        setVariants(variantsData);
+        setSelectedVariantId(variantsData[0].id);
+        setCurrentProduct({ id: productId, name: productName, price: productPrice });
+        setShowVariantDialog(true);
+      } else {
+        await addItem(productId, null, 1);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setAddingProductId(null);
+    }
+  };
+
+  const handleAddWithVariant = async () => {
+    if (!selectedVariantId || !currentProduct || addingProductId) return;
+    setAddingProductId(currentProduct.id);
+
+    try {
+      await addItem(currentProduct.id, selectedVariantId, 1);
+      setShowVariantDialog(false);
+      setCurrentProduct(null);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setAddingProductId(null);
+    }
+  };
+
+  const selectedVariant = variants.find(v => v.id === selectedVariantId);
+  const variantPrice = (currentProduct?.price || 0) + (selectedVariant?.price_adjustment || 0);
 
   return (
     <AccountLayout title="Favorites" description="Your saved items" isLoading={isLoading}>
@@ -104,16 +174,33 @@ export default function FavoritesPage() {
                         </span>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-2 h-8 w-fit gap-1.5 px-2 text-xs text-muted-foreground hover:text-destructive"
-                      onClick={() => removeMutation.mutate(favorite.id)}
-                      disabled={removeMutation.isPending}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      Remove
-                    </Button>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 flex-1 gap-1.5 text-xs"
+                        onClick={() => handleQuickAdd(product.id, product.name, Number(product.base_price))}
+                        disabled={addingProductId === product.id}
+                      >
+                        {addingProductId === product.id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <>
+                            <ShoppingBag className="h-3.5 w-3.5" />
+                            Add
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 gap-1.5 px-2 text-xs text-muted-foreground hover:text-destructive"
+                        onClick={() => removeMutation.mutate(favorite.id)}
+                        disabled={removeMutation.isPending}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
@@ -139,6 +226,30 @@ export default function FavoritesPage() {
                           NEW
                         </span>
                       )}
+
+                      {/* Quick add button - bottom */}
+                      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleQuickAdd(product.id, product.name, Number(product.base_price));
+                          }}
+                          disabled={addingProductId === product.id}
+                        >
+                          {addingProductId === product.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <ShoppingBag className="mr-2 h-4 w-4" />
+                              Add to Cart
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </Link>
 
@@ -175,6 +286,64 @@ export default function FavoritesPage() {
           })}
         </div>
       )}
+
+      {/* Variant Selection Dialog */}
+      <Dialog open={showVariantDialog} onOpenChange={setShowVariantDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-display">{currentProduct?.name}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium mb-3 block">Select Option</Label>
+              <RadioGroup
+                value={selectedVariantId || ""}
+                onValueChange={setSelectedVariantId}
+                className="space-y-2"
+              >
+                {variants.map((variant) => (
+                  <div
+                    key={variant.id}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg border p-3 cursor-pointer transition-colors",
+                      selectedVariantId === variant.id
+                        ? "border-primary bg-primary/5"
+                        : "hover:bg-accent/50"
+                    )}
+                    onClick={() => setSelectedVariantId(variant.id)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <RadioGroupItem value={variant.id} id={variant.id} />
+                      <Label htmlFor={variant.id} className="cursor-pointer font-medium">
+                        {variant.name}
+                      </Label>
+                    </div>
+                    <span className="text-sm font-medium">
+                      ${((currentProduct?.price || 0) + variant.price_adjustment).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+
+            <Button
+              className="w-full"
+              onClick={handleAddWithVariant}
+              disabled={!selectedVariantId || !!addingProductId}
+            >
+              {addingProductId ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  Add to Cart – ${variantPrice.toLocaleString()}
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AccountLayout>
   );
 }
