@@ -51,6 +51,7 @@ export default function Checkout() {
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
@@ -84,12 +85,10 @@ export default function Checkout() {
       // Only set default if no address is currently selected
       if (selectedAddressId === null) {
         const defaultAddr = addresses.find((a) => a.is_default) || addresses[0];
-        console.log("Setting default address:", defaultAddr.id);
         setSelectedAddressId(defaultAddr.id);
       }
     } else if (addresses && addresses.length === 0) {
       // No saved addresses, default to new
-      console.log("No addresses, defaulting to new");
       setSelectedAddressId("new");
     }
   }, [addresses]);
@@ -233,10 +232,7 @@ export default function Checkout() {
                     <RadioGroup
                       key={`address-group-${selectedAddressId}`}
                       value={selectedAddressId}
-                      onValueChange={(val) => {
-                        console.log("RadioGroup onValueChange:", val);
-                        setSelectedAddressId(val as string | "new");
-                      }}
+                      onValueChange={(val) => setSelectedAddressId(val as string | "new")}
                       className="space-y-2"
                     >
                       {addresses.map((address) => (
@@ -280,87 +276,103 @@ export default function Checkout() {
                   </div>
                 )}
 
-                {/* Address form */}
-                {(selectedAddressId === "new" || !addresses?.length) && (
-                  <div className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="shipping_first_name">First Name</Label>
-                        <Input
-                          id="shipping_first_name"
-                          {...register("shipping_first_name")}
-                          className={errors.shipping_first_name ? "border-destructive" : ""}
-                        />
-                        {errors.shipping_first_name && (
-                          <p className="text-sm text-destructive">{errors.shipping_first_name.message}</p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="shipping_last_name">Last Name</Label>
-                        <Input
-                          id="shipping_last_name"
-                          {...register("shipping_last_name")}
-                          className={errors.shipping_last_name ? "border-destructive" : ""}
-                        />
-                        {errors.shipping_last_name && (
-                          <p className="text-sm text-destructive">{errors.shipping_last_name.message}</p>
-                        )}
-                      </div>
-                    </div>
-
+                {/* Address form - always shown, readonly when using saved address */}
+                <div className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="shipping_address_line_1">Address</Label>
+                      <Label htmlFor="shipping_first_name">First Name</Label>
                       <Input
-                        id="shipping_address_line_1"
-                        placeholder="Street address"
-                        {...register("shipping_address_line_1")}
-                        className={errors.shipping_address_line_1 ? "border-destructive" : ""}
+                        id="shipping_first_name"
+                        {...register("shipping_first_name")}
+                        className={errors.shipping_first_name ? "border-destructive" : ""}
+                        readOnly={selectedAddressId !== "new" && selectedAddressId !== null}
                       />
-                      {errors.shipping_address_line_1 && (
-                        <p className="text-sm text-destructive">{errors.shipping_address_line_1.message}</p>
+                      {errors.shipping_first_name && (
+                        <p className="text-sm text-destructive">{errors.shipping_first_name.message}</p>
                       )}
                     </div>
-
                     <div className="space-y-2">
-                      <Label htmlFor="shipping_address_line_2">Apartment, suite, etc. (optional)</Label>
+                      <Label htmlFor="shipping_last_name">Last Name</Label>
                       <Input
-                        id="shipping_address_line_2"
-                        {...register("shipping_address_line_2")}
+                        id="shipping_last_name"
+                        {...register("shipping_last_name")}
+                        className={errors.shipping_last_name ? "border-destructive" : ""}
+                        readOnly={selectedAddressId !== "new" && selectedAddressId !== null}
+                      />
+                      {errors.shipping_last_name && (
+                        <p className="text-sm text-destructive">{errors.shipping_last_name.message}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="shipping_address_line_1">Address</Label>
+                    <Input
+                      id="shipping_address_line_1"
+                      placeholder="Street address"
+                      {...register("shipping_address_line_1")}
+                      className={errors.shipping_address_line_1 ? "border-destructive" : ""}
+                      readOnly={selectedAddressId !== "new" && selectedAddressId !== null}
+                    />
+                    {errors.shipping_address_line_1 && (
+                      <p className="text-sm text-destructive">{errors.shipping_address_line_1.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="shipping_address_line_2">Apartment, suite, etc. (optional)</Label>
+                    <Input
+                      id="shipping_address_line_2"
+                      {...register("shipping_address_line_2")}
+                      readOnly={selectedAddressId !== "new" && selectedAddressId !== null}
+                    />
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="shipping_city">City</Label>
+                      <Input
+                        id="shipping_city"
+                        {...register("shipping_city")}
+                        className={errors.shipping_city ? "border-destructive" : ""}
+                        readOnly={selectedAddressId !== "new" && selectedAddressId !== null}
+                      />
+                      {errors.shipping_city && (
+                        <p className="text-sm text-destructive">{errors.shipping_city.message}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="shipping_state">State / Province (optional)</Label>
+                      <Input
+                        id="shipping_state"
+                        {...register("shipping_state")}
+                        readOnly={selectedAddressId !== "new" && selectedAddressId !== null}
                       />
                     </div>
+                  </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="shipping_city">City</Label>
-                        <Input
-                          id="shipping_city"
-                          {...register("shipping_city")}
-                          className={errors.shipping_city ? "border-destructive" : ""}
-                        />
-                        {errors.shipping_city && (
-                          <p className="text-sm text-destructive">{errors.shipping_city.message}</p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="shipping_state">State / Province (optional)</Label>
-                        <Input id="shipping_state" {...register("shipping_state")} />
-                      </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="shipping_postal_code">Postal Code</Label>
+                      <Input
+                        id="shipping_postal_code"
+                        {...register("shipping_postal_code")}
+                        className={errors.shipping_postal_code ? "border-destructive" : ""}
+                        readOnly={selectedAddressId !== "new" && selectedAddressId !== null}
+                      />
+                      {errors.shipping_postal_code && (
+                        <p className="text-sm text-destructive">{errors.shipping_postal_code.message}</p>
+                      )}
                     </div>
-
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="shipping_postal_code">Postal Code</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="shipping_country">Country</Label>
+                      {selectedAddressId !== "new" && selectedAddressId !== null ? (
                         <Input
-                          id="shipping_postal_code"
-                          {...register("shipping_postal_code")}
-                          className={errors.shipping_postal_code ? "border-destructive" : ""}
+                          id="shipping_country_display"
+                          value={watch("shipping_country") || ""}
+                          readOnly
                         />
-                        {errors.shipping_postal_code && (
-                          <p className="text-sm text-destructive">{errors.shipping_postal_code.message}</p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="shipping_country">Country</Label>
+                      ) : (
                         <Controller
                           control={control}
                           name="shipping_country"
@@ -372,14 +384,23 @@ export default function Checkout() {
                             />
                           )}
                         />
-                        {errors.shipping_country && (
-                          <p className="text-sm text-destructive">{errors.shipping_country.message}</p>
-                        )}
-                      </div>
+                      )}
+                      {errors.shipping_country && (
+                        <p className="text-sm text-destructive">{errors.shipping_country.message}</p>
+                      )}
                     </div>
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label>Phone (optional)</Label>
+                  <div className="space-y-2">
+                    <Label>Phone (optional)</Label>
+                    {selectedAddressId !== "new" && selectedAddressId !== null ? (
+                      <Input
+                        id="shipping_phone_display"
+                        value={watch("shipping_phone") || ""}
+                        readOnly
+                        placeholder="Phone number"
+                      />
+                    ) : (
                       <Controller
                         control={control}
                         name="shipping_phone"
@@ -391,9 +412,9 @@ export default function Checkout() {
                           />
                         )}
                       />
-                    </div>
+                    )}
                   </div>
-                )}
+                </div>
               </section>
 
               <Separator />
