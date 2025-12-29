@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { useStorageCleanup, getEntityImageUrl } from "@/hooks/useStorageCleanup";
 import { useAdminNews } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -151,8 +152,14 @@ export default function AdminNews() {
     }
   };
 
+  const storageCleanup = useStorageCleanup();
+
   const confirmDelete = async () => {
     if (!selectedNews) return;
+
+    // Get the article to collect image URL before deletion
+    const articleToDelete = news?.find((n) => n.id === selectedNews);
+    const imageUrls = articleToDelete ? getEntityImageUrl(articleToDelete) : [];
 
     try {
       const { error } = await supabase
@@ -163,6 +170,20 @@ export default function AdminNews() {
       if (error) throw error;
       toast.success("Article deleted");
       queryClient.invalidateQueries({ queryKey: ["admin-news"] });
+
+      // Cleanup orphaned images in background
+      if (imageUrls.length > 0) {
+        storageCleanup.mutate(imageUrls, {
+          onSuccess: (data) => {
+            if (data.deletedCount > 0) {
+              console.log(`Cleaned up ${data.deletedCount} orphaned image(s)`);
+            }
+          },
+          onError: (err) => {
+            console.error("Image cleanup error:", err);
+          },
+        });
+      }
     } catch (err) {
       console.error("Delete error:", err);
       toast.error("Failed to delete article");

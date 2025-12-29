@@ -3,6 +3,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { useStorageCleanup } from "@/hooks/useStorageCleanup";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -247,8 +248,16 @@ export default function AdminCelebrities() {
     }
   };
 
+  const storageCleanup = useStorageCleanup();
+
   const confirmDelete = async () => {
     if (!selectedId) return;
+
+    // Get the entry to collect image URLs before deletion
+    const entryToDelete = celebrities?.find((c) => c.id === selectedId);
+    const imageUrls: string[] = [];
+    if (entryToDelete?.image_url) imageUrls.push(entryToDelete.image_url);
+    if (entryToDelete?.jewelry_photo_url) imageUrls.push(entryToDelete.jewelry_photo_url);
 
     try {
       const { error } = await supabase
@@ -260,6 +269,20 @@ export default function AdminCelebrities() {
       toast.success("Celebrity appearance deleted");
       queryClient.invalidateQueries({ queryKey: ["admin-celebrities"] });
       queryClient.invalidateQueries({ queryKey: ["press"] });
+
+      // Cleanup orphaned images in background
+      if (imageUrls.length > 0) {
+        storageCleanup.mutate(imageUrls, {
+          onSuccess: (data) => {
+            if (data.deletedCount > 0) {
+              console.log(`Cleaned up ${data.deletedCount} orphaned image(s)`);
+            }
+          },
+          onError: (err) => {
+            console.error("Image cleanup error:", err);
+          },
+        });
+      }
     } catch (err) {
       console.error("Delete error:", err);
       toast.error("Failed to delete celebrity appearance");
