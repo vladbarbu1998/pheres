@@ -58,25 +58,19 @@ export default function Story() {
               </div>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Narcisa Pheres brings a rare combination of artistic vision and technical 
-                  mastery to the world of fine jewelry. Trained in fashion design at prestigious 
-                  institutions in Milan and London, she later earned her certification as a 
-                  diamond expert from the Gemological Institute of America (GIA), merging 
-                  creative excellence with scientific precision.
+                  PHERES brings luxury back to its roots by creating very exclusive products of extremely high quality that the niche market of connoisseurs truly appreciates.
                 </p>
                 <p>
-                  Under her direction, Pheres has become synonymous with red-carpet elegance. 
-                  Her designs have been chosen by some of the world's most discerning women—
-                  from acclaimed artists and performers to heads of state. This trust speaks 
-                  to both the exceptional quality of her work and her understanding of how 
-                  jewelry transforms presence.
+                  Narcisa Pheres, a line dedicated exclusively for fine jewelry enthuses with one-of-a-kind diamonds and resonates opulence for the high-end market.
                 </p>
                 <p>
-                  Her achievements have earned recognition from Forbes and inclusion among 
-                  the "300 Most Powerful People in Hong Kong." As the official jewelry 
-                  supplier to Princess Olga Romanoff, Narcisa continues a tradition of 
-                  creating pieces worthy of royalty—while remaining committed to making 
-                  each client feel like the centerpiece of their own story.
+                  Founded by designer Narcisa Pheres over a decade ago, as a highly exclusive Italian fashion house, PHERES has taken on a new life of its own.
+                </p>
+                <p>
+                  PHERES maintains its focus on creating unique luxury experiences that walk the fine line between elegance and extravagance—tearing down walls of limitation and boldly innovating a symbiosis of style.
+                </p>
+                <p>
+                  Among the PHERES brand are the Narcisa Pheres Fine Jewelry pieces that have been gracing many a red carpet event. With these pieces, in the belief that true opulence is in the detail, the greatest of consideration and care is paid to even the smallest of steps in the design and creation process.
                 </p>
               </div>
             </div>
