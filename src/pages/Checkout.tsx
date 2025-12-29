@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, ShoppingBag, Pencil, Clock } from "lucide-react";
+import { Loader2, ShoppingBag, Pencil } from "lucide-react";
 import { AddressFormDialog, type Address } from "@/components/address/AddressFormDialog";
 import { Layout } from "@/components/layout/Layout";
 import { CartCheckoutLayout } from "@/components/cart/CartCheckoutLayout";
@@ -20,7 +20,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useProfile, useAddresses } from "@/hooks/useAccount";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
 
 const checkoutSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -49,13 +48,10 @@ export default function Checkout() {
   const [selectedAddressId, setSelectedAddressId] = useState<string | "new" | null>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   
-  const { 
-    checkRateLimit, 
-    recordAttempt, 
-    isRateLimited, 
-    secondsUntilReset,
-    reset: resetRateLimit 
-  } = useRateLimit(RATE_LIMIT_PRESETS.checkout);
+  // Honeypot fields for bot detection - bots will fill these hidden fields
+  const [honeypotName, setHoneypotName] = useState("");
+  const [honeypotEmail, setHoneypotEmail] = useState("");
+  const formStartTime = useRef(Date.now());
 
   const {
     register,
@@ -132,14 +128,23 @@ export default function Checkout() {
   const onSubmit = async (data: CheckoutFormData) => {
     if (isSubmitting) return;
     
-    // Check rate limit before proceeding
-    if (!checkRateLimit()) {
-      toast.error(`Too many checkout attempts. Please wait ${Math.ceil(secondsUntilReset / 60)} minute(s).`);
+    // Check honeypot fields - if filled, it's likely a bot
+    if (honeypotName || honeypotEmail) {
+      // Silently reject but show generic success to avoid revealing detection
+      console.log("Honeypot triggered - potential bot detected");
+      toast.success("Order placed successfully!");
+      return;
+    }
+    
+    // Check if form was filled too quickly (less than 3 seconds) - likely a bot
+    const timeSpent = Date.now() - formStartTime.current;
+    if (timeSpent < 3000) {
+      console.log("Form submitted too quickly - potential bot detected");
+      toast.success("Order placed successfully!");
       return;
     }
     
     setIsSubmitting(true);
-    recordAttempt();
 
     try {
       const cartPayload = items.map((item) => ({
@@ -164,6 +169,10 @@ export default function Checkout() {
           },
           cart_items: cartPayload,
           customer_notes: data.customer_notes,
+          // Honeypot data for server-side validation
+          _hp_name: honeypotName,
+          _hp_email: honeypotEmail,
+          _hp_time: timeSpent,
         },
       });
 
@@ -175,8 +184,6 @@ export default function Checkout() {
         throw new Error(result?.error || "Failed to create order");
       }
 
-      // Reset rate limit on successful order
-      resetRateLimit();
       
       // Clear local cart (server already cleared DB cart)
       await clearCart();
@@ -209,6 +216,39 @@ export default function Checkout() {
 
   const leftContent = (
     <>
+      {/* Honeypot fields - hidden from users, visible to bots */}
+      <div 
+        aria-hidden="true" 
+        style={{ 
+          position: 'absolute', 
+          left: '-9999px', 
+          width: '1px', 
+          height: '1px', 
+          overflow: 'hidden' 
+        }}
+      >
+        <label htmlFor="hp_name">Leave this empty</label>
+        <input
+          type="text"
+          id="hp_name"
+          name="hp_name"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypotName}
+          onChange={(e) => setHoneypotName(e.target.value)}
+        />
+        <label htmlFor="hp_email">Leave this empty</label>
+        <input
+          type="email"
+          id="hp_email"
+          name="hp_email"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypotEmail}
+          onChange={(e) => setHoneypotEmail(e.target.value)}
+        />
+      </div>
+
       {/* Contact */}
       <section className="space-y-4">
         <h2 className="font-display text-xl font-medium">Contact</h2>
@@ -527,17 +567,12 @@ export default function Checkout() {
         type="submit"
         size="lg"
         className="w-full mt-6"
-        disabled={isSubmitting || isRateLimited}
+        disabled={isSubmitting}
       >
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Placing Order...
-          </>
-        ) : isRateLimited ? (
-          <>
-            <Clock className="mr-2 h-4 w-4" />
-            Wait {Math.ceil(secondsUntilReset / 60)}m
           </>
         ) : (
           "Place Order"
