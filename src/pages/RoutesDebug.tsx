@@ -19,7 +19,6 @@ const routeGroups: RouteGroup[] = [
       { path: "/shop", label: "Shop (Product Archive)", type: "static" },
       { path: "/story", label: "Our Story", type: "static" },
       { path: "/celebrities", label: "Celebrities", type: "static" },
-      { path: "/press", label: "Press (not in nav)", type: "static" },
       { path: "/contact", label: "Contact", type: "static" },
       { path: "/search", label: "Search Results", type: "static" },
     ],
