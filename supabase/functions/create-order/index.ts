@@ -58,6 +58,10 @@ interface OrderRequest {
   shipping_address: ShippingAddress;
   cart_items: CartItem[];
   customer_notes?: string;
+  // Honeypot fields for bot detection
+  _hp_name?: string;
+  _hp_email?: string;
+  _hp_time?: number;
 }
 
 // Validation helper functions
@@ -122,7 +126,27 @@ serve(async (req) => {
       );
     }
 
-    const { customer_email, shipping_address, cart_items, customer_notes } = body;
+    const { customer_email, shipping_address, cart_items, customer_notes, _hp_name, _hp_email, _hp_time } = body;
+
+    // ====== HONEYPOT VALIDATION (Bot Detection) ======
+    
+    // Check if honeypot fields are filled (bots will fill these)
+    if (_hp_name || _hp_email) {
+      console.log("Honeypot triggered - bot detected, rejecting order");
+      return new Response(
+        JSON.stringify({ error: "Order validation failed" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    // Check if form was submitted too quickly (less than 3 seconds)
+    if (_hp_time !== undefined && _hp_time < 3000) {
+      console.log(`Form submitted too quickly (${_hp_time}ms) - potential bot, rejecting order`);
+      return new Response(
+        JSON.stringify({ error: "Order validation failed" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // ====== INPUT VALIDATION ======
 
