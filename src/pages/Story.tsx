@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
+import { PageHero } from "@/components/layout/PageHero";
 import { Diamond, Gem, Globe, Leaf } from "lucide-react";
 import narcisaPhoto from "@/assets/narcisa-pheres-founder.jpg";
-
 const values = [
   {
     icon: Diamond,
@@ -28,23 +28,11 @@ const values = [
 export default function Story() {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative py-20 md:py-32 lg:py-40">
-        <div className="container max-w-4xl text-center">
-          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-primary animate-fade-in">
-            Est. 2012
-          </p>
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in text-balance">
-            Where Heritage Meets
-            <br />
-            Modern Luxury
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl animate-fade-in" style={{ animationDelay: "100ms" }}>
-            Pheres is a house of fine jewelry dedicated to the art of rarity—creating 
-            extraordinary pieces for those who appreciate the exceptional.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        label="Est. 2012"
+        title="Where Heritage Meets Modern Luxury"
+        intro="Pheres is a house of fine jewelry dedicated to the art of rarity—creating extraordinary pieces for those who appreciate the exceptional."
+      />
 
       {/* Founder Section */}
       <section className="border-t border-border/50 py-16 md:py-24">
