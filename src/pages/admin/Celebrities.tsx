@@ -436,7 +436,7 @@ export default function AdminCelebrities() {
                   <Label>Celebrity Photo *</Label>
                   <ImageUploadField
                     value={formData.image_url}
-                    onChange={(url) => setFormData({ ...formData, image_url: url })}
+                    onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url }))}
                     folder="celebrities"
                     aspectRatio="portrait"
                     placeholder="Drag & drop celebrity photo"
@@ -446,7 +446,7 @@ export default function AdminCelebrities() {
                   <Label>Jewelry Photo</Label>
                   <ImageUploadField
                     value={formData.jewelry_photo_url}
-                    onChange={(url) => setFormData({ ...formData, jewelry_photo_url: url })}
+                    onChange={(url) => setFormData((prev) => ({ ...prev, jewelry_photo_url: url }))}
                     folder="celebrities"
                     aspectRatio="square"
                     placeholder="Drag & drop jewelry photo"

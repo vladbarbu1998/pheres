@@ -341,7 +341,7 @@ export default function AdminNews() {
                 <Label>Featured Image</Label>
                 <ImageUploadField
                   value={formData.image_url}
-                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url }))}
                   folder="news"
                   aspectRatio="landscape"
                   placeholder="Drag & drop a featured image"
