@@ -1,12 +1,17 @@
-import { useParams, Link } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { useParams, Link, useSearchParams } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
 import { Pagination } from "@/components/shop/Pagination";
+import {
+  ShopFilters,
+  ShopFiltersSidebar,
+  type FilterState,
+  type SortOption,
+} from "@/components/shop/ShopFilters";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,12 +20,29 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useCategory, useProducts } from "@/hooks/useProducts";
-import { useState } from "react";
+import {
+  useCategory,
+  useProducts,
+  useCollections,
+  useCategoryFilterOptions,
+} from "@/hooks/useProducts";
+
+const initialFilters: FilterState = {
+  categoryId: null,
+  collectionId: null,
+  minPrice: null,
+  maxPrice: null,
+  stoneType: null,
+};
 
 export default function CategoryPage() {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [page, setPage] = useState(1);
+
+  const sortParam = searchParams.get("sort") as SortOption | null;
+  const sortBy: SortOption = sortParam || "newest";
 
   const {
     data: category,
@@ -29,26 +51,92 @@ export default function CategoryPage() {
     refetch: refetchCategory,
   } = useCategory(slug || "");
 
+  const { data: allCollections, isLoading: collectionsLoading } = useCollections();
+  const { data: filterOptionsData, isLoading: filterOptionsLoading } =
+    useCategoryFilterOptions(slug || "");
+
+  // Build filters with category ID
+  const activeFilters = useMemo(() => ({
+    ...filters,
+    categoryId: category?.id || null,
+  }), [filters, category?.id]);
+
   const {
     data: productsData,
     isLoading: productsLoading,
     isError: productsError,
     refetch: refetchProducts,
   } = useProducts({
-    filters: { categoryId: category?.id || null, collectionId: null, minPrice: null, maxPrice: null, stoneType: null },
+    filters: activeFilters,
+    sortBy,
     page,
     pageSize: 12,
   });
+
+  // Update document title and meta for SEO
+  useEffect(() => {
+    if (category) {
+      document.title = `${category.name} | Pheres Jewelry`;
+      
+      // Update meta description
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription && category.description) {
+        metaDescription.setAttribute("content", category.description.slice(0, 160));
+      }
+    }
+    
+    return () => {
+      document.title = "Pheres | Luxury Jewelry";
+    };
+  }, [category]);
+
+  const handleSortChange = (sort: SortOption) => {
+    setSearchParams({ sort });
+    setPage(1);
+  };
+
+  const handleFiltersChange = (newFilters: FilterState) => {
+    // Don't allow changing categoryId from filters on category page
+    setFilters({
+      ...newFilters,
+      categoryId: null, // Keep null, we use category from URL
+    });
+    setPage(1);
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const isLoading = categoryLoading || productsLoading;
+  const handleClearFilters = () => {
+    setFilters(initialFilters);
+    setPage(1);
+  };
+
+  // Filter collections to only show those with products in this category
+  const activeCollectionIds = filterOptionsData?.activeCollectionIds || [];
+  const collections = useMemo(
+    () => (allCollections || []).filter((c) => activeCollectionIds.includes(c.id)),
+    [allCollections, activeCollectionIds]
+  );
+
+  // Get stone types from products in this category
+  const stoneTypes = filterOptionsData?.stoneTypes || [];
+
+  const isLoading =
+    categoryLoading || productsLoading || collectionsLoading || filterOptionsLoading;
   const isError = categoryError || productsError;
   const products = productsData?.products || [];
+  const totalCount = productsData?.totalCount || 0;
   const totalPages = productsData?.totalPages || 1;
+  
+  // Check if non-category filters are active
+  const hasActiveFilters = 
+    filters.collectionId !== null ||
+    filters.minPrice !== null ||
+    filters.maxPrice !== null ||
+    filters.stoneType !== null;
 
   // Category not found
   if (!categoryLoading && !category && !categoryError) {
@@ -126,33 +214,66 @@ export default function CategoryPage() {
 
       {/* Products */}
       <section className="container py-8 lg:py-12">
-        {isError ? (
-          <ErrorState
-            onRetry={() => {
-              refetchCategory();
-              refetchProducts();
-            }}
+        {/* Filters Bar */}
+        <ShopFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          sortBy={sortBy}
+          onSortChange={handleSortChange}
+          categories={[]} // Don't show category filter on category page
+          collections={collections}
+          productCount={totalCount}
+          isLoading={isLoading}
+          stoneTypes={stoneTypes}
+        />
+
+        {/* Content Grid */}
+        <div className="mt-8 flex gap-8 lg:gap-12">
+          {/* Desktop Sidebar */}
+          <ShopFiltersSidebar
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            categories={[]} // Don't show category filter on category page
+            collections={collections}
+            stoneTypes={stoneTypes}
           />
-        ) : isLoading ? (
-          <ProductGrid products={[]} isLoading skeletonCount={8} />
-        ) : products.length === 0 ? (
-          <EmptyState
-            title="No products yet"
-            description="This category doesn't have any products yet. Check back soon!"
-            actionLabel="Browse all products"
-            actionHref="/shop"
-          />
-        ) : (
-          <>
-            <ProductGrid products={products} />
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              className="mt-12"
-            />
-          </>
-        )}
+
+          {/* Products */}
+          <div className="flex-1">
+            {isError ? (
+              <ErrorState
+                onRetry={() => {
+                  refetchCategory();
+                  refetchProducts();
+                }}
+              />
+            ) : isLoading ? (
+              <ProductGrid products={[]} isLoading skeletonCount={8} />
+            ) : products.length === 0 ? (
+              <EmptyState
+                title="No products found"
+                description={
+                  hasActiveFilters
+                    ? "Try adjusting your filters to find what you're looking for."
+                    : "This category doesn't have any products yet. Check back soon!"
+                }
+                actionLabel={hasActiveFilters ? "Clear filters" : "Browse all products"}
+                onAction={hasActiveFilters ? handleClearFilters : undefined}
+                actionHref={hasActiveFilters ? undefined : "/shop"}
+              />
+            ) : (
+              <>
+                <ProductGrid products={products} />
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  className="mt-12"
+                />
+              </>
+            )}
+          </div>
+        </div>
       </section>
     </Layout>
   );

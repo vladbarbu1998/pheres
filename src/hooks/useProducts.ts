@@ -387,3 +387,80 @@ export function useCollectionFilterOptions(collectionSlug: string) {
     staleTime: 5 * 60 * 1000,
   });
 }
+
+// Hook to get distinct filter options from products within a specific category
+export function useCategoryFilterOptions(categorySlug: string) {
+  return useQuery({
+    queryKey: ["category-filter-options", categorySlug],
+    queryFn: async () => {
+      // First, get the category ID from slug
+      const { data: category, error: categoryError } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("slug", categorySlug)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (categoryError) throw categoryError;
+      if (!category) {
+        return {
+          stoneTypes: [],
+          activeCollectionIds: [],
+        };
+      }
+
+      // Fetch products in this category with their details
+      const { data: products, error } = await supabase
+        .from("products")
+        .select(`
+          id,
+          stone_type,
+          product_collections (
+            collection_id
+          ),
+          product_stones (
+            stone_type
+          )
+        `)
+        .eq("is_active", true)
+        .eq("category_id", category.id);
+
+      if (error) throw error;
+
+      // Extract distinct stone types from both product.stone_type and product_stones table
+      const stoneTypesFromProducts = (products || [])
+        .map((p) => p.stone_type?.trim())
+        .filter((s): s is string => !!s && s !== "");
+
+      const stoneTypesFromStones = (products || [])
+        .flatMap((p) => p.product_stones?.map((ps) => ps.stone_type?.trim()) || [])
+        .filter((s): s is string => !!s && s !== "");
+
+      // Deduplicate using a Map to handle case variations
+      const stoneMap = new Map<string, string>();
+      [...stoneTypesFromProducts, ...stoneTypesFromStones].forEach((s) => {
+        const key = s.toLowerCase();
+        if (!stoneMap.has(key)) {
+          stoneMap.set(key, s);
+        }
+      });
+      const stoneTypes = Array.from(stoneMap.values()).sort();
+
+      // Extract distinct collection IDs
+      const collectionIds = Array.from(
+        new Set(
+          (products || [])
+            .flatMap((p) => p.product_collections?.map((pc) => pc.collection_id) || [])
+            .filter((id): id is string => !!id)
+        )
+      );
+
+      return {
+        stoneTypes,
+        activeCollectionIds: collectionIds,
+      };
+    },
+    enabled: !!categorySlug,
+    staleTime: 5 * 60 * 1000,
+  });
+}
