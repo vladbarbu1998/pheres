@@ -409,7 +409,7 @@ export default function AdminCelebrities() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="event_date">Event Date</Label>
                   <Input
@@ -427,24 +427,6 @@ export default function AdminCelebrities() {
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="e.g., Los Angeles, CA"
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="section">Section</Label>
-                  <Select
-                    value={formData.section}
-                    onValueChange={(value) => setFormData({ ...formData, section: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select section" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SECTIONS.map((section) => (
-                        <SelectItem key={section} value={section}>
-                          {section}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
 
