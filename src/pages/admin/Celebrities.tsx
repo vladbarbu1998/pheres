@@ -182,7 +182,26 @@ export default function AdminCelebrities() {
           ? `${formData.celebrity_name} at ${eventName}` 
           : formData.celebrity_name
       );
-      const slug = formData.slug?.trim() || generateSlug(title);
+      let slug = formData.slug?.trim() || generateSlug(title);
+
+      // For new entries, check if slug exists and make it unique
+      if (!formData.id) {
+        const { data: existingSlugs } = await supabase
+          .from("press_entries")
+          .select("slug")
+          .ilike("slug", `${slug}%`);
+        
+        if (existingSlugs && existingSlugs.length > 0) {
+          const slugSet = new Set(existingSlugs.map(s => s.slug));
+          if (slugSet.has(slug)) {
+            let counter = 2;
+            while (slugSet.has(`${slug}-${counter}`)) {
+              counter++;
+            }
+            slug = `${slug}-${counter}`;
+          }
+        }
+      }
 
       const dataToSave = {
         title,
