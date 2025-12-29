@@ -30,8 +30,8 @@ export default function Story() {
     <Layout>
       <PageHero
         label="PHERES"
-        title="Where Heritage Meets Modern Luxury"
-        intro="Pheres is a house of fine jewelry dedicated to the art of rarity—creating extraordinary pieces for those who appreciate the exceptional."
+        title="Our Story"
+        intro="A highly exclusive Italian fashion house creating one-of-a-kind fine jewelry for connoisseurs who appreciate true opulence."
       />
 
       {/* Founder Section */}
