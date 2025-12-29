@@ -1,24 +1,31 @@
 import { useParams, Link } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
 import { ProductGallery, ProductGallerySkeleton } from "@/components/product/ProductGallery";
 import { ProductInfo, ProductInfoSkeleton } from "@/components/product/ProductInfo";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useProduct, useRelatedProducts } from "@/hooks/useProduct";
 
 export default function ProductPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { categorySlug, productSlug } = useParams<{ categorySlug: string; productSlug: string }>();
 
   const {
     data: product,
     isLoading: productLoading,
     isError: productError,
     refetch,
-  } = useProduct(slug || "");
+  } = useProduct(productSlug || "");
 
   // Get collection IDs for related products query
   const collectionIds =
@@ -31,6 +38,9 @@ export default function ProductPage() {
 
   // Get first collection for display
   const primaryCollection = product?.product_collections?.[0]?.collections;
+  
+  // Get category info
+  const category = product?.categories;
 
   // Sort images by display order
   const sortedImages = product?.product_images
@@ -75,13 +85,40 @@ export default function ProductPage() {
   return (
     <Layout>
       <div className="container py-8 lg:py-12 overflow-x-hidden">
-        {/* Back link */}
-        <Button variant="ghost" size="sm" asChild className="mb-6">
-          <Link to="/shop">
-            <ChevronLeft className="mr-1 h-4 w-4" />
-            Back to Shop
-          </Link>
-        </Button>
+        {/* Breadcrumb */}
+        {productLoading ? (
+          <Skeleton className="mb-6 h-5 w-64" />
+        ) : (
+          <Breadcrumb className="mb-6">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/shop">Shop</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              {category && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link to={`/shop/category/${category.slug}`}>{category.name}</Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              )}
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{product?.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        )}
 
         {/* Main product section */}
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">

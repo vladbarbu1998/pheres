@@ -57,18 +57,22 @@ export default function FavoritesPage() {
       ) : (
         <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0 lg:grid-cols-3">
           {favorites?.map((favorite) => {
-            const product = favorite.products;
+            const product = favorite.products as any;
             if (!product) return null;
 
-            const primaryImage = product.product_images?.find((img) => img.is_primary);
+            const primaryImage = product.product_images?.find((img: any) => img.is_primary);
             const firstImage = product.product_images?.[0];
             const imageUrl = primaryImage?.image_url || firstImage?.image_url;
+            const categorySlug = product.categories?.slug;
+            const productUrl = categorySlug 
+              ? `/shop/${categorySlug}/${product.slug}` 
+              : `/shop/all/${product.slug}`;
 
             return (
               <div key={favorite.id} className="group relative">
                 {/* Mobile: Horizontal card layout */}
                 <div className="flex gap-4 sm:hidden">
-                  <Link to={`/product/${product.slug}`} className="shrink-0">
+                  <Link to={productUrl} className="shrink-0">
                     <div className="relative h-28 w-24 overflow-hidden rounded-sm bg-secondary/50">
                       {imageUrl ? (
                         <img
@@ -91,7 +95,7 @@ export default function FavoritesPage() {
                     </div>
                   </Link>
                   <div className="flex flex-1 flex-col justify-center py-1">
-                    <Link to={`/product/${product.slug}`}>
+                    <Link to={productUrl}>
                       <h3 className="font-display text-sm font-medium text-foreground line-clamp-2">
                         {product.name}
                       </h3>
@@ -121,7 +125,7 @@ export default function FavoritesPage() {
 
                 {/* Desktop: Vertical card layout */}
                 <div className="hidden sm:block">
-                  <Link to={`/product/${product.slug}`} className="block">
+                  <Link to={productUrl} className="block">
                     <div className="relative aspect-[3/4] overflow-hidden bg-secondary/50">
                       {imageUrl ? (
                         <img
@@ -155,7 +159,7 @@ export default function FavoritesPage() {
                   </Button>
 
                   <div className="mt-4 space-y-1">
-                    <Link to={`/product/${product.slug}`}>
+                    <Link to={productUrl}>
                       <h3 className="font-display text-sm font-medium text-foreground transition-colors hover:text-primary lg:text-base">
                         {product.name}
                       </h3>

@@ -60,6 +60,11 @@ export function useProducts({
           stone_type,
           category_id,
           created_at,
+          categories (
+            id,
+            name,
+            slug
+          ),
           product_images (
             image_url,
             is_primary,
@@ -207,6 +212,24 @@ export function useCollection(slug: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("collections")
+        .select("*")
+        .eq("slug", slug)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!slug,
+  });
+}
+
+export function useCategory(slug: string) {
+  return useQuery({
+    queryKey: ["category", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
         .select("*")
         .eq("slug", slug)
         .eq("is_active", true)

@@ -23,6 +23,7 @@ interface ProductCardProps {
   compareAtPrice?: number | null;
   imageUrl?: string | null;
   collectionName?: string | null;
+  categorySlug?: string | null;
   isNew?: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -43,6 +44,7 @@ export function ProductCard({
   compareAtPrice,
   imageUrl,
   collectionName,
+  categorySlug,
   isNew,
   className,
   style,
@@ -108,12 +110,17 @@ export function ProductCard({
 
   const selectedVariant = variants.find(v => v.id === selectedVariantId);
   const variantPrice = price + (selectedVariant?.price_adjustment || 0);
+  
+  // Build product URL with category
+  const productUrl = categorySlug 
+    ? `/shop/${categorySlug}/${slug}` 
+    : `/shop/all/${slug}`;
 
   return (
     <>
       <article className={cn("group relative", className)} style={style}>
         {/* Image container */}
-        <Link to={`/product/${slug}`} className="block">
+        <Link to={productUrl} className="block">
           <div className="relative aspect-square overflow-hidden bg-secondary/50">
             {imageUrl ? (
               <img
@@ -195,7 +202,7 @@ export function ProductCard({
               {collectionName}
             </p>
           )}
-          <Link to={`/product/${slug}`}>
+          <Link to={productUrl}>
             <h3 className="font-display text-sm font-medium text-foreground transition-colors hover:text-primary lg:text-base">
               {name}
             </h3>
