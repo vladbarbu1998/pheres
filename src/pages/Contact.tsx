@@ -101,8 +101,8 @@ export default function Contact() {
             Contact Pheres
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Whether you have a question about a piece, wish to schedule a private viewing, 
-            or are interested in a bespoke creation, our team is here to assist you.
+            Whether you have a question about a piece or are interested in a bespoke creation, 
+            our team is here to assist you.
           </p>
         </div>
       </section>

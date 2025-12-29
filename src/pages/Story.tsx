@@ -186,18 +186,12 @@ export default function Story() {
             Discover our collection of one-of-a-kind pieces, each crafted to become 
             part of your legacy.
           </p>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
+          <div className="mt-8">
             <a
               href="/shop"
               className="inline-flex items-center justify-center rounded-sm bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-luxury hover:bg-primary/90"
             >
               Explore the Collection
-            </a>
-            <a
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-sm border border-border px-8 py-3 text-sm font-medium text-foreground transition-luxury hover:bg-accent"
-            >
-              Schedule a Consultation
             </a>
           </div>
         </div>
