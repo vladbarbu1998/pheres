@@ -14,20 +14,29 @@ const SECTION_TITLES: Record<string, string> = {
 };
 
 function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance; index: number }) {
+  const hasJewelryPhoto = !!appearance.jewelry_photo_url;
+  const hasEventName = !!appearance.event_name;
+  const hasEventDate = !!appearance.event_date;
+  const hasLocation = !!appearance.location;
+  const hasMetadata = hasEventDate || hasLocation;
+
   return (
     <article 
       className="group animate-fade-in"
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      {/* Desktop: Side by side / Mobile: Stacked */}
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-        {/* Celebrity Photo - Large */}
-        <div className="w-full md:w-2/3">
+      {/* Photos layout - adapts based on whether jewelry photo exists */}
+      <div className={`flex flex-col ${hasJewelryPhoto ? 'md:flex-row gap-4 md:gap-6' : ''}`}>
+        {/* Celebrity Photo */}
+        <div className={hasJewelryPhoto ? 'w-full md:w-2/3' : 'w-full'}>
           <div className="aspect-[3/4] overflow-hidden bg-muted rounded-sm">
             {appearance.image_url ? (
               <img
                 src={appearance.image_url}
-                alt={`${appearance.celebrity_name} at ${appearance.event_name || "event"}`}
+                alt={appearance.event_name 
+                  ? `${appearance.celebrity_name} at ${appearance.event_name}` 
+                  : appearance.celebrity_name || "Celebrity"
+                }
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
             ) : (
@@ -38,48 +47,48 @@ function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance;
           </div>
         </div>
 
-        {/* Jewelry Photo - Smaller, vertically centered on desktop */}
-        <div className="w-full md:w-1/3 md:flex md:items-center">
-          <div className="aspect-square overflow-hidden bg-muted rounded-sm w-full">
-            {appearance.jewelry_photo_url ? (
+        {/* Jewelry Photo - Only render if present */}
+        {hasJewelryPhoto && (
+          <div className="w-full md:w-1/3 md:flex md:items-center">
+            <div className="aspect-square overflow-hidden bg-muted rounded-sm w-full">
               <img
-                src={appearance.jewelry_photo_url}
+                src={appearance.jewelry_photo_url!}
                 alt={`Jewelry worn by ${appearance.celebrity_name}`}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-                <span className="text-xs text-muted-foreground/50 uppercase tracking-wider">Jewelry</span>
-              </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Caption */}
-      <div className="mt-5 space-y-1.5">
+      {/* Caption - only show fields that have values */}
+      <div className="mt-5">
         <h3 className="font-display text-xl font-semibold text-foreground tracking-tight">
           {appearance.celebrity_name}
         </h3>
-        {appearance.event_name && (
-          <p className="text-base text-primary font-medium">
+        
+        {hasEventName && (
+          <p className="mt-1 text-base text-primary font-medium">
             {appearance.event_name}
           </p>
         )}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-          {appearance.event_date && (
-            <span className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5" />
-              {format(new Date(appearance.event_date), "MMMM yyyy")}
-            </span>
-          )}
-          {appearance.location && (
-            <span className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5" />
-              {appearance.location}
-            </span>
-          )}
-        </div>
+        
+        {hasMetadata && (
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+            {hasEventDate && (
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5" />
+                {format(new Date(appearance.event_date!), "MMMM yyyy")}
+              </span>
+            )}
+            {hasLocation && (
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5" />
+                {appearance.location}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </article>
   );

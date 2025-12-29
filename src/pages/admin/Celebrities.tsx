@@ -163,18 +163,13 @@ export default function AdminCelebrities() {
   };
 
   const handleSave = async () => {
-    if (!formData.celebrity_name || !formData.event_name) {
-      toast.error("Celebrity name and event name are required");
+    if (!formData.celebrity_name) {
+      toast.error("Celebrity name is required");
       return;
     }
 
     if (!formData.image_url) {
       toast.error("Celebrity photo is required");
-      return;
-    }
-
-    if (!formData.jewelry_photo_url) {
-      toast.error("Jewelry photo is required");
       return;
     }
 
@@ -399,7 +394,7 @@ export default function AdminCelebrities() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="event_name">Event Name *</Label>
+                  <Label htmlFor="event_name">Event Name</Label>
                   <Input
                     id="event_name"
                     value={formData.event_name}
@@ -461,7 +456,7 @@ export default function AdminCelebrities() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Jewelry Photo *</Label>
+                  <Label>Jewelry Photo</Label>
                   <ImageUploadField
                     value={formData.jewelry_photo_url}
                     onChange={(url) => setFormData({ ...formData, jewelry_photo_url: url })}
