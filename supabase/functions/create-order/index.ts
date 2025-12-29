@@ -6,13 +6,16 @@ const ALLOWED_ORIGINS = [
   "https://lovable.dev",
   "https://www.lovable.dev",
   "https://sbyfgresripeilehcoru.lovableproject.com",
-  // Add your production domain here when deployed
+  "https://pheres.lovable.app",
 ];
 
 const getCorsHeaders = (origin: string | null) => {
-  // Check if origin is allowed
+  // Check if origin is allowed (includes *.lovable.dev, *.lovableproject.com, *.lovable.app)
   const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => 
-    origin === allowed || origin.endsWith('.lovable.dev') || origin.endsWith('.lovableproject.com')
+    origin === allowed || 
+    origin.endsWith('.lovable.dev') || 
+    origin.endsWith('.lovableproject.com') ||
+    origin.endsWith('.lovable.app')
   ) ? origin : ALLOWED_ORIGINS[0];
   
   return {
