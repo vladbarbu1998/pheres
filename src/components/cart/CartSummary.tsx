@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import { cn } from "@/lib/utils";
 
 export function CartSummary() {
-  const { subtotal, itemCount } = useCart();
+  const { subtotal, itemCount, updatingItems } = useCart();
+  const isUpdating = updatingItems.size > 0;
 
   return (
     <div className="rounded-sm border border-border bg-card p-6 sticky top-24">
@@ -12,10 +14,13 @@ export function CartSummary() {
         Order Summary
       </h2>
 
-      <div className="space-y-3 text-sm">
+      <div className={cn(
+        "space-y-3 text-sm transition-opacity duration-200",
+        isUpdating && "opacity-60"
+      )}>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Subtotal ({itemCount} items)</span>
-          <span className="font-medium text-foreground">${subtotal.toLocaleString()}</span>
+          <span className="font-medium text-foreground tabular-nums">${subtotal.toLocaleString()}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Shipping</span>
@@ -29,14 +34,17 @@ export function CartSummary() {
 
       <div className="border-t border-border my-6" />
 
-      <div className="flex justify-between items-center mb-6">
+      <div className={cn(
+        "flex justify-between items-center mb-6 transition-opacity duration-200",
+        isUpdating && "opacity-60"
+      )}>
         <span className="font-display font-semibold text-lg text-foreground">Estimated Total</span>
-        <span className="font-display font-semibold text-xl text-foreground">
+        <span className="font-display font-semibold text-xl text-foreground tabular-nums">
           ${subtotal.toLocaleString()}
         </span>
       </div>
 
-      <Button asChild className="w-full" size="lg">
+      <Button asChild className="w-full" size="lg" disabled={isUpdating || itemCount === 0}>
         <Link to="/checkout">
           Proceed to Checkout
           <ArrowRight className="ml-2 h-4 w-4" />

@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart, CartItem as CartItemType } from "@/contexts/CartContext";
+import { cn } from "@/lib/utils";
 
 interface CartItemProps {
   item: CartItemType;
 }
 
 export function CartItem({ item }: CartItemProps) {
-  const { updateQuantity, removeItem } = useCart();
+  const { updateQuantity, removeItem, updatingItems } = useCart();
   const price = item.product.base_price + (item.variant?.price_adjustment || 0);
   const lineTotal = price * item.quantity;
+  const isUpdating = updatingItems.has(item.id);
   
   // Build product URL with category
   const productUrl = item.product.category_slug 
@@ -18,7 +20,12 @@ export function CartItem({ item }: CartItemProps) {
     : `/shop/all/${item.product.slug}`;
 
   return (
-    <div className="flex gap-4 py-6 border-b border-border">
+    <div 
+      className={cn(
+        "flex gap-4 py-6 border-b border-border transition-opacity duration-200",
+        isUpdating && "opacity-60"
+      )}
+    >
       {/* Image */}
       <Link 
         to={productUrl}
@@ -58,7 +65,7 @@ export function CartItem({ item }: CartItemProps) {
               ${price.toLocaleString()}
             </p>
           </div>
-          <p className="font-display font-semibold text-foreground whitespace-nowrap">
+          <p className="font-display font-semibold text-foreground whitespace-nowrap transition-all duration-200">
             ${lineTotal.toLocaleString()}
           </p>
         </div>
@@ -71,16 +78,19 @@ export function CartItem({ item }: CartItemProps) {
               size="icon"
               className="h-8 w-8"
               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-              disabled={item.quantity <= 1}
+              disabled={item.quantity <= 1 || isUpdating}
             >
               <Minus className="h-3 w-3" />
             </Button>
-            <span className="w-8 text-center font-medium">{item.quantity}</span>
+            <span className="w-8 text-center font-medium tabular-nums">
+              {item.quantity}
+            </span>
             <Button
               variant="outline"
               size="icon"
               className="h-8 w-8"
               onClick={() => updateQuantity(item.id, item.quantity + 1)}
+              disabled={isUpdating}
             >
               <Plus className="h-3 w-3" />
             </Button>
@@ -90,8 +100,13 @@ export function CartItem({ item }: CartItemProps) {
             size="sm"
             className="text-muted-foreground hover:text-destructive"
             onClick={() => removeItem(item.id)}
+            disabled={isUpdating}
           >
-            <Trash2 className="h-4 w-4 mr-1" />
+            {isUpdating ? (
+              <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4 mr-1" />
+            )}
             Remove
           </Button>
         </div>
