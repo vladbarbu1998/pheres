@@ -176,15 +176,20 @@ export default function AdminCelebrities() {
     setSaving(true);
     try {
       // Auto-generate title and slug if empty
-      const title = formData.title || `${formData.celebrity_name} at ${formData.event_name}`;
-      const slug = formData.slug || generateSlug(title);
+      const eventName = formData.event_name?.trim();
+      const title = formData.title?.trim() || (
+        eventName 
+          ? `${formData.celebrity_name} at ${eventName}` 
+          : formData.celebrity_name
+      );
+      const slug = formData.slug?.trim() || generateSlug(title);
 
       const dataToSave = {
         title,
         slug,
         description: formData.description || null,
         celebrity_name: formData.celebrity_name,
-        event_name: formData.event_name,
+        event_name: eventName || null,
         event_date: formData.event_date || null,
         location: formData.location || null,
         section: formData.section || null,
