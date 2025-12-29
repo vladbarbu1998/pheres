@@ -28,6 +28,9 @@ test.describe('Checkout Flow (Guest)', () => {
     
     const checkoutButton = page.getByTestId('checkout-button');
     
+    // Wait for button to be visible before checking
+    await checkoutButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    
     if (await checkoutButton.isVisible()) {
       await checkoutButton.click();
       await expect(page).toHaveURL(/\/checkout/);

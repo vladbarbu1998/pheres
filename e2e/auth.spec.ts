@@ -9,7 +9,7 @@ test.describe('Authentication', () => {
     // Check for login form elements
     await expect(page.getByLabel(/email/i).or(page.locator('input[type="email"]'))).toBeVisible();
     await expect(page.getByLabel(/password/i).or(page.locator('input[type="password"]'))).toBeVisible();
-    await expect(page.getByRole('button', { name: /sign in|log in|login/i })).toBeVisible();
+    await expect(page.locator('button[type="submit"]').filter({ hasText: /sign in|log in|login/i })).toBeVisible();
   });
 
   test('register page loads correctly', async ({ page }) => {
@@ -25,8 +25,8 @@ test.describe('Authentication', () => {
     await page.goto(routes.login);
     await page.waitForLoadState('networkidle');
     
-    // Submit empty form
-    await page.getByRole('button', { name: /sign in|log in|login/i }).click();
+    // Submit empty form - use submit button specifically
+    await page.locator('button[type="submit"]').filter({ hasText: /sign in|log in|login/i }).click();
     
     // Should show validation errors
     await expect(page.locator('text=/required|please enter/i')).toBeVisible({ timeout: 3000 });
@@ -40,8 +40,8 @@ test.describe('Authentication', () => {
     await page.locator('input[type="email"]').fill('wrong@email.com');
     await page.locator('input[type="password"]').fill('wrongpassword');
     
-    // Submit
-    await page.getByRole('button', { name: /sign in|log in|login/i }).click();
+    // Submit - use submit button specifically
+    await page.locator('button[type="submit"]').filter({ hasText: /sign in|log in|login/i }).click();
     
     // Should show error message
     await expect(

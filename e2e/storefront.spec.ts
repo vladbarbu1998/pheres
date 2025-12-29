@@ -15,21 +15,27 @@ test.describe('Storefront Navigation', () => {
 
   test('navigates to Shop page', async ({ page }) => {
     await page.goto(routes.home);
-    await page.getByRole('link', { name: /shop/i }).first().click();
+    const shopLink = page.getByRole('link', { name: /shop/i }).first();
+    await shopLink.scrollIntoViewIfNeeded();
+    await shopLink.click();
     
     await expect(page).toHaveURL(/\/shop/);
   });
 
   test('navigates to Our Story page', async ({ page }) => {
     await page.goto(routes.home);
-    await page.getByRole('link', { name: /our story/i }).first().click();
+    const storyLink = page.getByRole('link', { name: /our story/i }).first();
+    await storyLink.scrollIntoViewIfNeeded();
+    await storyLink.click();
     
     await expect(page).toHaveURL(/\/story/);
   });
 
   test('navigates to Contact page', async ({ page }) => {
     await page.goto(routes.home);
-    await page.getByRole('link', { name: /contact/i }).first().click();
+    const contactLink = page.getByRole('link', { name: /contact/i }).first();
+    await contactLink.scrollIntoViewIfNeeded();
+    await contactLink.click();
     
     await expect(page).toHaveURL(/\/contact/);
   });
