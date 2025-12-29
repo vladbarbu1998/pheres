@@ -452,7 +452,7 @@ export default function Checkout() {
           const price = item.product.base_price + (item.variant?.price_adjustment || 0);
           return (
             <div key={item.id} className="flex gap-4">
-              <div className="relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden bg-muted">
+              <div className="h-16 w-16 flex-shrink-0 rounded-md overflow-hidden bg-muted">
                 {item.product.image_url ? (
                   <img
                     src={item.product.image_url}
@@ -464,15 +464,13 @@ export default function Checkout() {
                     <ShoppingBag className="h-6 w-6 text-muted-foreground" />
                   </div>
                 )}
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                  {item.quantity}
-                </span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{item.product.name}</p>
-                {item.variant && (
-                  <p className="text-sm text-muted-foreground">{item.variant.name}</p>
-                )}
+                <p className="text-sm text-muted-foreground">
+                  {item.variant && <span>{item.variant.name} · </span>}
+                  Qty: {item.quantity}
+                </p>
               </div>
               <p className="font-medium">{formatPrice(price * item.quantity)}</p>
             </div>
