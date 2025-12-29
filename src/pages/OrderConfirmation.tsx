@@ -67,8 +67,8 @@ export default function OrderConfirmation() {
       <div className="container mx-auto max-w-2xl px-4 py-12 lg:py-16">
         {/* Success Header */}
         <div className="text-center mb-10">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-            <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400" />
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+            <CheckCircle className="h-10 w-10 text-green-600" />
           </div>
           <h1 className="font-display text-3xl font-semibold tracking-tight mb-2">
             Thank You for Your Order!
@@ -87,7 +87,7 @@ export default function OrderConfirmation() {
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Status</p>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
                 <Package className="h-3.5 w-3.5" />
                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
               </span>
