@@ -88,10 +88,8 @@ export function ProductInfo({
     }
 
     setIsAdding(true);
-    // Add item with selected quantity
-    for (let i = 0; i < quantity; i++) {
-      await addItem(productId, selectedVariantId);
-    }
+    // Add item with selected quantity in a single request
+    await addItem(productId, selectedVariantId, quantity);
     setIsAdding(false);
     setJustAdded(true);
     setQuantity(1); // Reset quantity after adding
