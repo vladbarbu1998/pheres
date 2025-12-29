@@ -230,7 +230,11 @@ export default function Checkout() {
                       {addresses.map((address) => (
                         <div
                           key={address.id}
-                          className="flex items-start space-x-3 rounded-lg border p-4 cursor-pointer hover:bg-accent/50 transition-colors"
+                          className={`flex items-start space-x-3 rounded-lg border p-4 cursor-pointer transition-colors ${
+                            selectedAddressId === address.id 
+                              ? "border-primary bg-primary/5" 
+                              : "hover:bg-accent/50"
+                          }`}
                           onClick={() => setSelectedAddressId(address.id)}
                         >
                           <RadioGroupItem value={address.id} id={address.id} className="mt-1" />
@@ -248,7 +252,11 @@ export default function Checkout() {
                         </div>
                       ))}
                       <div
-                        className="flex items-center space-x-3 rounded-lg border p-4 cursor-pointer hover:bg-accent/50 transition-colors"
+                        className={`flex items-center space-x-3 rounded-lg border p-4 cursor-pointer transition-colors ${
+                          selectedAddressId === "new" 
+                            ? "border-primary bg-primary/5" 
+                            : "hover:bg-accent/50"
+                        }`}
                         onClick={() => setSelectedAddressId("new")}
                       >
                         <RadioGroupItem value="new" id="new-address" />
