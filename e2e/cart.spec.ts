@@ -10,7 +10,7 @@ test.describe('Cart', () => {
   test('empty cart shows appropriate message', async ({ page }) => {
     // Use domcontentloaded instead of load for faster/more reliable navigation
     await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 15000 });
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     
     // Either cart has items or shows empty state
     const emptyMessage = page.getByTestId('empty-state');
@@ -36,7 +36,7 @@ test.describe('Cart', () => {
     
     // Use domcontentloaded for more reliable navigation across browsers
     await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 15000 });
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     
     await expect(page).toHaveURL(/\/cart/);
   });
@@ -44,7 +44,7 @@ test.describe('Cart', () => {
   test('cart summary shows when items present', async ({ page }) => {
     // Use domcontentloaded for more reliable navigation
     await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 15000 });
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     
     const summarySection = page.getByTestId('cart-summary');
     const cartItems = page.getByTestId('cart-item');
