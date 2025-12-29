@@ -1,6 +1,6 @@
 import { Layout } from "@/components/layout/Layout";
-import { Separator } from "@/components/ui/separator";
 import { Diamond, Gem, Globe, Leaf } from "lucide-react";
+import narcisaPhoto from "@/assets/narcisa-pheres-founder.jpg";
 
 const values = [
   {
@@ -46,63 +46,17 @@ export default function Story() {
         </div>
       </section>
 
-      {/* Brand Story Section */}
-      <section className="border-t border-border/50 py-16 md:py-24">
-        <div className="container max-w-6xl">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-            <div className="order-2 lg:order-1 space-y-6">
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                The Art of the Extraordinary
-              </h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  In an era of mass production, Pheres stands apart. We believe true luxury 
-                  cannot be replicated—it must be created with intention, precision, and an 
-                  unwavering commitment to excellence. Each piece in our collection represents 
-                  hundreds of hours of meticulous craftsmanship.
-                </p>
-                <p>
-                  Founded over a decade ago as an Italian fashion house, Pheres evolved to 
-                  focus exclusively on what we do best: fine jewelry of unparalleled quality. 
-                  Our pieces have graced the world's most prestigious stages—from the Oscars 
-                  to the Golden Globes—adorning those who understand that true elegance is 
-                  quiet, confident, and rare.
-                </p>
-                <p>
-                  We do not create for trends. We create for legacy. Every Pheres piece is 
-                  designed to be treasured across generations, carrying with it the story 
-                  of exceptional craftsmanship and timeless beauty.
-                </p>
-              </div>
-            </div>
-            <div className="order-1 lg:order-2">
-              <div className="aspect-[4/5] overflow-hidden bg-muted">
-                <img
-                  src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80"
-                  alt="Pheres jewelry craftsmanship"
-                  className="h-full w-full object-cover transition-luxury hover:scale-105"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Founder Section */}
-      <section className="bg-card py-16 md:py-24">
+      <section className="border-t border-border/50 py-16 md:py-24">
         <div className="container max-w-6xl">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
             <div>
               <div className="aspect-[3/4] overflow-hidden bg-muted">
-                {/* Founder portrait placeholder */}
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                  <div className="text-center px-8">
-                    <div className="mx-auto mb-4 h-24 w-24 rounded-full border-2 border-primary/20 bg-primary/10 flex items-center justify-center">
-                      <span className="font-display text-3xl font-semibold text-primary">NP</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Founder Portrait</p>
-                  </div>
-                </div>
+                <img
+                  src={narcisaPhoto}
+                  alt="Narcisa Pheres, Founder of Pheres"
+                  className="h-full w-full object-cover transition-luxury hover:scale-105"
+                />
               </div>
             </div>
             <div className="space-y-6">
