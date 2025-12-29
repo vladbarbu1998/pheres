@@ -120,7 +120,7 @@ export default function FavoritesPage() {
                 {/* Desktop: Vertical card layout */}
                 <div className="hidden sm:block">
                   <Link to={productUrl} className="block">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-secondary/50">
+                    <div className="relative aspect-square overflow-hidden bg-secondary/50">
                       {imageUrl ? (
                         <img
                           src={imageUrl}
