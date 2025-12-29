@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, CheckCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,8 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [registrationComplete, setRegistrationComplete] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
   const { signUp, user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -70,11 +72,9 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success(
-      "Account created! Please check your email and click the verification link to activate your account.",
-      { duration: 6000 }
-    );
-    navigate("/account/login", { replace: true });
+    // Show confirmation screen instead of redirecting
+    setRegisteredEmail(data.email);
+    setRegistrationComplete(true);
   };
 
   // Show loading or nothing while checking auth
@@ -83,6 +83,55 @@ export default function RegisterPage() {
       <Layout>
         <div className="container flex min-h-[70vh] items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Show confirmation screen after successful registration
+  if (registrationComplete) {
+    return (
+      <Layout>
+        <div className="container flex min-h-[70vh] items-center justify-center py-12">
+          <div className="mx-auto w-full max-w-md space-y-6 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Mail className="h-8 w-8 text-primary" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+                Check Your Email
+              </h1>
+              <p className="text-muted-foreground">
+                We've sent a verification link to
+              </p>
+              <p className="font-medium text-foreground">{registeredEmail}</p>
+            </div>
+            <div className="rounded-lg border border-border bg-muted/30 p-4 text-left text-sm">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-foreground">Next steps:</p>
+                  <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                    <li>Open your email inbox</li>
+                    <li>Click the verification link in our email</li>
+                    <li>Return here to sign in</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Didn't receive the email? Check your spam folder or{" "}
+              <button
+                onClick={() => setRegistrationComplete(false)}
+                className="font-medium text-foreground underline hover:text-primary"
+              >
+                try again
+              </button>
+            </p>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/account/login">Go to Sign In</Link>
+            </Button>
+          </div>
         </div>
       </Layout>
     );
