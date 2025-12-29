@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Heart, ShoppingBag, Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { QuantityInput } from "@/components/ui/quantity-input";
 import { ProductSpecs } from "./ProductSpecs";
 import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -68,9 +69,9 @@ export function ProductInfo({
   const { addItem } = useCart();
   const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(productId);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
-
   const activeVariants = variants.filter(v => v.is_active);
   const hasVariants = activeVariants.length > 0;
   const selectedVariant = activeVariants.find(v => v.id === selectedVariantId);
@@ -87,9 +88,13 @@ export function ProductInfo({
     }
 
     setIsAdding(true);
-    await addItem(productId, selectedVariantId);
+    // Add item with selected quantity
+    for (let i = 0; i < quantity; i++) {
+      await addItem(productId, selectedVariantId);
+    }
     setIsAdding(false);
     setJustAdded(true);
+    setQuantity(1); // Reset quantity after adding
     setTimeout(() => setJustAdded(false), 2000);
   };
 
@@ -173,29 +178,37 @@ export function ProductInfo({
 
       {/* Actions */}
       <div className="flex flex-col gap-4 pt-2">
-        <Button 
-          size="lg" 
-          className="w-full py-6 text-base"
-          onClick={handleAddToCart}
-          disabled={!canAddToCart || isAdding}
-        >
-          {isAdding ? (
-            <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Adding...
-            </>
-          ) : justAdded ? (
-            <>
-              <Check className="mr-2 h-5 w-5" />
-              Added to Cart
-            </>
-          ) : (
-            <>
-              <ShoppingBag className="mr-2 h-5 w-5" />
-              {hasVariants && !selectedVariantId ? "Select an option" : "Add to Cart"}
-            </>
-          )}
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <QuantityInput
+            value={quantity}
+            onChange={setQuantity}
+            disabled={isAdding}
+            className="shrink-0"
+          />
+          <Button 
+            size="lg" 
+            className="flex-1 py-5 text-base h-10"
+            onClick={handleAddToCart}
+            disabled={!canAddToCart || isAdding}
+          >
+            {isAdding ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Adding...
+              </>
+            ) : justAdded ? (
+              <>
+                <Check className="mr-2 h-5 w-5" />
+                Added to Cart
+              </>
+            ) : (
+              <>
+                <ShoppingBag className="mr-2 h-5 w-5" />
+                {hasVariants && !selectedVariantId ? "Select an option" : "Add to Cart"}
+              </>
+            )}
+          </Button>
+        </div>
         <Button 
           size="lg" 
           variant="outline"

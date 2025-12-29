@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Minus, Plus, Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QuantityInput } from "@/components/ui/quantity-input";
 import { useCart, CartItem as CartItemType } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
 
@@ -72,29 +73,12 @@ export function CartItem({ item }: CartItemProps) {
 
         {/* Quantity controls */}
         <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => updateQuantity(item.id, item.quantity - 1)}
-              disabled={item.quantity <= 1 || isUpdating}
-            >
-              <Minus className="h-3 w-3" />
-            </Button>
-            <span className="w-8 text-center font-medium tabular-nums">
-              {item.quantity}
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => updateQuantity(item.id, item.quantity + 1)}
-              disabled={isUpdating}
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div>
+          <QuantityInput
+            value={item.quantity}
+            onChange={(newQuantity) => updateQuantity(item.id, newQuantity)}
+            disabled={isUpdating}
+            size="sm"
+          />
           <Button
             variant="ghost"
             size="sm"
