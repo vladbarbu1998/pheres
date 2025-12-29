@@ -70,8 +70,11 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success("Welcome to Pheres! Your account has been created.");
-    navigate("/account", { replace: true });
+    toast.success(
+      "Account created! Please check your email and click the verification link to activate your account.",
+      { duration: 6000 }
+    );
+    navigate("/account/login", { replace: true });
   };
 
   // Show loading or nothing while checking auth
