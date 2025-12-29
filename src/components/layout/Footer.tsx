@@ -9,7 +9,7 @@ const footerLinks = {
   ],
   about: [
     { name: "Our Story", href: "/story" },
-    { name: "Press", href: "/press" },
+    { name: "Celebrities", href: "/celebrities" },
     { name: "Contact", href: "/contact" },
   ],
   help: [
