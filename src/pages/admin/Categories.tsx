@@ -409,7 +409,7 @@ export default function AdminCategories() {
                 <Label>Image</Label>
                 <ImageUploadField
                   value={formData.image_url}
-                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url }))}
                   folder="categories"
                   aspectRatio="square"
                   placeholder="Drag & drop a category image"

@@ -305,7 +305,7 @@ export default function AdminStory() {
                 <Label>Image (optional)</Label>
                 <ImageUploadField
                   value={formData.image_url}
-                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url }))}
                   folder="story"
                   aspectRatio="landscape"
                   placeholder="Drag & drop a section image"
