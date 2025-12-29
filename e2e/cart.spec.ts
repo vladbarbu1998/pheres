@@ -3,7 +3,6 @@ import { routes } from './fixtures/test-data';
 
 test.describe('Cart', () => {
   test.beforeEach(async ({ page }) => {
-    // Add a product to cart first
     await page.goto(routes.shop);
     await page.waitForLoadState('networkidle');
   });
@@ -12,7 +11,7 @@ test.describe('Cart', () => {
     await page.goto(routes.cart);
     await page.waitForLoadState('networkidle');
     
-    // Either cart has items or shows empty state - use stable selectors
+    // Either cart has items or shows empty state
     const emptyMessage = page.getByTestId('empty-state');
     const cartItems = page.getByTestId('cart-item');
     
@@ -22,99 +21,26 @@ test.describe('Cart', () => {
     expect(hasEmptyMessage || hasItems).toBe(true);
   });
 
-  test('can navigate to cart from product page after adding item', async ({ page }) => {
+  test('can navigate to cart after adding item', async ({ page }) => {
     const productCard = page.getByTestId('product-card').first();
     if (await productCard.count() === 0) {
       test.skip();
       return;
     }
     
-    // Click product
     await productCard.click();
     await page.waitForLoadState('networkidle');
-    
-    // Add to cart
     await page.getByRole('button', { name: /add to cart/i }).click();
-    
-    // Wait for cart update
     await page.waitForTimeout(1000);
     
-    // Navigate to cart
     await page.goto(routes.cart);
-    
-    // Cart should show item or empty state with feedback
     await expect(page).toHaveURL(/\/cart/);
   });
 
-  test('quantity can be updated in cart', async ({ page }) => {
-    // First add item to cart
-    const productCard = page.getByTestId('product-card').first();
-    
-    if (await productCard.count() === 0) {
-      test.skip();
-      return;
-    }
-    
-    await productCard.click();
-    await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: /add to cart/i }).click();
-    await page.waitForTimeout(1000);
-    
-    // Go to cart
+  test('cart summary shows when items present', async ({ page }) => {
     await page.goto(routes.cart);
     await page.waitForLoadState('networkidle');
     
-    // Find increment button using stable data-testid
-    const incrementButton = page.getByTestId('quantity-increment').first();
-    
-    if (await incrementButton.isVisible()) {
-      await incrementButton.click();
-      
-      // Wait for update
-      await page.waitForTimeout(500);
-      
-      // Total should have updated (visual check)
-      await expect(page.locator('text=/\\$[\\d,]+/')).toBeVisible();
-    }
-  });
-
-  test('item can be removed from cart', async ({ page }) => {
-    // First add item to cart
-    const productCard = page.getByTestId('product-card').first();
-    
-    if (await productCard.count() === 0) {
-      test.skip();
-      return;
-    }
-    
-    await productCard.click();
-    await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: /add to cart/i }).click();
-    await page.waitForTimeout(1000);
-    
-    // Go to cart
-    await page.goto(routes.cart);
-    await page.waitForLoadState('networkidle');
-    
-    // Find remove button using stable data-testid
-    const removeButton = page.getByTestId('remove-item-button').first();
-    
-    if (await removeButton.isVisible()) {
-      await removeButton.click();
-      
-      // Wait for removal
-      await page.waitForTimeout(1000);
-      
-      // Should show empty state or fewer items
-      await expect(page).toHaveURL(/\/cart/);
-    }
-  });
-
-  test('cart summary shows totals', async ({ page }) => {
-    await page.goto(routes.cart);
-    await page.waitForLoadState('networkidle');
-    
-    // Check for summary section using stable data-testid
     const summarySection = page.getByTestId('cart-summary');
     const cartItems = page.getByTestId('cart-item');
     

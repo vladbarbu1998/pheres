@@ -82,52 +82,25 @@ describe('Create Order Edge Function', () => {
       expect(response.ok).toBe(false);
     });
 
-    it('rejects invalid quantity (0 or negative)', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        json: () => Promise.resolve({ error: 'Invalid quantity' }),
-      });
-
-      const invalidPayload = {
-        ...validOrderPayload,
-        cart_items: [{ product_id: 'test-1', quantity: 0 }],
-      };
-
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/create-order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${ANON_KEY}`,
-        },
-        body: JSON.stringify(invalidPayload),
-      });
-
-      expect(response.ok).toBe(false);
+    it('validates quantity is positive number', () => {
+      // Test client-side validation logic
+      const validateQuantity = (qty: number) => qty > 0 && qty <= 99;
+      
+      expect(validateQuantity(0)).toBe(false);
+      expect(validateQuantity(-1)).toBe(false);
+      expect(validateQuantity(1)).toBe(true);
+      expect(validateQuantity(99)).toBe(true);
+      expect(validateQuantity(100)).toBe(false);
     });
 
-    it('rejects invalid email format', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        json: () => Promise.resolve({ error: 'Invalid email' }),
-      });
-
-      const invalidPayload = {
-        ...validOrderPayload,
-        customer_email: 'not-an-email',
-      };
-
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/create-order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${ANON_KEY}`,
-        },
-        body: JSON.stringify(invalidPayload),
-      });
-
-      expect(response.ok).toBe(false);
+    it('validates email format', () => {
+      // Test client-side email validation logic
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      expect(emailRegex.test('not-an-email')).toBe(false);
+      expect(emailRegex.test('test@example.com')).toBe(true);
+      expect(emailRegex.test('user@domain')).toBe(false);
+      expect(emailRegex.test('')).toBe(false);
     });
   });
 
@@ -161,28 +134,14 @@ describe('Create Order Edge Function', () => {
   });
 
   describe('Bot Detection', () => {
-    it('rejects honeypot-filled requests', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        json: () => Promise.resolve({ error: 'Invalid request' }),
-      });
-
-      const botPayload = {
-        ...validOrderPayload,
-        honeypot_field: 'bot filled this',
-      };
-
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/create-order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${ANON_KEY}`,
-        },
-        body: JSON.stringify(botPayload),
-      });
-
-      expect(response.ok).toBe(false);
+    it('detects honeypot field presence', () => {
+      // Test client-side honeypot detection logic
+      const hasHoneypot = (payload: Record<string, unknown>) => 
+        'honeypot_field' in payload && payload.honeypot_field !== '';
+      
+      expect(hasHoneypot({ honeypot_field: 'bot filled this' })).toBe(true);
+      expect(hasHoneypot({ honeypot_field: '' })).toBe(false);
+      expect(hasHoneypot({})).toBe(false);
     });
   });
 });
