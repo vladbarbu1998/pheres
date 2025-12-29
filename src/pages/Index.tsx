@@ -241,17 +241,12 @@ export default function Index() {
             Discover a world where every piece tells a story of exceptional 
             craftsmanship and timeless elegance.
           </p>
-          <div className="flex flex-col gap-4 sm:flex-row justify-center">
-            <Button asChild size="lg" className="group">
-              <Link to="/shop">
-                Explore the Collection
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/contact">Schedule a Consultation</Link>
-            </Button>
-          </div>
+          <Button asChild size="lg" className="group">
+            <Link to="/shop">
+              Explore the Collection
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Button>
         </div>
       </section>
     </Layout>
