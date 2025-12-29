@@ -18,7 +18,6 @@ const initialFilters: FilterState = {
   collectionId: null,
   minPrice: null,
   maxPrice: null,
-  metalType: null,
   stoneType: null,
 };
 
@@ -65,11 +64,18 @@ export default function ShopPage() {
     setPage(1);
   };
 
-  const categories = categoriesData || [];
+  const allCategories = categoriesData || [];
   const allCollections = collectionsData || [];
   const products = productsData?.products || [];
   const totalCount = productsData?.totalCount || 0;
   const totalPages = productsData?.totalPages || 1;
+
+  // Filter categories to only show those with active products
+  const activeCategoryIds = filterOptionsData?.activeCategoryIds || [];
+  const categories = useMemo(
+    () => allCategories.filter((c) => activeCategoryIds.includes(c.id)),
+    [allCategories, activeCategoryIds]
+  );
 
   // Filter collections to only show those with active products
   const activeCollectionIds = filterOptionsData?.activeCollectionIds || [];
@@ -78,8 +84,7 @@ export default function ShopPage() {
     [allCollections, activeCollectionIds]
   );
 
-  // Get dynamic metal and stone types from active products
-  const metalTypes = filterOptionsData?.metalTypes || [];
+  // Get dynamic stone types from active products
   const stoneTypes = filterOptionsData?.stoneTypes || [];
 
   const isLoading = productsLoading || categoriesLoading || collectionsLoading || filterOptionsLoading;
@@ -113,7 +118,6 @@ export default function ShopPage() {
           collections={collections}
           productCount={totalCount}
           isLoading={isLoading}
-          metalTypes={metalTypes}
           stoneTypes={stoneTypes}
         />
 
@@ -125,7 +129,6 @@ export default function ShopPage() {
             onFiltersChange={handleFiltersChange}
             categories={categories}
             collections={collections}
-            metalTypes={metalTypes}
             stoneTypes={stoneTypes}
           />
 

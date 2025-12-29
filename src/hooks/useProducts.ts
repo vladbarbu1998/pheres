@@ -122,10 +122,6 @@ export function useProducts({
         query = query.lte("base_price", filters.maxPrice);
       }
 
-      if (filters?.metalType) {
-        query = query.eq("metal_type", filters.metalType);
-      }
-
       // Filter by stone type - check both product.stone_type AND product_stones table
       if (filters?.stoneType && stoneProductIds !== null) {
         // Build OR filter: products where stone_type matches OR id is in stoneProductIds
@@ -228,11 +224,11 @@ export function useProductFilterOptions() {
   return useQuery({
     queryKey: ["product-filter-options"],
     queryFn: async () => {
-      // Fetch all active products with their metal_type, stone_type, collections, and product_stones
+      // Fetch all active products with their category_id, stone_type, collections, and product_stones
       const { data: products, error } = await supabase
         .from("products")
         .select(`
-          metal_type,
+          category_id,
           stone_type,
           product_collections (
             collection_id
@@ -245,14 +241,14 @@ export function useProductFilterOptions() {
 
       if (error) throw error;
 
-      // Extract distinct metal types
-      const metalTypes = Array.from(
+      // Extract distinct category IDs that have active products
+      const categoryIds = Array.from(
         new Set(
           (products || [])
-            .map((p) => p.metal_type)
-            .filter((m): m is string => !!m && m.trim() !== "")
+            .map((p) => p.category_id)
+            .filter((id): id is string => !!id)
         )
-      ).sort();
+      );
 
       // Extract distinct stone types from both product.stone_type and product_stones table
       const stoneTypesFromProducts = (products || [])
@@ -284,8 +280,8 @@ export function useProductFilterOptions() {
       );
 
       return {
-        metalTypes,
         stoneTypes,
+        activeCategoryIds: categoryIds,
         activeCollectionIds: collectionIds,
       };
     },

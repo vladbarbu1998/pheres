@@ -24,7 +24,6 @@ export interface FilterState {
   collectionId: string | null;
   minPrice: number | null;
   maxPrice: number | null;
-  metalType: string | null;
   stoneType: string | null;
 }
 
@@ -51,7 +50,6 @@ interface ShopFiltersProps {
   collections: Collection[];
   productCount: number;
   isLoading?: boolean;
-  metalTypes?: string[];
   stoneTypes?: string[];
 }
 
@@ -85,9 +83,8 @@ function FilterContent({
   onFiltersChange,
   categories,
   collections,
-  metalTypes = [],
   stoneTypes = [],
-}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "metalTypes" | "stoneTypes">) {
+}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes">) {
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
     onFiltersChange({
       ...filters,
@@ -107,13 +104,6 @@ function FilterContent({
       ...filters,
       minPrice: checked ? min : null,
       maxPrice: checked ? max : null,
-    });
-  };
-
-  const handleMetalChange = (metal: string, checked: boolean) => {
-    onFiltersChange({
-      ...filters,
-      metalType: checked ? metal : null,
     });
   };
 
@@ -199,31 +189,6 @@ function FilterContent({
         </div>
       </FilterSection>
 
-      {/* Metal Type */}
-      {metalTypes.length > 0 && (
-        <FilterSection title="Metal">
-          <div className="space-y-2">
-            {metalTypes.map((metal) => (
-              <div key={metal} className="flex items-center gap-2">
-                <Checkbox
-                  id={`metal-${metal}`}
-                  checked={filters.metalType === metal}
-                  onCheckedChange={(checked) =>
-                    handleMetalChange(metal, checked as boolean)
-                  }
-                />
-                <Label
-                  htmlFor={`metal-${metal}`}
-                  className="text-sm font-normal text-muted-foreground cursor-pointer"
-                >
-                  {metal}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </FilterSection>
-      )}
-
       {/* Stone Type */}
       {stoneTypes.length > 0 && (
         <FilterSection title="Stone">
@@ -261,7 +226,6 @@ export function ShopFilters({
   collections,
   productCount,
   isLoading,
-  metalTypes = [],
   stoneTypes = [],
 }: ShopFiltersProps) {
   const hasActiveFilters =
@@ -269,7 +233,6 @@ export function ShopFilters({
     filters.collectionId ||
     filters.minPrice !== null ||
     filters.maxPrice !== null ||
-    filters.metalType ||
     filters.stoneType;
 
   const clearFilters = () => {
@@ -278,7 +241,6 @@ export function ShopFilters({
       collectionId: null,
       minPrice: null,
       maxPrice: null,
-      metalType: null,
       stoneType: null,
     });
   };
@@ -309,7 +271,6 @@ export function ShopFilters({
                 onFiltersChange={onFiltersChange}
                 categories={categories}
                 collections={collections}
-                metalTypes={metalTypes}
                 stoneTypes={stoneTypes}
               />
               {hasActiveFilters && (
@@ -376,15 +337,13 @@ export function ShopFiltersSidebar({
   onFiltersChange,
   categories,
   collections,
-  metalTypes = [],
   stoneTypes = [],
-}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "metalTypes" | "stoneTypes">) {
+}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes">) {
   const hasActiveFilters =
     filters.categoryId ||
     filters.collectionId ||
     filters.minPrice !== null ||
     filters.maxPrice !== null ||
-    filters.metalType ||
     filters.stoneType;
 
   const clearFilters = () => {
@@ -393,7 +352,6 @@ export function ShopFiltersSidebar({
       collectionId: null,
       minPrice: null,
       maxPrice: null,
-      metalType: null,
       stoneType: null,
     });
   };
@@ -414,7 +372,6 @@ export function ShopFiltersSidebar({
           onFiltersChange={onFiltersChange}
           categories={categories}
           collections={collections}
-          metalTypes={metalTypes}
           stoneTypes={stoneTypes}
         />
       </div>
