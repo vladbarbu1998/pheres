@@ -4,6 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, ShoppingBag, ArrowLeft, Pencil } from "lucide-react";
+import { AddressFormDialog, type Address } from "@/components/address/AddressFormDialog";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ export default function Checkout() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | "new" | null>(null);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
   const {
     register,
@@ -187,6 +189,12 @@ export default function Checkout() {
 
   return (
     <Layout>
+      {/* Address Edit Dialog */}
+      <AddressFormDialog
+        address={editingAddress}
+        open={!!editingAddress}
+        onOpenChange={(open) => !open && setEditingAddress(null)}
+      />
       <div className="container mx-auto max-w-6xl px-4 py-8 lg:py-12">
         <Link
           to="/cart"
@@ -264,7 +272,7 @@ export default function Checkout() {
                             className="h-8 w-8 p-0"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/account/addresses?edit=${address.id}`);
+                              setEditingAddress(address as Address);
                             }}
                           >
                             <Pencil className="h-4 w-4" />
