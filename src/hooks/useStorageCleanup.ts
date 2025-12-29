@@ -21,28 +21,37 @@ export function useStorageCleanup() {
   return useMutation({
     mutationFn: async (fileUrls: string[]): Promise<CleanupResponse> => {
       if (!fileUrls || fileUrls.length === 0) {
+        console.log("[useStorageCleanup] No URLs provided, skipping");
         return { success: true, results: [], deletedCount: 0 };
       }
 
       // Filter out empty/null URLs
       const validUrls = fileUrls.filter((url) => url && url.trim() !== "");
       if (validUrls.length === 0) {
+        console.log("[useStorageCleanup] No valid URLs after filtering, skipping");
         return { success: true, results: [], deletedCount: 0 };
       }
 
-      console.log(`[useStorageCleanup] Requesting cleanup for ${validUrls.length} file(s)`);
+      console.log(`[useStorageCleanup] Requesting cleanup for ${validUrls.length} file(s):`, validUrls);
 
-      const { data, error } = await supabase.functions.invoke("storage-cleanup", {
-        body: { fileUrls: validUrls },
-      });
+      try {
+        const { data, error } = await supabase.functions.invoke("storage-cleanup", {
+          body: { fileUrls: validUrls },
+        });
 
-      if (error) {
-        console.error("[useStorageCleanup] Error:", error);
-        throw new Error(error.message || "Failed to cleanup files");
+        if (error) {
+          console.error("[useStorageCleanup] Function invoke error:", error);
+          // Don't throw - we don't want to break the UI if cleanup fails
+          return { success: false, results: [], deletedCount: 0 };
+        }
+
+        console.log(`[useStorageCleanup] Success:`, data);
+        return data as CleanupResponse;
+      } catch (err) {
+        console.error("[useStorageCleanup] Exception:", err);
+        // Graceful failure - don't break the UI
+        return { success: false, results: [], deletedCount: 0 };
       }
-
-      console.log(`[useStorageCleanup] Result:`, data);
-      return data as CleanupResponse;
     },
   });
 }
