@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHero } from "@/components/layout/PageHero";
 import { Diamond, Gem, Globe, Leaf } from "lucide-react";
@@ -123,12 +124,12 @@ export default function Story() {
             part of your legacy.
           </p>
           <div className="mt-8">
-            <a
-              href="/shop"
+            <Link
+              to="/shop"
               className="inline-flex items-center justify-center rounded-sm bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-luxury hover:bg-primary/90"
             >
               Explore the Collection
-            </a>
+            </Link>
           </div>
         </div>
       </section>
