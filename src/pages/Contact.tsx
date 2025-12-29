@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Mail, MapPin, Phone, Clock, Instagram, Send, CheckCircle } from "lucide-react";
+import { MapPin, Instagram, Send, CheckCircle, Clock } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must be less than 100 characters"),
@@ -45,6 +46,13 @@ const socialLinks = [
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  
+  const { 
+    checkRateLimit, 
+    recordAttempt, 
+    isRateLimited, 
+    secondsUntilReset 
+  } = useRateLimit(RATE_LIMIT_PRESETS.contactForm);
 
   const {
     register,
@@ -56,7 +64,18 @@ export default function Contact() {
   });
 
   const onSubmit = async (data: ContactFormData) => {
+    // Check rate limit before proceeding
+    if (!checkRateLimit()) {
+      toast({
+        title: "Too many attempts",
+        description: `Please wait ${Math.ceil(secondsUntilReset / 60)} minute(s) before sending another message.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
+    recordAttempt();
 
     try {
       const { error } = await supabase.from("contact_messages").insert({
@@ -178,9 +197,19 @@ export default function Contact() {
                   )}
                 </div>
 
-                <Button type="submit" size="lg" disabled={isSubmitting} className="w-full sm:w-auto">
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  disabled={isSubmitting || isRateLimited} 
+                  className="w-full sm:w-auto"
+                >
                   {isSubmitting ? (
                     "Sending..."
+                  ) : isRateLimited ? (
+                    <>
+                      <Clock className="mr-2 h-4 w-4" />
+                      Wait {Math.ceil(secondsUntilReset / 60)}m
+                    </>
                   ) : (
                     <>
                       Send Message

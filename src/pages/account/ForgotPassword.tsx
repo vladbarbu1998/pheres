@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle, Clock } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -21,6 +22,13 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { resetPassword } = useAuth();
+  
+  const { 
+    checkRateLimit, 
+    recordAttempt, 
+    isRateLimited, 
+    secondsUntilReset 
+  } = useRateLimit(RATE_LIMIT_PRESETS.passwordReset);
 
   const {
     register,
@@ -31,7 +39,15 @@ export default function ForgotPasswordPage() {
   });
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
+    // Check rate limit before proceeding
+    if (!checkRateLimit()) {
+      toast.error(`Too many reset attempts. Please wait ${Math.ceil(secondsUntilReset / 60)} minute(s).`);
+      return;
+    }
+    
     setIsLoading(true);
+    recordAttempt();
+    
     const { error } = await resetPassword(data.email);
     setIsLoading(false);
 
@@ -99,9 +115,13 @@ export default function ForgotPasswordPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Send Reset Link
+            <Button type="submit" className="w-full" size="lg" disabled={isLoading || isRateLimited}>
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : isRateLimited ? (
+                <Clock className="mr-2 h-4 w-4" />
+              ) : null}
+              {isRateLimited ? `Wait ${Math.ceil(secondsUntilReset / 60)}m` : "Send Reset Link"}
             </Button>
           </form>
 

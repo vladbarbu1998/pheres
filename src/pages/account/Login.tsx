@@ -3,13 +3,14 @@ import { Link, useNavigate, useLocation, useSearchParams } from "react-router-do
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Clock } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -25,6 +26,14 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  
+  const { 
+    checkRateLimit, 
+    recordAttempt, 
+    isRateLimited, 
+    secondsUntilReset,
+    reset: resetRateLimit 
+  } = useRateLimit(RATE_LIMIT_PRESETS.login);
 
   // Support both state-based redirect and query param redirect
   const redirectParam = searchParams.get("redirect");
@@ -47,7 +56,15 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    // Check rate limit before proceeding
+    if (!checkRateLimit()) {
+      toast.error(`Too many login attempts. Please wait ${Math.ceil(secondsUntilReset / 60)} minute(s).`);
+      return;
+    }
+    
     setIsLoading(true);
+    recordAttempt();
+    
     const { error } = await signIn(data.email, data.password);
     setIsLoading(false);
 
@@ -60,6 +77,8 @@ export default function LoginPage() {
       return;
     }
 
+    // Reset rate limit on successful login
+    resetRateLimit();
     toast.success("Welcome back!");
     navigate(from, { replace: true });
   };
@@ -134,9 +153,13 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+            <Button type="submit" className="w-full" size="lg" disabled={isLoading || isRateLimited}>
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : isRateLimited ? (
+                <Clock className="mr-2 h-4 w-4" />
+              ) : null}
+              {isRateLimited ? `Wait ${Math.ceil(secondsUntilReset / 60)}m` : "Sign In"}
             </Button>
           </form>
 
