@@ -216,6 +216,9 @@ export default function Celebrities() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="border-t border-border" />
+
       {/* Gallery Grid - directly after hero, no section heading */}
       <section className="py-12 md:py-16 lg:py-20">
         <div className="container max-w-5xl">
