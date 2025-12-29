@@ -169,8 +169,7 @@ export default function Celebrities() {
             Celebrities & Red Carpet Moments
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl animate-fade-in leading-relaxed" style={{ animationDelay: "100ms" }}>
-            From the Oscars to the Golden Globes, Pheres jewelry has adorned some of 
-            the world's most celebrated figures on the most prestigious stages.
+            Pheres jewelry has adorned some of the world's most celebrated figures on the most prestigious stages.
           </p>
         </div>
       </section>
