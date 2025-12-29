@@ -44,7 +44,7 @@ export default function Cart() {
           <h1 className="font-display text-3xl font-semibold text-foreground md:text-4xl mb-8">
             Your Cart
           </h1>
-          <div className="text-center py-16 border border-dashed border-border rounded-sm">
+          <div className="text-center py-16 border border-dashed border-border rounded-sm" data-testid="empty-state">
             <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground/50 mb-6" />
             <h2 className="font-display text-2xl font-semibold text-foreground mb-2">
               Your cart is empty

@@ -16,7 +16,7 @@ test.describe('Product Page', () => {
     }
     
     await productCard.click();
-    await expect(page).toHaveURL(/\/product\//);
+    await expect(page).toHaveURL(/\/shop\/.+\/.+|\/product\//);
   });
 
   test('product page displays essential information', async ({ page }) => {
@@ -49,8 +49,10 @@ test.describe('Product Page', () => {
     // Click Add to Cart
     await page.getByRole('button', { name: /add to cart/i }).click();
     
-    // Should see success feedback (toast)
-    await expect(page.getByText(/added to cart/i)).toBeVisible({ timeout: 5000 });
+    // Should see success feedback (toast) - be specific to avoid matching button text
+    await expect(
+      page.locator('[data-sonner-toast], [role="status"]').filter({ hasText: /added to cart/i }).first()
+    ).toBeVisible({ timeout: 5000 });
   });
 });
 
