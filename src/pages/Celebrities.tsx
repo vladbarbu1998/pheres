@@ -3,7 +3,7 @@ import { useCelebrityAppearances, type GroupedCelebrities, type CelebrityAppeara
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Crown, ArrowRight, MapPin, Calendar } from "lucide-react";
+import { Crown, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 
 const SECTION_TITLES: Record<string, string> = {
@@ -13,81 +13,66 @@ const SECTION_TITLES: Record<string, string> = {
   "Other Appearances": "More Moments",
 };
 
+function formatEventInfo(appearance: CelebrityAppearance): string | null {
+  const parts: string[] = [];
+  
+  if (appearance.event_name) {
+    parts.push(appearance.event_name);
+  }
+  
+  if (appearance.location) {
+    parts.push(appearance.location);
+  }
+  
+  if (appearance.event_date) {
+    try {
+      parts.push(format(new Date(appearance.event_date), "yyyy"));
+    } catch {
+      // Invalid date, skip
+    }
+  }
+  
+  return parts.length > 0 ? parts.join(", ") : null;
+}
+
 function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance; index: number }) {
-  const hasJewelryPhoto = !!appearance.jewelry_photo_url;
-  const hasEventName = !!appearance.event_name;
-  const hasEventDate = !!appearance.event_date;
-  const hasLocation = !!appearance.location;
-  const hasMetadata = hasEventDate || hasLocation;
+  const eventInfo = formatEventInfo(appearance);
 
   return (
     <article 
       className="group animate-fade-in"
-      style={{ animationDelay: `${index * 80}ms` }}
+      style={{ animationDelay: `${index * 60}ms` }}
     >
-      {/* Photos layout - adapts based on whether jewelry photo exists */}
-      <div className={`flex flex-col ${hasJewelryPhoto ? 'md:flex-row gap-4 md:gap-6' : ''}`}>
-        {/* Celebrity Photo */}
-        <div className={hasJewelryPhoto ? 'w-full md:w-2/3' : 'w-full'}>
-          <div className="aspect-[3/4] overflow-hidden bg-muted rounded-sm">
-            {appearance.image_url ? (
-              <img
-                src={appearance.image_url}
-                alt={appearance.event_name 
-                  ? `${appearance.celebrity_name} at ${appearance.event_name}` 
-                  : appearance.celebrity_name || "Celebrity"
-                }
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                <Crown className="h-16 w-16 text-primary/20" />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Jewelry Photo - Only render if present */}
-        {hasJewelryPhoto && (
-          <div className="w-full md:w-1/3 md:flex md:items-center">
-            <div className="aspect-square overflow-hidden bg-muted rounded-sm w-full">
-              <img
-                src={appearance.jewelry_photo_url!}
-                alt={`Jewelry worn by ${appearance.celebrity_name}`}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-              />
+      {/* Elegant framed image */}
+      <div className="bg-secondary/30 p-3 md:p-4 rounded-sm">
+        <div className="aspect-[4/5] overflow-hidden bg-muted">
+          {appearance.image_url ? (
+            <img
+              src={appearance.image_url}
+              alt={appearance.event_name 
+                ? `${appearance.celebrity_name} at ${appearance.event_name}` 
+                : appearance.celebrity_name || "Celebrity"
+              }
+              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
+              <Crown className="h-12 w-12 text-primary/20" />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* Caption - only show fields that have values */}
-      <div className="mt-5">
-        <h3 className="font-display text-xl font-semibold text-foreground tracking-tight">
+      {/* Minimal caption */}
+      <div className="mt-4 px-1">
+        <h3 className="font-display text-lg font-semibold text-foreground tracking-tight">
           {appearance.celebrity_name}
         </h3>
         
-        {hasEventName && (
-          <p className="mt-1 text-base text-primary font-medium">
-            {appearance.event_name}
+        {eventInfo && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            {eventInfo}
           </p>
-        )}
-        
-        {hasMetadata && (
-          <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            {hasEventDate && (
-              <span className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" />
-                {format(new Date(appearance.event_date!), "MMMM yyyy")}
-              </span>
-            )}
-            {hasLocation && (
-              <span className="flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" />
-                {appearance.location}
-              </span>
-            )}
-          </div>
         )}
       </div>
     </article>
@@ -103,15 +88,15 @@ function CelebritySection({ group, sectionIndex }: { group: GroupedCelebrities; 
       style={{ animationDelay: `${sectionIndex * 100}ms` }}
     >
       {/* Section Header */}
-      <div className="mb-10 md:mb-14">
+      <div className="mb-10 md:mb-12">
         <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground tracking-tight">
           {title}
         </h2>
         <div className="mt-3 h-px w-16 bg-primary/60" />
       </div>
 
-      {/* Grid of Cards */}
-      <div className="grid gap-12 md:gap-16 lg:grid-cols-2">
+      {/* Responsive Grid */}
+      <div className="grid gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {group.appearances.map((appearance, index) => (
           <CelebrityCard 
             key={appearance.id} 
@@ -126,22 +111,20 @@ function CelebritySection({ group, sectionIndex }: { group: GroupedCelebrities; 
 
 function LoadingSkeleton() {
   return (
-    <div className="space-y-20">
+    <div className="space-y-16">
       {Array.from({ length: 2 }).map((_, sectionIdx) => (
         <div key={sectionIdx}>
-          <Skeleton className="h-8 w-64 mb-10" />
-          <div className="grid gap-12 lg:grid-cols-2">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="space-y-4">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <Skeleton className="aspect-[3/4] w-full md:w-2/3" />
-                  <div className="w-full md:w-1/3 md:flex md:items-center">
-                    <Skeleton className="aspect-square w-full" />
-                  </div>
+          <Skeleton className="h-8 w-48 mb-10" />
+          <div className="grid gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i}>
+                <div className="bg-secondary/30 p-3 md:p-4 rounded-sm">
+                  <Skeleton className="aspect-[4/5] w-full" />
                 </div>
-                <Skeleton className="h-6 w-48" />
-                <Skeleton className="h-5 w-36" />
-                <Skeleton className="h-4 w-28" />
+                <div className="mt-4 px-1 space-y-2">
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
               </div>
             ))}
           </div>
@@ -202,7 +185,7 @@ export default function Celebrities() {
               </Button>
             </div>
           ) : hasAppearances ? (
-            <div className="space-y-20 md:space-y-28">
+            <div className="space-y-20 md:space-y-24">
               {groupedAppearances.map((group, sectionIndex) => (
                 <CelebritySection 
                   key={group.section} 
