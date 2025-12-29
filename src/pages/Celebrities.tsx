@@ -6,12 +6,8 @@ import { Link } from "react-router-dom";
 import { Crown, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 
-function formatEventInfo(appearance: CelebrityAppearance): string | null {
+function formatLocationYear(appearance: CelebrityAppearance): string | null {
   const parts: string[] = [];
-  
-  if (appearance.event_name) {
-    parts.push(appearance.event_name);
-  }
   
   if (appearance.location) {
     parts.push(appearance.location);
@@ -29,7 +25,7 @@ function formatEventInfo(appearance: CelebrityAppearance): string | null {
 }
 
 function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance; index: number }) {
-  const eventInfo = formatEventInfo(appearance);
+  const locationYear = formatLocationYear(appearance);
 
   return (
     <article 
@@ -60,9 +56,15 @@ function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance;
           {appearance.celebrity_name}
         </h3>
         
-        {eventInfo && (
-          <p className="mt-1 text-sm text-muted-foreground font-light">
-            {eventInfo}
+        {appearance.event_name && (
+          <p className="mt-1 text-base text-primary font-medium">
+            {appearance.event_name}
+          </p>
+        )}
+        
+        {locationYear && (
+          <p className="mt-0.5 text-sm text-muted-foreground font-light">
+            {locationYear}
           </p>
         )}
       </div>
