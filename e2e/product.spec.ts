@@ -32,7 +32,7 @@ test.describe('Product Page', () => {
     
     // Check for product name and Add to Cart button
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.getByRole('button', { name: /add to cart/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /add to cart/i }).first()).toBeVisible();
   });
 
   test('can add product to cart', async ({ page }) => {
@@ -47,7 +47,7 @@ test.describe('Product Page', () => {
     await page.waitForLoadState('networkidle');
     
     // Click Add to Cart
-    await page.getByRole('button', { name: /add to cart/i }).click();
+    await page.getByRole('button', { name: /add to cart/i }).first().click();
     
     // Should see success feedback (toast) - be specific to avoid matching button text
     await expect(

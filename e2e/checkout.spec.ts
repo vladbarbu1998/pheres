@@ -11,13 +11,14 @@ test.describe('Checkout Flow (Guest)', () => {
     if (await productCard.count() > 0) {
       await productCard.click();
       await page.waitForLoadState('networkidle');
-      await page.getByRole('button', { name: /add to cart/i }).click();
+      await page.getByRole('button', { name: /add to cart/i }).first().click();
       await page.waitForTimeout(1000);
     }
   });
 
   test('checkout page is accessible', async ({ page }) => {
-    await page.goto(routes.checkout);
+    await page.goto(routes.checkout, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
     // Should be on cart or checkout
     await expect(page).toHaveURL(/\/(cart|checkout)/);
   });
@@ -38,8 +39,8 @@ test.describe('Checkout Flow (Guest)', () => {
   });
 
   test('can fill shipping form', async ({ page }) => {
-    await page.goto(routes.checkout);
-    await page.waitForLoadState('networkidle');
+    await page.goto(routes.checkout, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
     
     const emailInput = page.locator('input[type="email"]').first();
     
