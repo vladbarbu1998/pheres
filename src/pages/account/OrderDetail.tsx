@@ -153,21 +153,9 @@ export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: order, isLoading, isError } = useOrder(id || "");
 
-  if (isLoading) {
+  if (isError || (!isLoading && !order)) {
     return (
-      <AccountLayout title="Order Details">
-        <div className="space-y-4">
-          <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-16" />
-          <Skeleton className="h-32" />
-        </div>
-      </AccountLayout>
-    );
-  }
-
-  if (isError || !order) {
-    return (
-      <AccountLayout title="Order Details">
+      <AccountLayout title="Order Details" isLoading={false}>
         <div className="text-center py-8">
           <p className="text-muted-foreground text-sm">Order not found.</p>
           <Button asChild variant="outline" size="sm" className="mt-3">
@@ -182,7 +170,8 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <AccountLayout title="Order Details">
+    <AccountLayout title="Order Details" isLoading={isLoading}>
+      {order && (
       <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
         {/* Back link */}
         <Button asChild variant="ghost" size="sm" className="h-8 px-2">
@@ -360,6 +349,7 @@ export default function OrderDetailPage() {
           </Card>
         )}
       </div>
+      )}
     </AccountLayout>
   );
 }
