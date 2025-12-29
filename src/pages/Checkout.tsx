@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, ShoppingBag, Pencil } from "lucide-react";
+import { Loader2, ShoppingBag, Pencil, Clock } from "lucide-react";
 import { AddressFormDialog, type Address } from "@/components/address/AddressFormDialog";
 import { Layout } from "@/components/layout/Layout";
 import { CartCheckoutLayout } from "@/components/cart/CartCheckoutLayout";
@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useProfile, useAddresses } from "@/hooks/useAccount";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
 
 const checkoutSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -47,6 +48,14 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | "new" | null>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  
+  const { 
+    checkRateLimit, 
+    recordAttempt, 
+    isRateLimited, 
+    secondsUntilReset,
+    reset: resetRateLimit 
+  } = useRateLimit(RATE_LIMIT_PRESETS.checkout);
 
   const {
     register,
@@ -122,7 +131,15 @@ export default function Checkout() {
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (isSubmitting) return;
+    
+    // Check rate limit before proceeding
+    if (!checkRateLimit()) {
+      toast.error(`Too many checkout attempts. Please wait ${Math.ceil(secondsUntilReset / 60)} minute(s).`);
+      return;
+    }
+    
     setIsSubmitting(true);
+    recordAttempt();
 
     try {
       const cartPayload = items.map((item) => ({
@@ -158,6 +175,9 @@ export default function Checkout() {
         throw new Error(result?.error || "Failed to create order");
       }
 
+      // Reset rate limit on successful order
+      resetRateLimit();
+      
       // Clear local cart (server already cleared DB cart)
       await clearCart();
 
@@ -507,12 +527,17 @@ export default function Checkout() {
         type="submit"
         size="lg"
         className="w-full mt-6"
-        disabled={isSubmitting}
+        disabled={isSubmitting || isRateLimited}
       >
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Placing Order...
+          </>
+        ) : isRateLimited ? (
+          <>
+            <Clock className="mr-2 h-4 w-4" />
+            Wait {Math.ceil(secondsUntilReset / 60)}m
           </>
         ) : (
           "Place Order"

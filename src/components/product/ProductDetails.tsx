@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface ProductDetailsProps {
   description?: string | null;
@@ -21,11 +22,10 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
             About This Piece
           </h2>
           {description ? (
-            <div className="prose prose-neutral dark:prose-invert max-w-none">
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                {description}
-              </p>
-            </div>
+            <div 
+              className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
+            />
           ) : (
             <p className="text-muted-foreground leading-relaxed">
               Each Pheres piece is meticulously crafted by master artisans, combining 
