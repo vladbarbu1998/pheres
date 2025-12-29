@@ -78,9 +78,23 @@ export default function Checkout() {
     }
   }, [profile, setValue]);
 
-  // Prefill address if selected
+  // Set default address when addresses load
   useEffect(() => {
-    if (selectedAddressId !== "new" && addresses) {
+    if (addresses && addresses.length > 0) {
+      // Only set default if no address is currently selected
+      if (selectedAddressId === null) {
+        const defaultAddr = addresses.find((a) => a.is_default) || addresses[0];
+        setSelectedAddressId(defaultAddr.id);
+      }
+    } else if (addresses && addresses.length === 0) {
+      // No saved addresses, default to new
+      setSelectedAddressId("new");
+    }
+  }, [addresses]);
+
+  // Prefill address fields when selection changes
+  useEffect(() => {
+    if (selectedAddressId && selectedAddressId !== "new" && addresses) {
       const address = addresses.find((a) => a.id === selectedAddressId);
       if (address) {
         setValue("shipping_first_name", address.first_name);
@@ -95,16 +109,6 @@ export default function Checkout() {
       }
     }
   }, [selectedAddressId, addresses, setValue]);
-
-  // Set default address when loaded
-  useEffect(() => {
-    if (addresses && addresses.length > 0 && selectedAddressId === null) {
-      const defaultAddr = addresses.find((a) => a.is_default) || addresses[0];
-      setSelectedAddressId(defaultAddr.id);
-    } else if ((!addresses || addresses.length === 0) && selectedAddressId === null) {
-      setSelectedAddressId("new");
-    }
-  }, [addresses, selectedAddressId]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -221,11 +225,11 @@ export default function Checkout() {
                 <h2 className="font-display text-xl font-medium">Shipping Address</h2>
 
                 {/* Address selector for logged-in users with addresses */}
-                {user && addresses && addresses.length > 0 && (
+                {user && addresses && addresses.length > 0 && selectedAddressId !== null && (
                   <div className="space-y-3">
                     <Label>Saved Addresses</Label>
                     <RadioGroup
-                      value={selectedAddressId || ""}
+                      value={selectedAddressId}
                       onValueChange={(val) => setSelectedAddressId(val as string | "new")}
                       className="space-y-2"
                     >
