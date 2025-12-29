@@ -2,35 +2,48 @@ import { test, expect } from '@playwright/test';
 import { routes, validShippingAddress } from './fixtures/test-data';
 
 test.describe('Checkout Flow (Guest)', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, browserName }) => {
+    // Increase timeout for Firefox which is slower
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
     await page.goto(routes.shop);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     const productCard = page.getByTestId('product-card').first();
     
     if (await productCard.count() > 0) {
       await productCard.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       await page.getByRole('button', { name: /add to cart/i }).first().click();
       await page.waitForTimeout(1000);
     }
   });
 
-  test('checkout page is accessible', async ({ page }) => {
+  test('checkout page is accessible', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
     await page.goto(routes.checkout, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    // Use selector-based waiting instead of networkidle for Firefox compatibility
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 }).catch(() => {});
     // Should be on cart or checkout
     await expect(page).toHaveURL(/\/(cart|checkout)/);
   });
 
-  test('can navigate to checkout from cart', async ({ page }) => {
-    await page.goto(routes.cart);
-    await page.waitForLoadState('networkidle');
+  test('can navigate to checkout from cart', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
+    await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });
     
     const checkoutButton = page.getByTestId('checkout-button');
     
     // Wait for button to be visible before checking
-    await checkoutButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    await checkoutButton.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
     
     if (await checkoutButton.isVisible()) {
       await checkoutButton.click();
@@ -38,9 +51,13 @@ test.describe('Checkout Flow (Guest)', () => {
     }
   });
 
-  test('can fill shipping form', async ({ page }) => {
+  test('can fill shipping form', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
     await page.goto(routes.checkout, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 }).catch(() => {});
     
     const emailInput = page.locator('input[type="email"]').first();
     
