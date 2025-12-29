@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useCelebrityAppearances, type CelebrityAppearance } from "@/hooks/usePress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +8,10 @@ import { Link } from "react-router-dom";
 import { Crown, ArrowRight, Search, X } from "lucide-react";
 import { format } from "date-fns";
 import { useDebounce } from "@/hooks/useDebounce";
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import "yet-another-react-lightbox/styles.css";
+
 function formatLocationYear(appearance: CelebrityAppearance): string | null {
   const parts: string[] = [];
   
@@ -26,7 +30,13 @@ function formatLocationYear(appearance: CelebrityAppearance): string | null {
   return parts.length > 0 ? parts.join(", ") : null;
 }
 
-function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance; index: number }) {
+interface CelebrityCardProps {
+  appearance: CelebrityAppearance;
+  index: number;
+  onImageClick: () => void;
+}
+
+function CelebrityCard({ appearance, index, onImageClick }: CelebrityCardProps) {
   const locationYear = formatLocationYear(appearance);
 
   return (
@@ -34,8 +44,13 @@ function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance;
       className="group animate-fade-in"
       style={{ animationDelay: `${index * 60}ms` }}
     >
-      {/* Image container - shows full image without cropping */}
-      <div className="bg-background flex items-center justify-center">
+      {/* Image container - clickable for lightbox */}
+      <button
+        type="button"
+        onClick={onImageClick}
+        className="w-full bg-background flex items-center justify-center cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-sm"
+        aria-label={`View larger image of ${appearance.celebrity_name}`}
+      >
         {appearance.image_url ? (
           <img
             src={appearance.image_url}
@@ -44,15 +59,16 @@ function CelebrityCard({ appearance, index }: { appearance: CelebrityAppearance;
               : appearance.celebrity_name || "Celebrity"
             }
             className="w-full h-auto max-h-[600px] object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.01]"
+            loading="lazy"
           />
         ) : (
           <div className="w-full aspect-square flex items-center justify-center bg-secondary/30">
             <Crown className="h-12 w-12 text-muted-foreground/30" />
           </div>
         )}
-      </div>
+      </button>
 
-      {/* Caption */}
+      {/* Caption - not clickable */}
       <div className="mt-5">
         <h3 className="font-display text-lg font-semibold text-foreground tracking-tight">
           {appearance.celebrity_name}
@@ -125,6 +141,7 @@ function NoResultsState({ onClear }: { onClear: () => void }) {
 export default function Celebrities() {
   const { data: appearances, isLoading, isError, refetch } = useCelebrityAppearances();
   const [searchQuery, setSearchQuery] = useState("");
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
   const debouncedQuery = useDebounce(searchQuery, 250);
 
   // Filter appearances based on search query
@@ -150,6 +167,31 @@ export default function Celebrities() {
       );
     });
   }, [appearances, debouncedQuery]);
+
+  // Prepare slides for lightbox from filtered appearances (only those with images)
+  const appearancesWithImages = useMemo(() => {
+    return filteredAppearances.filter((a) => a.image_url);
+  }, [filteredAppearances]);
+
+  const lightboxSlides = useMemo(() => {
+    return appearancesWithImages.map((appearance) => ({
+      src: appearance.image_url!,
+      alt: appearance.event_name 
+        ? `${appearance.celebrity_name} at ${appearance.event_name}` 
+        : appearance.celebrity_name || "Celebrity",
+    }));
+  }, [appearancesWithImages]);
+
+  const openLightbox = useCallback((index: number) => {
+    const appearance = filteredAppearances[index];
+    if (appearance?.image_url) {
+      const lightboxIdx = appearancesWithImages.findIndex((a) => a.id === appearance.id);
+      setLightboxIndex(lightboxIdx);
+    }
+  }, [filteredAppearances, appearancesWithImages]);
+
+  // Get current appearance for lightbox caption
+  const currentLightboxAppearance = lightboxIndex >= 0 ? appearancesWithImages[lightboxIndex] : null;
 
   const hasAppearances = appearances && appearances.length > 0;
   const hasFilteredResults = filteredAppearances.length > 0;
@@ -225,6 +267,7 @@ export default function Celebrities() {
                     key={appearance.id} 
                     appearance={appearance} 
                     index={index}
+                    onImageClick={() => openLightbox(index)}
                   />
                 ))}
               </div>
@@ -258,6 +301,50 @@ export default function Celebrities() {
           </div>
         </section>
       )}
+
+      {/* Lightbox */}
+      <Lightbox
+        open={lightboxIndex >= 0}
+        close={() => setLightboxIndex(-1)}
+        index={lightboxIndex}
+        slides={lightboxSlides}
+        plugins={[Zoom]}
+        on={{
+          view: ({ index }) => setLightboxIndex(index),
+        }}
+        zoom={{
+          maxZoomPixelRatio: 3,
+          zoomInMultiplier: 2,
+        }}
+        carousel={{
+          finite: false,
+        }}
+        controller={{
+          closeOnBackdropClick: true,
+        }}
+        styles={{
+          container: { backgroundColor: "rgba(0, 0, 0, 0.9)" },
+        }}
+        render={{
+          slideFooter: () => {
+            if (!currentLightboxAppearance) return null;
+            return (
+              <div className="absolute bottom-0 left-0 right-0 p-4 text-center bg-gradient-to-t from-black/60 to-transparent">
+                {currentLightboxAppearance.celebrity_name && (
+                  <p className="font-display text-lg font-semibold text-white">
+                    {currentLightboxAppearance.celebrity_name}
+                  </p>
+                )}
+                {currentLightboxAppearance.event_name && (
+                  <p className="text-sm text-white/80 mt-1">
+                    {currentLightboxAppearance.event_name}
+                  </p>
+                )}
+              </div>
+            );
+          },
+        }}
+      />
     </Layout>
   );
 }
