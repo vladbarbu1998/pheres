@@ -114,7 +114,7 @@ export function ProductCard({
       <article className={cn("group relative", className)} style={style}>
         {/* Image container */}
         <Link to={`/product/${slug}`} className="block">
-          <div className="relative aspect-[3/4] overflow-hidden bg-secondary/50">
+          <div className="relative aspect-square overflow-hidden bg-secondary/50">
             {imageUrl ? (
               <img
                 src={imageUrl}
