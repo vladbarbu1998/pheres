@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useAuth } from "@/contexts/AuthContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const navItems = [
   { name: "Overview", href: "/account", icon: User },
@@ -18,9 +19,23 @@ interface AccountLayoutProps {
   children: React.ReactNode;
   title: string;
   description?: string;
+  isLoading?: boolean;
 }
 
-export function AccountLayout({ children, title, description }: AccountLayoutProps) {
+// Loading skeleton with consistent height
+function AccountLoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-8 w-48" />
+      <div className="space-y-4">
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
+      </div>
+    </div>
+  );
+}
+
+export function AccountLayout({ children, title, description, isLoading }: AccountLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
@@ -35,18 +50,18 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
       <Header />
       <main className="flex-1">
         <div className="container py-8 lg:py-12">
-          {/* Page Header - fixed height to prevent layout shift */}
-          <div className="mb-8 min-h-[60px]">
+          {/* Page Header - consistent height across all pages */}
+          <div className="mb-8 h-[60px] flex flex-col justify-center">
             <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
               {title}
             </h1>
             {description && (
-              <p className="mt-2 text-muted-foreground">{description}</p>
+              <p className="mt-1 text-sm text-muted-foreground lg:text-base">{description}</p>
             )}
           </div>
 
           <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
-            {/* Sidebar Navigation - fixed width */}
+            {/* Sidebar Navigation - fixed width, consistent across all pages */}
             <aside className="lg:w-64 lg:shrink-0">
               <nav className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:flex-col lg:gap-1">
                 {navItems.map((item) => {
@@ -81,8 +96,16 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
               </nav>
             </aside>
 
-            {/* Main Content - consistent min height */}
-            <div className="flex-1 min-w-0 min-h-[400px]">{children}</div>
+            {/* Main Content - consistent min height and spacing */}
+            <div className="flex-1 min-w-0 min-h-[400px]">
+              {isLoading ? (
+                <AccountLoadingSkeleton />
+              ) : (
+                <div className="space-y-6">
+                  {children}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>

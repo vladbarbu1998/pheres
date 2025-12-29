@@ -22,14 +22,8 @@ export default function OrdersPage() {
   const { data: orders, isLoading, isError, refetch } = useOrders();
 
   return (
-    <AccountLayout title="Orders" description="View and track your orders">
-      {isLoading ? (
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
-        </div>
-      ) : isError ? (
+    <AccountLayout title="Orders" description="View and track your orders" isLoading={isLoading}>
+      {isError ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">Something went wrong loading your orders.</p>
           <Button onClick={() => refetch()} variant="outline" className="mt-4">

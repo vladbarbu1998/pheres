@@ -27,14 +27,8 @@ export default function FavoritesPage() {
   });
 
   return (
-    <AccountLayout title="Favorites" description="Your saved items">
-      {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-[3/4]" />
-          ))}
-        </div>
-      ) : isError ? (
+    <AccountLayout title="Favorites" description="Your saved items" isLoading={isLoading}>
+      {isError ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">Something went wrong loading your favorites.</p>
           <Button onClick={() => refetch()} variant="outline" className="mt-4">
@@ -55,7 +49,7 @@ export default function FavoritesPage() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {favorites?.map((favorite) => {
             const product = favorite.products as any;
             if (!product) return null;
