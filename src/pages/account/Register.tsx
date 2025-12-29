@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,9 @@ const registerSchema = z.object({
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/[0-9]/, "Password must contain at least one number"),
   confirmPassword: z.string(),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -173,6 +177,38 @@ export default function RegisterPage() {
               />
               {errors.confirmPassword && (
                 <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  id="consent"
+                  {...register("consent")}
+                  onCheckedChange={(checked) => {
+                    const event = {
+                      target: { name: "consent", value: checked === true },
+                    };
+                    register("consent").onChange(event as any);
+                  }}
+                  className={errors.consent ? "border-destructive" : ""}
+                />
+                <label
+                  htmlFor="consent"
+                  className="text-sm leading-tight text-muted-foreground cursor-pointer"
+                >
+                  I agree to the{" "}
+                  <Link to="/terms" className="text-foreground underline hover:text-primary">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy" className="text-foreground underline hover:text-primary">
+                    Privacy Policy
+                  </Link>
+                </label>
+              </div>
+              {errors.consent && (
+                <p className="text-sm text-destructive">{errors.consent.message}</p>
               )}
             </div>
 
