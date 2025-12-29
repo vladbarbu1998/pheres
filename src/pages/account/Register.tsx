@@ -154,6 +154,9 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              <p className="text-xs text-muted-foreground">
+                At least 8 characters with uppercase, lowercase, and a number
+              </p>
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
