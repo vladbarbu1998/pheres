@@ -31,7 +31,7 @@ export default function Story() {
       <PageHero
         label="PHERES"
         title="Our Story"
-        intro="A highly exclusive Italian fashion house creating one-of-a-kind fine jewelry for connoisseurs who appreciate true opulence."
+        intro="Creating unique luxury experiences that walk the fine line between elegance and extravagance—boldly innovating a symbiosis of style."
       />
 
       {/* Founder Section */}
