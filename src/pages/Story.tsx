@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHero } from "@/components/layout/PageHero";
+import { BiographyViewer } from "@/components/story/BiographyViewer";
 import { Diamond, Gem, Globe, Leaf } from "lucide-react";
 import narcisaPhoto from "@/assets/narcisa-pheres-founder.jpg";
 const values = [
@@ -76,6 +77,27 @@ export default function Story() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Designer Biography Section */}
+      <section className="border-t border-border/50 py-16 md:py-24">
+        <div className="container max-w-6xl">
+          <div className="mb-12 text-center md:mb-16">
+            <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
+              The Journey
+            </p>
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              Designer Biography
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+              Discover the remarkable journey of Narcisa Pheres — from her education at 
+              Instituto di Moda Burgo in Milan to becoming a globally recognized luxury jewelry 
+              designer whose creations grace the world's most prestigious red carpets.
+            </p>
+          </div>
+
+          <BiographyViewer />
         </div>
       </section>
 
