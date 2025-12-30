@@ -6,7 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
 
 interface ProductImage {
   id: string;
@@ -218,7 +220,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         close={() => setLightboxOpen(false)}
         index={selectedIndex}
         slides={lightboxSlides}
-        plugins={[Zoom]}
+        plugins={[Zoom, Thumbnails]}
         on={{
           view: ({ index }) => {
             setSelectedIndex(index);
