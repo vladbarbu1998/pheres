@@ -7,7 +7,7 @@ interface ProductCardSkeletonProps {
 
 export function ProductCardSkeleton({ className }: ProductCardSkeletonProps) {
   return (
-    <div className={cn("animate-pulse", className)}>
+    <div className={cn("animate-pulse", className)} data-testid="product-skeleton">
       {/* Image skeleton */}
       <Skeleton className="aspect-[3/4] w-full" />
 
