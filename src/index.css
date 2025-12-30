@@ -172,18 +172,27 @@
 
 /* Mobile toast positioning - center on small screens */
 @media (max-width: 767px) {
-  [data-sonner-toaster] {
+  /* Override Sonner's inline positioning styles */
+  [data-sonner-toaster][data-x-position] {
     top: auto !important;
     bottom: 80px !important;
-    left: 0 !important;
-    right: 0 !important;
+    left: 16px !important;
+    right: 16px !important;
     transform: none !important;
-    display: flex !important;
-    justify-content: center !important;
+    width: auto !important;
   }
   
+  /* Center the toast list container */
+  [data-sonner-toaster] > ol {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  
+  /* Set toast width */
   [data-sonner-toaster] [data-sonner-toast] {
-    width: calc(100vw - 32px) !important;
+    width: 100% !important;
     max-width: 400px !important;
   }
 }
