@@ -132,26 +132,28 @@ function MainProductCard({ product }: { product: ProductWithImages }) {
             New
           </span>
         )}
-      </div>
-      
-      {/* Product Details - Below Image */}
-      <div className="pt-3 space-y-0.5 md:pt-4 md:space-y-1">
-        {collectionName && (
-          <p className="text-[9px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
-            {collectionName}
-          </p>
-        )}
-        <h3 className="font-display text-sm font-medium text-foreground transition-colors group-hover:text-primary md:text-lg">
-          {product.name}
-        </h3>
-        <p className="text-xs text-foreground md:text-sm">
-          ${Number(product.base_price).toLocaleString()}
-          {product.compare_at_price && product.compare_at_price > product.base_price && (
-            <span className="ml-1.5 text-[10px] text-muted-foreground line-through md:text-xs">
-              ${Number(product.compare_at_price).toLocaleString()}
-            </span>
-          )}
-        </p>
+        
+        {/* Product Info Overlay - Bottom Left (no gradient, no View Details) */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+          <div className="space-y-0.5 md:space-y-1">
+            {collectionName && (
+              <p className="text-[9px] font-medium uppercase tracking-[0.15em] text-foreground/80 md:text-[11px]">
+                {collectionName}
+              </p>
+            )}
+            <h3 className="font-display text-sm font-medium text-foreground md:text-lg">
+              {product.name}
+            </h3>
+            <p className="text-xs text-foreground md:text-sm">
+              ${Number(product.base_price).toLocaleString()}
+              {product.compare_at_price && product.compare_at_price > product.base_price && (
+                <span className="ml-1.5 text-[10px] text-foreground/60 line-through md:text-xs">
+                  ${Number(product.compare_at_price).toLocaleString()}
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
       </div>
     </Link>
   );
