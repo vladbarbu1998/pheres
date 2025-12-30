@@ -85,7 +85,7 @@ export function BrandHeritageSection() {
 
               {/* Brand Pillars */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-10 border-t border-border/50 mt-10">
-                <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
+                <div className="flex flex-col items-start gap-2 text-left">
                   <Gem className="h-5 w-5 text-primary" />
                   <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
                     Handcrafted Excellence
@@ -94,7 +94,7 @@ export function BrandHeritageSection() {
                     Each piece meticulously crafted by master artisans
                   </p>
                 </div>
-                <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
+                <div className="flex flex-col items-start gap-2 text-left">
                   <Award className="h-5 w-5 text-primary" />
                   <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
                     Timeless Design
