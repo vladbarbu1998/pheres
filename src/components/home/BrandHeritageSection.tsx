@@ -87,7 +87,7 @@ export function BrandHeritageSection() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 border-t border-border/50 mt-10">
                 <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
                   <Gem className="h-5 w-5 text-primary" />
-                  <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-foreground">
+                  <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
                     Handcrafted Excellence
                   </h4>
                   <p className="text-sm text-muted-foreground">
@@ -96,7 +96,7 @@ export function BrandHeritageSection() {
                 </div>
                 <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
                   <Shield className="h-5 w-5 text-primary" />
-                  <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-foreground">
+                  <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
                     Ethically Sourced
                   </h4>
                   <p className="text-sm text-muted-foreground">
@@ -105,7 +105,7 @@ export function BrandHeritageSection() {
                 </div>
                 <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
                   <Award className="h-5 w-5 text-primary" />
-                  <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-foreground">
+                  <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
                     Timeless Design
                   </h4>
                   <p className="text-sm text-muted-foreground">
