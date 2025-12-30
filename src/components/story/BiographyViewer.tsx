@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Lightbox from "yet-another-react-lightbox";
@@ -21,6 +21,7 @@ export function BiographyViewer() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const thumbnailsRef = useRef<HTMLDivElement>(null);
 
   // Lazy load - only render when section comes into view
   useEffect(() => {
@@ -59,6 +60,20 @@ export function BiographyViewer() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goToPrevious, goToNext]);
+
+  // Scroll thumbnail into view when page changes
+  useEffect(() => {
+    if (thumbnailsRef.current) {
+      const container = thumbnailsRef.current;
+      const activeThumb = container.children[currentPage] as HTMLElement;
+      if (activeThumb) {
+        const containerRect = container.getBoundingClientRect();
+        const thumbRect = activeThumb.getBoundingClientRect();
+        const scrollLeft = activeThumb.offsetLeft - containerRect.width / 2 + thumbRect.width / 2;
+        container.scrollTo({ left: scrollLeft, behavior: "smooth" });
+      }
+    }
+  }, [currentPage]);
 
   return (
     <div ref={containerRef} className="w-full">
@@ -127,7 +142,7 @@ export function BiographyViewer() {
               </div>
 
               {/* Controls bar */}
-              <div className="flex items-center justify-between border-t border-border/50 px-4 py-3">
+              <div className="flex items-center justify-between border-t border-border/50 px-3 py-2 sm:px-4 sm:py-3">
                 {/* Mobile navigation */}
                 <Button
                   variant="ghost"
@@ -160,9 +175,13 @@ export function BiographyViewer() {
                 </Button>
               </div>
 
-              {/* Page thumbnails - horizontal scroll on mobile */}
-              <div className="border-t border-border/50 px-4 py-3">
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-muted">
+              {/* Page thumbnails - swipeable carousel */}
+              <div className="border-t border-border/50 px-2 py-2 sm:px-4 sm:py-3">
+                <div 
+                  ref={thumbnailsRef}
+                  className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-2 sm:pb-2"
+                  style={{ WebkitOverflowScrolling: "touch" }}
+                >
                   {pages.map((page, index) => (
                     <button
                       key={index}
@@ -171,9 +190,9 @@ export function BiographyViewer() {
                         setCurrentPage(index);
                       }}
                       className={cn(
-                        "relative flex-shrink-0 overflow-hidden rounded-sm transition-all",
+                        "relative flex-shrink-0 snap-center overflow-hidden rounded-sm transition-all",
                         currentPage === index
-                          ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                          ? "ring-2 ring-primary ring-offset-1 ring-offset-background sm:ring-offset-2"
                           : "opacity-60 hover:opacity-100"
                       )}
                       aria-label={`Go to page ${index + 1}`}
