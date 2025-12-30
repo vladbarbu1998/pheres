@@ -83,9 +83,17 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
   
-  /* Prevent lightbox from adding extra padding when scrollbar-gutter is already stable */
+  /* Prevent lightbox from adding extra padding/margin when scrollbar-gutter is already stable */
   body.yarl__no_scroll {
     padding-right: 0 !important;
+    margin-right: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  /* Ensure scrollbar gutter remains stable when lightbox is open */
+  html:has(body.yarl__no_scroll) {
+    scrollbar-gutter: stable !important;
+    overflow-y: scroll !important;
   }
   
   h1, h2, h3, h4, h5, h6 {
