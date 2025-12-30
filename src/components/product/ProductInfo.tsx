@@ -41,6 +41,7 @@ interface ProductInfoProps {
   shortDescription?: string | null;
   collectionName?: string | null;
   collectionSlug?: string | null;
+  productCode?: string | null;
   metalType?: string | null;
   metalWeight?: string | null;
   grossWeight?: string | null;
@@ -58,6 +59,7 @@ export function ProductInfo({
   shortDescription,
   collectionName,
   collectionSlug,
+  productCode,
   metalType,
   metalWeight,
   grossWeight,
@@ -220,6 +222,7 @@ export function ProductInfo({
       {/* Specs */}
       <div className="pt-6 border-t border-border">
         <ProductSpecs
+          productCode={productCode}
           metalType={metalType}
           metalWeight={metalWeight}
           grossWeight={grossWeight}

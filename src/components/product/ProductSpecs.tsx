@@ -9,6 +9,7 @@ interface ProductStone {
 }
 
 interface ProductSpecsProps {
+  productCode?: string | null;
   metalType?: string | null;
   metalWeight?: string | null;
   grossWeight?: string | null;
@@ -32,6 +33,7 @@ function SpecItem({ label, value }: SpecItemProps) {
 }
 
 export function ProductSpecs({
+  productCode,
   metalType,
   metalWeight,
   grossWeight,
@@ -40,6 +42,7 @@ export function ProductSpecs({
   collectionName,
 }: ProductSpecsProps) {
   const baseSpecs = [
+    { label: "Product Code", value: productCode },
     { label: "Metal", value: metalType },
     { label: "Metal Weight", value: metalWeight },
     { label: "Gross Weight", value: grossWeight },

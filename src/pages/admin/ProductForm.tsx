@@ -420,14 +420,14 @@ export default function ProductForm() {
               </div>
             </div>
 
-            {/* SKU & Price */}
+            {/* Product Code & Price */}
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="sku">SKU</Label>
+                <Label htmlFor="sku">Product Code</Label>
                 <Input
                   id="sku"
                   {...register("sku")}
-                  placeholder="PH-RNG-001"
+                  placeholder="e.g. RNG-001"
                 />
               </div>
               <div className="space-y-2">
