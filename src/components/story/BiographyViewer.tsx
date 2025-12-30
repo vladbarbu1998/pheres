@@ -7,6 +7,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
 const TOTAL_PAGES = 25;
+const SWIPE_THRESHOLD = 50; // Minimum swipe distance in pixels
 
 // Generate page image paths
 const pages = Array.from({ length: TOTAL_PAGES }, (_, i) => ({
@@ -20,6 +21,11 @@ export function BiographyViewer() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const thumbnailsRef = useRef<HTMLDivElement>(null);
+  
+  // Touch swipe state
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   // Lazy load - only render when section comes into view
   useEffect(() => {
@@ -48,6 +54,46 @@ export function BiographyViewer() {
     setCurrentPage((prev) => (prev < TOTAL_PAGES - 1 ? prev + 1 : prev));
   }, []);
 
+  // Scroll active thumbnail into view
+  useEffect(() => {
+    if (thumbnailsRef.current) {
+      const activeThumb = thumbnailsRef.current.children[currentPage] as HTMLElement;
+      if (activeThumb) {
+        activeThumb.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      }
+    }
+  }, [currentPage]);
+
+  // Touch handlers for swipe navigation
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    
+    const diff = touchStartX.current - touchEndX.current;
+    
+    if (Math.abs(diff) > SWIPE_THRESHOLD) {
+      if (diff > 0) {
+        // Swiped left → next page
+        goToNext();
+      } else {
+        // Swiped right → previous page
+        goToPrevious();
+      }
+    }
+    
+    // Reset
+    touchStartX.current = null;
+    touchEndX.current = null;
+  }, [goToNext, goToPrevious]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,18 +113,24 @@ export function BiographyViewer() {
           <div className="relative mx-auto max-w-4xl">
             {/* Shadow/Book effect wrapper */}
             <div className="relative rounded-sm bg-card shadow-2xl shadow-foreground/5">
-              {/* Page display area */}
-              <div className="relative w-full overflow-hidden bg-background sm:aspect-[4/3] md:aspect-[16/10]">
+              {/* Page display area with touch swipe support */}
+              <div 
+                className="relative w-full overflow-hidden bg-background sm:aspect-[4/3] md:aspect-[16/10]"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
                 {/* Current page image */}
                 <img
                   src={pages[currentPage].src}
                   alt={pages[currentPage].alt}
                   className={cn(
-                    "h-full w-full object-contain transition-opacity duration-300",
+                    "h-full w-full object-contain transition-opacity duration-300 select-none",
                     isLoaded ? "opacity-100" : "opacity-0"
                   )}
                   onLoad={() => setIsLoaded(true)}
                   loading="lazy"
+                  draggable={false}
                 />
                 
                 {/* Loading skeleton */}
@@ -159,9 +211,12 @@ export function BiographyViewer() {
                 </Button>
               </div>
 
-              {/* Page thumbnails - horizontal scroll on mobile */}
-              <div className="border-t border-border/50 px-4 py-3">
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-muted">
+              {/* Page thumbnails - horizontal scroll with improved spacing */}
+              <div className="border-t border-border/50 px-4 py-5 md:py-6">
+                <div 
+                  ref={thumbnailsRef}
+                  className="flex gap-2 overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-muted"
+                >
                   {pages.map((page, index) => (
                     <button
                       key={index}
