@@ -303,7 +303,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           {/* Thumbnails at bottom */}
           {hasMultipleImages && (
             <div className="border-t bg-muted/30 px-6 py-6 flex items-center justify-center">
-              <div className="flex gap-3 overflow-x-auto max-w-lg px-2">
+              <div className="flex gap-3 overflow-x-auto max-w-lg px-2 py-1">
                 {sortedImages.map((image, index) => (
                   <button
                     key={image.id}
