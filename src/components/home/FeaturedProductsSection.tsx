@@ -8,9 +8,10 @@ export function FeaturedProductsSection() {
   const { data, isLoading } = useFeaturedProducts(8);
   const products = data?.products || [];
 
-  // Get hero product (first one) and remaining products for the grid
+  // Get hero product and grid products
   const heroProduct = products[0];
-  const gridProducts = products.slice(1, 5);
+  const rightStackProducts = products.slice(1, 3); // 2 products stacked on right
+  const bottomRowProducts = products.slice(3, 5);  // 2 products in bottom row
 
   return (
     <section className="border-t border-border/50">
@@ -35,36 +36,117 @@ export function FeaturedProductsSection() {
 
         {/* Loading State */}
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 lg:gap-6">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className={i === 0 ? "hidden lg:block lg:row-span-2" : ""}>
+          <div className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
+              <div className="col-span-2 lg:col-span-2 lg:row-span-2">
                 <ProductCardSkeleton />
               </div>
-            ))}
+              <ProductCardSkeleton />
+              <ProductCardSkeleton />
+            </div>
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
+              <ProductCardSkeleton />
+              <ProductCardSkeleton />
+            </div>
           </div>
         ) : products.length > 0 ? (
           /* 
-           * LAYOUT:
-           * - Mobile: 2-column grid with 4 products (hero hidden)
-           * - Desktop (lg+): 3-column grid
-           *   - Left column: Featured product spanning 2 rows
-           *   - Right 2 columns: 2x2 grid of products
+           * ASYMMETRIC GRID LAYOUT:
+           * Desktop: 
+           *   Row 1: Featured (2/3) | Product 2 (1/3)
+           *          Featured       | Product 3 (1/3)
+           *   Row 2: Product 4 (1/2) | Product 5 (1/2)
+           * 
+           * Mobile: 2-column grid, all products
            */
-          <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 lg:gap-6">
-            
-            {/* FEATURED PRODUCT - Desktop only, spans 2 rows */}
-            {heroProduct && (
-              <FeaturedProductCard product={heroProduct} />
-            )}
+          <div className="space-y-4 md:space-y-6">
+            {/* Top Section: Featured + Stacked Products */}
+            <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
+              {/* Featured Product - 2/3 width on desktop */}
+              {heroProduct && (
+                <Link
+                  to={`/product/${heroProduct.slug}`}
+                  className="group col-span-2 lg:row-span-2 animate-fade-in"
+                >
+                  <div className="relative aspect-square overflow-hidden rounded-sm bg-muted lg:aspect-[4/3]">
+                    {(() => {
+                      const primaryImage = heroProduct.product_images?.find((img) => img.is_primary);
+                      const imageUrl = primaryImage?.image_url || heroProduct.product_images?.[0]?.image_url;
+                      return imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={heroProduct.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <span className="font-display text-6xl font-light text-muted-foreground/20">
+                            {heroProduct.name.charAt(0)}
+                          </span>
+                        </div>
+                      );
+                    })()}
+                    
+                    {/* New Badge */}
+                    {heroProduct.is_new && (
+                      <span className="absolute top-4 left-4 bg-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
+                        New
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Product Details */}
+                  <div className="pt-4 space-y-1">
+                    {heroProduct.product_collections?.[0]?.collections?.name && (
+                      <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
+                        {heroProduct.product_collections[0].collections.name}
+                      </p>
+                    )}
+                    <h3 className="font-display text-base font-medium text-foreground transition-colors group-hover:text-primary md:text-lg">
+                      {heroProduct.name}
+                    </h3>
+                    <p className="text-sm text-foreground">
+                      ${Number(heroProduct.base_price).toLocaleString()}
+                    </p>
+                    <p className="inline-flex items-center text-xs text-primary pt-1 group-hover:underline">
+                      View Details
+                      <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    </p>
+                  </div>
+                </Link>
+              )}
 
-            {/* GRID PRODUCTS - All breakpoints */}
-            {gridProducts.map((product, index) => (
-              <GridProductCard 
-                key={product.id} 
-                product={product} 
-                index={index}
-              />
-            ))}
+              {/* Right Stack - 2 products (hidden on mobile, shown in bottom on mobile) */}
+              {rightStackProducts.map((product, index) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  index={index}
+                  className="hidden lg:flex"
+                />
+              ))}
+            </div>
+
+            {/* Bottom Row - 2 products at 50% each */}
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
+              {/* On mobile: show all 4 grid products here */}
+              {/* On desktop: show only bottom 2 */}
+              {rightStackProducts.map((product, index) => (
+                <ProductCard 
+                  key={`mobile-${product.id}`} 
+                  product={product} 
+                  index={index}
+                  className="lg:hidden"
+                />
+              ))}
+              {bottomRowProducts.map((product, index) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  index={index + 2}
+                />
+              ))}
+            </div>
           </div>
         ) : (
           <div className="rounded-sm border border-dashed border-border bg-card/50 p-12 text-center">
@@ -78,11 +160,7 @@ export function FeaturedProductsSection() {
   );
 }
 
-/* ============================================
-   FEATURED PRODUCT CARD (Desktop only)
-   - Large square image spanning 2 rows
-   - Product details below image
-   ============================================ */
+/* Product Card Component */
 interface ProductWithImages {
   id: string;
   slug: string;
@@ -94,96 +172,36 @@ interface ProductWithImages {
   product_collections?: Array<{ collections?: { name: string } }>;
 }
 
-function FeaturedProductCard({ product }: { product: ProductWithImages }) {
+function ProductCard({ 
+  product, 
+  index,
+  className = ""
+}: { 
+  product: ProductWithImages; 
+  index: number;
+  className?: string;
+}) {
   const primaryImage = product.product_images?.find((img) => img.is_primary);
-  const firstImage = product.product_images?.[0];
-  const imageUrl = primaryImage?.image_url || firstImage?.image_url;
+  const imageUrl = primaryImage?.image_url || product.product_images?.[0]?.image_url;
   const collectionName = product.product_collections?.[0]?.collections?.name;
 
   return (
     <Link
       to={`/product/${product.slug}`}
-      className="group hidden lg:flex lg:flex-col lg:row-span-2 animate-fade-in"
-    >
-      {/* Square Image Container */}
-      <div className="relative aspect-square overflow-hidden rounded-sm bg-muted">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-            <span className="font-display text-5xl font-light text-muted-foreground/30">
-              {product.name.charAt(0)}
-            </span>
-          </div>
-        )}
-        
-        {/* New Badge */}
-        {product.is_new && (
-          <span className="absolute top-3 left-3 bg-primary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
-            New
-          </span>
-        )}
-      </div>
-      
-      {/* Product Details */}
-      <div className="pt-4 space-y-1">
-        {collectionName && (
-          <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            {collectionName}
-          </p>
-        )}
-        <h3 className="font-display text-base font-medium text-foreground transition-colors group-hover:text-primary">
-          {product.name}
-        </h3>
-        <p className="text-sm text-foreground">
-          ${Number(product.base_price).toLocaleString()}
-          {product.compare_at_price && product.compare_at_price > product.base_price && (
-            <span className="ml-2 text-xs text-muted-foreground line-through">
-              ${Number(product.compare_at_price).toLocaleString()}
-            </span>
-          )}
-        </p>
-        <p className="inline-flex items-center text-xs text-primary pt-1 group-hover:underline">
-          View Details
-          <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-        </p>
-      </div>
-    </Link>
-  );
-}
-
-/* ============================================
-   GRID PRODUCT CARD
-   - Square image with clean details below
-   - Visible on all breakpoints
-   ============================================ */
-function GridProductCard({ product, index }: { product: ProductWithImages; index: number }) {
-  const primaryImage = product.product_images?.find((img) => img.is_primary);
-  const firstImage = product.product_images?.[0];
-  const imageUrl = primaryImage?.image_url || firstImage?.image_url;
-  const collectionName = product.product_collections?.[0]?.collections?.name;
-
-  return (
-    <Link
-      to={`/product/${product.slug}`}
-      className="group flex flex-col animate-fade-in"
+      className={`group flex flex-col animate-fade-in ${className}`}
       style={{ animationDelay: `${(index + 1) * 80}ms` }}
     >
-      {/* Square Image Container */}
+      {/* Square Image */}
       <div className="relative aspect-square overflow-hidden rounded-sm bg-muted">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-            <span className="font-display text-3xl font-light text-muted-foreground/30">
+          <div className="flex h-full items-center justify-center">
+            <span className="font-display text-3xl font-light text-muted-foreground/20">
               {product.name.charAt(0)}
             </span>
           </div>
@@ -198,7 +216,7 @@ function GridProductCard({ product, index }: { product: ProductWithImages; index
       </div>
       
       {/* Product Details */}
-      <div className="pt-3 space-y-0.5 md:pt-4 md:space-y-1">
+      <div className="pt-3 space-y-0.5 md:pt-4">
         {collectionName && (
           <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
             {collectionName}
@@ -209,11 +227,6 @@ function GridProductCard({ product, index }: { product: ProductWithImages; index
         </h3>
         <p className="text-xs text-foreground md:text-sm">
           ${Number(product.base_price).toLocaleString()}
-          {product.compare_at_price && product.compare_at_price > product.base_price && (
-            <span className="ml-1.5 text-[10px] text-muted-foreground line-through md:ml-2 md:text-xs">
-              ${Number(product.compare_at_price).toLocaleString()}
-            </span>
-          )}
         </p>
       </div>
     </Link>
