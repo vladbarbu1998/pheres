@@ -69,7 +69,7 @@ export function BiographyViewer() {
             {/* Shadow/Book effect wrapper */}
             <div className="relative rounded-sm bg-card shadow-2xl shadow-foreground/5">
               {/* Page display area */}
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-background sm:aspect-[4/3] md:aspect-[16/10]">
+              <div className="relative w-full overflow-hidden bg-background sm:aspect-[4/3] md:aspect-[16/10]">
                 {/* Current page image */}
                 <img
                   src={pages[currentPage].src}
