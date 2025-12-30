@@ -24,9 +24,9 @@ interface SpecItemProps {
 
 function SpecItem({ label, value }: SpecItemProps) {
   return (
-    <div className="flex justify-between py-3">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium text-foreground">{value}</span>
+    <div className="flex justify-between gap-4 py-3">
+      <span className="text-sm text-muted-foreground shrink-0">{label}</span>
+      <span className="text-sm font-medium text-foreground text-right break-words">{value}</span>
     </div>
   );
 }
