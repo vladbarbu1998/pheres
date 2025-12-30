@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Gem, Shield, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import narcisaPhoto from "@/assets/narcisa-pheres-founder.jpg";
 
@@ -56,7 +56,8 @@ export function BrandHeritageSection() {
               style={{ animationDelay: "150ms" }}
             >
               <div className="space-y-6">
-                <p className="text-xl font-light leading-relaxed text-foreground md:text-2xl">
+                {/* Opening statement with decorative border */}
+                <p className="border-l-2 border-primary/40 pl-5 font-medium leading-relaxed text-foreground">
                   PHERES brings luxury back to its roots by creating very exclusive 
                   products of extremely high quality that the niche market of 
                   connoisseurs truly appreciates.
@@ -78,6 +79,37 @@ export function BrandHeritageSection() {
                     With the belief that true opulence is in the detail, the greatest 
                     of consideration and care is paid to even the smallest of steps 
                     in the design and creation process.
+                  </p>
+                </div>
+              </div>
+
+              {/* Brand Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 border-t border-border/50 mt-10">
+                <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
+                  <Gem className="h-5 w-5 text-primary" />
+                  <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-foreground">
+                    Handcrafted Excellence
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Each piece meticulously crafted by master artisans
+                  </p>
+                </div>
+                <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
+                  <Shield className="h-5 w-5 text-primary" />
+                  <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-foreground">
+                    Ethically Sourced
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Conflict-free diamonds and responsibly sourced materials
+                  </p>
+                </div>
+                <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
+                  <Award className="h-5 w-5 text-primary" />
+                  <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-foreground">
+                    Timeless Design
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Enduring elegance that transcends fleeting trends
                   </p>
                 </div>
               </div>
