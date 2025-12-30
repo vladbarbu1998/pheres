@@ -140,12 +140,12 @@ export function ProductCard({
             {/* Badges */}
             <div className="absolute left-3 top-3 flex flex-col gap-2">
               {isNew && (
-                <span className="bg-foreground px-2 py-1 text-xs font-medium tracking-wide text-background">
+                <span className="bg-foreground px-2 py-1 font-display text-xs font-medium tracking-wide text-background">
                   NEW
                 </span>
               )}
               {hasDiscount && (
-                <span className="bg-primary px-2 py-1 text-xs font-medium tracking-wide text-primary-foreground">
+                <span className="bg-primary px-2 py-1 font-display text-xs font-medium tracking-wide text-primary-foreground">
                   -{discountPercent}%
                 </span>
               )}
@@ -199,7 +199,7 @@ export function ProductCard({
         {/* Details */}
         <div className="mt-4 space-y-1">
           {collectionName && (
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <p className="font-display text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {collectionName}
             </p>
           )}

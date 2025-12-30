@@ -12,7 +12,7 @@ export function BrandHeritageSection() {
       <div className="container relative py-20 md:py-32">
         {/* Elegant centered header */}
         <div className="mb-16 text-center">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
+          <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.3em] text-primary">
             Our Heritage
           </p>
           <h2 className="font-display text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
@@ -43,7 +43,7 @@ export function BrandHeritageSection() {
                   <h3 className="font-display text-lg font-semibold text-foreground tracking-wide">
                     Narcisa Pheres
                   </h3>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mt-1">
+                  <p className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mt-1">
                     Founder
                   </p>
                 </div>
