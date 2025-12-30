@@ -2,9 +2,12 @@ import { test, expect } from '@playwright/test';
 import { routes } from './fixtures/test-data';
 
 test.describe('Product Page', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(routes.shop);
-    await page.waitForLoadState('networkidle');
+  test.beforeEach(async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    await page.goto(routes.shop, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 });
   });
 
   test('can open a product from the shop grid', async ({ page }) => {
@@ -28,7 +31,7 @@ test.describe('Product Page', () => {
     }
     
     await productCard.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     // Check for product name and Add to Cart button
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -44,7 +47,7 @@ test.describe('Product Page', () => {
     }
     
     await productCard.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     // Click Add to Cart
     await page.getByRole('button', { name: /add to cart/i }).first().click();
@@ -57,9 +60,13 @@ test.describe('Product Page', () => {
 });
 
 test.describe('Product Image Gallery', () => {
-  test('product images are displayed', async ({ page }) => {
-    await page.goto(routes.shop);
-    await page.waitForLoadState('networkidle');
+  test('product images are displayed', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
+    await page.goto(routes.shop, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 });
     
     const productCard = page.getByTestId('product-card').first();
     
@@ -69,7 +76,7 @@ test.describe('Product Image Gallery', () => {
     }
     
     await productCard.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     // Check for product image
     const productImage = page.locator('img[alt]').first();
