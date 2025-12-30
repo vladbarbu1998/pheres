@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { PageTransition } from "@/components/layout/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -48,7 +49,8 @@ export function AccountLayout({ children, title, description, isLoading }: Accou
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
+      <PageTransition key={location.pathname}>
+        <main className="flex-1">
         <div className="container py-8 lg:py-12">
           {/* Page Header - fixed height ensures no layout shift */}
           <div className="mb-8 min-h-[60px]">
@@ -110,7 +112,8 @@ export function AccountLayout({ children, title, description, isLoading }: Accou
             </div>
           </div>
         </div>
-      </main>
+        </main>
+      </PageTransition>
       <Footer />
     </div>
   );
