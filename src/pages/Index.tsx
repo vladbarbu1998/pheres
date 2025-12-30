@@ -195,46 +195,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Craftsmanship Section */}
-      <section className="container py-16 md:py-24">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-          <div className="relative aspect-square overflow-hidden rounded-sm bg-muted order-2 lg:order-1">
-            <img
-              src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=800&q=80"
-              alt="Pheres jewelry craftsmanship"
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <div className="space-y-6 order-1 lg:order-2">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
-              The Pheres Difference
-            </p>
-            <h2 className="font-display text-3xl font-semibold text-foreground md:text-4xl text-balance">
-              Crafted for the Extraordinary
-            </h2>
-            <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                Every Pheres creation begins with a singular vision: to transform the 
-                world's rarest stones into wearable works of art. Our master artisans 
-                work with diamonds of exceptional provenance, each selected for its 
-                unique character and brilliance.
-              </p>
-              <p>
-                From sketch to final polish, our pieces undergo months of meticulous 
-                craftsmanship. We believe true luxury cannot be rushed—it must be 
-                earned through patience, precision, and an unwavering commitment to 
-                perfection.
-              </p>
-            </div>
-            <Button asChild variant="outline" className="group">
-              <Link to="/story">
-                Learn More About Pheres
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       {/* Final CTA */}
       <section className="border-t border-border/50 bg-secondary/30">
