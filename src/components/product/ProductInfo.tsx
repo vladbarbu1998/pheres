@@ -184,7 +184,7 @@ export function ProductInfo({
             className="shrink-0 [&_button]:h-11 [&_input]:h-11"
           />
           <Button 
-            className="flex-1 h-11 px-8"
+            className="flex-1 h-11 min-h-11 px-8"
             onClick={handleAddToCart}
             disabled={!canAddToCart || isAdding}
           >
