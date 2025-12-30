@@ -85,29 +85,27 @@ export function FeaturedProductsSection() {
                 </div>
                 
                 {/* Product Info - Below Image */}
-                <div className="pt-4 space-y-1">
+                <div className="pt-5 space-y-1">
                   {/* Collection Name */}
                   {heroProduct.product_collections?.[0]?.collections?.name && (
-                    <p className="text-sm font-medium uppercase tracking-[0.15em] text-primary">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                       {heroProduct.product_collections[0].collections.name}
                     </p>
                   )}
-                  <h3 className="font-display text-2xl font-semibold text-foreground group-hover:text-primary transition-colors md:text-3xl">
+                  <h3 className="font-display text-xl font-medium text-foreground group-hover:text-primary transition-colors">
                     {heroProduct.name}
                   </h3>
-                  <div className="flex items-center gap-3">
+                  <p className="text-base text-foreground">
+                    ${Number(heroProduct.base_price).toLocaleString()}
                     {heroProduct.compare_at_price && heroProduct.compare_at_price > heroProduct.base_price && (
-                      <span className="text-lg text-muted-foreground line-through">
+                      <span className="ml-2 text-sm text-muted-foreground line-through">
                         ${Number(heroProduct.compare_at_price).toLocaleString()}
                       </span>
                     )}
-                    <span className="text-xl font-semibold text-foreground md:text-2xl">
-                      ${Number(heroProduct.base_price).toLocaleString()}
-                    </span>
-                  </div>
-                  <span className="inline-flex items-center text-sm font-medium text-primary group-hover:underline mt-2">
+                  </p>
+                  <span className="inline-flex items-center text-sm text-primary group-hover:underline pt-1">
                     View Details
-                    <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                   </span>
                 </div>
               </Link>

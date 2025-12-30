@@ -145,11 +145,8 @@ export default function Index() {
       {/* Featured Products Section */}
       <FeaturedProductsSection />
 
-      {/* Brand Heritage Section */}
-      <BrandHeritageSection />
-
-      {/* Press Teaser */}
-      <section className="border-t border-b border-border/50 bg-primary/5">
+      {/* Press Teaser - Worn by Icons */}
+      <section className="border-t border-border/50 bg-primary/5">
         <div className="container py-12 md:py-16">
           <div className="flex flex-col items-center gap-6 text-center">
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
@@ -194,6 +191,9 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Brand Heritage Section */}
+      <BrandHeritageSection />
 
 
       {/* Final CTA */}
