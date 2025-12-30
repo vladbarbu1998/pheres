@@ -184,8 +184,7 @@ export function ProductInfo({
             className="shrink-0"
           />
           <Button 
-            size="lg" 
-            className="flex-1 py-6 text-base"
+            className="flex-1 h-14 px-8 text-base"
             onClick={handleAddToCart}
             disabled={!canAddToCart || isAdding}
           >
@@ -208,9 +207,8 @@ export function ProductInfo({
           </Button>
         </div>
         <Button 
-          size="lg" 
           variant="outline"
-          className="w-full py-6 text-base sm:w-auto"
+          className="w-full h-14 px-8 text-base sm:w-auto"
           onClick={toggleFavorite}
           disabled={isToggling}
         >
