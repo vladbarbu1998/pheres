@@ -60,7 +60,7 @@ export default function Index() {
       {/* Collections Highlight - Card-based design */}
       <section className="border-t border-border/50 bg-secondary/30">
         <div className="container py-16 md:py-24">
-          <div className="mb-12 flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+          <div className="mb-12 text-center sm:flex sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div>
               <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
                 Curated Collections
@@ -69,7 +69,7 @@ export default function Index() {
                 Worlds of Wonder
               </h2>
             </div>
-            <Button asChild variant="outline" className="group">
+            <Button asChild variant="outline" className="group hidden sm:inline-flex">
               <Link to="/shop">
                 View All Collections
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -139,6 +139,16 @@ export default function Index() {
               </p>
             </div>
           )}
+
+          {/* Mobile-only button at end of section */}
+          <div className="mt-8 text-center sm:hidden">
+            <Button asChild variant="outline" className="group">
+              <Link to="/shop">
+                View All Collections
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
