@@ -126,41 +126,32 @@ function MainProductCard({ product }: { product: ProductWithImages }) {
           </div>
         )}
         
-        {/* Subtle gradient for text readability - light overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/20 to-transparent" />
-        
         {/* New Badge */}
         {product.is_new && (
           <span className="absolute top-4 left-4 bg-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
             New
           </span>
         )}
-        
-        {/* Product Info Overlay - Bottom Left */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-          <div className="space-y-1">
-            {collectionName && (
-              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-foreground/70">
-                {collectionName}
-              </p>
-            )}
-            <h3 className="font-display text-lg font-medium text-foreground md:text-xl">
-              {product.name}
-            </h3>
-            <p className="text-sm text-foreground">
-              ${Number(product.base_price).toLocaleString()}
-              {product.compare_at_price && product.compare_at_price > product.base_price && (
-                <span className="ml-2 text-xs text-foreground/50 line-through">
-                  ${Number(product.compare_at_price).toLocaleString()}
-                </span>
-              )}
-            </p>
-            <p className="inline-flex items-center text-xs text-primary pt-1 group-hover:underline">
-              View Details
-              <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-            </p>
-          </div>
-        </div>
+      </div>
+      
+      {/* Product Details - Below Image */}
+      <div className="pt-3 space-y-0.5 md:pt-4 md:space-y-1">
+        {collectionName && (
+          <p className="text-[9px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
+            {collectionName}
+          </p>
+        )}
+        <h3 className="font-display text-sm font-medium text-foreground transition-colors group-hover:text-primary md:text-lg">
+          {product.name}
+        </h3>
+        <p className="text-xs text-foreground md:text-sm">
+          ${Number(product.base_price).toLocaleString()}
+          {product.compare_at_price && product.compare_at_price > product.base_price && (
+            <span className="ml-1.5 text-[10px] text-muted-foreground line-through md:text-xs">
+              ${Number(product.compare_at_price).toLocaleString()}
+            </span>
+          )}
+        </p>
       </div>
     </Link>
   );
