@@ -76,7 +76,7 @@ function CelebrityCard({ appearance, index, onImageClick }: CelebrityCardProps) 
         </h3>
         
         {appearance.event_name && (
-          <p className="mt-1.5 font-display text-sm uppercase tracking-widest text-primary font-medium">
+          <p className="mt-1 text-base text-primary font-medium">
             {appearance.event_name}
           </p>
         )}
