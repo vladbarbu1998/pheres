@@ -91,7 +91,6 @@ const routeGroups: RouteGroup[] = [
       { path: "/admin/press", label: "Press Entries", type: "static" },
       { path: "/admin/story", label: "Story Sections", type: "static" },
       { path: "/admin/inbox", label: "Contact Messages", type: "static" },
-      { path: "/admin/settings", label: "Settings", type: "static" },
     ],
   },
 ];

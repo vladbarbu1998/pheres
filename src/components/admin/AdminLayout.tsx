@@ -15,7 +15,6 @@ import {
   Star,
   BookOpen,
   Mail,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -33,7 +32,6 @@ const navItems = [
   { title: "Celebrities", href: "/admin/celebrities", icon: Star },
   { title: "Story", href: "/admin/story", icon: BookOpen },
   { title: "Inbox", href: "/admin/inbox", icon: Mail },
-  { title: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 interface AdminLayoutProps {
