@@ -22,7 +22,7 @@ export default function Index() {
         <div className="container py-16 md:py-24 lg:py-32">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-6 animate-fade-in">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
+              <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
                 Fine Jewelry House
               </p>
               <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
@@ -62,7 +62,7 @@ export default function Index() {
         <div className="container py-16 md:py-24">
           <div className="mb-12 text-center sm:flex sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div>
-              <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
+              <p className="mb-2 font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
                 Curated Collections
               </p>
               <h2 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
@@ -159,7 +159,7 @@ export default function Index() {
       <section className="border-t border-border/50 bg-primary/5">
         <div className="container py-12 md:py-16">
           <div className="flex flex-col items-center gap-6 text-center">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
+            <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
               Worn by Icons
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">

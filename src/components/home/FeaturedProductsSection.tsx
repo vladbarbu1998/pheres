@@ -18,7 +18,7 @@ export function FeaturedProductsSection() {
         {/* Section Header */}
         <div className="mb-10 text-center sm:flex sm:flex-row sm:items-center sm:justify-between sm:text-left md:mb-12">
           <div>
-            <p className="mb-2 font-display text-xs font-medium uppercase tracking-[0.25em] text-primary">
+            <p className="mb-2 font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
               Featured Pieces
             </p>
             <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
