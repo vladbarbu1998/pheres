@@ -43,7 +43,8 @@ test.describe('Cart', () => {
     
     await productCard.click();
     await page.waitForLoadState('domcontentloaded');
-    await page.getByRole('button', { name: /add to cart/i }).click();
+    await page.waitForSelector('h1', { state: 'visible', timeout: 15000 });
+    await page.getByRole('button', { name: /add to cart/i }).first().click();
     await page.waitForTimeout(1000);
     
     await page.goto(routes.cart, { waitUntil: 'domcontentloaded' });

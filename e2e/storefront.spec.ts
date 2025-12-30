@@ -2,8 +2,15 @@ import { test, expect } from '@playwright/test';
 import { routes } from './fixtures/test-data';
 
 test.describe('Storefront Navigation', () => {
+  test.beforeEach(async ({ browserName }) => {
+    // Increase timeout for Firefox which is slower
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+  });
+
   test('homepage loads with main navigation links', async ({ page }) => {
-    await page.goto(routes.home);
+    await page.goto(routes.home, { waitUntil: 'domcontentloaded' });
     
     // Check page title
     await expect(page).toHaveTitle(/Pheres/i);
@@ -14,7 +21,8 @@ test.describe('Storefront Navigation', () => {
   });
 
   test('navigates to Shop page', async ({ page, isMobile }) => {
-    await page.goto(routes.home);
+    await page.goto(routes.home, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('nav', { state: 'visible', timeout: 15000 });
     
     if (isMobile) {
       // Open mobile menu first
@@ -30,7 +38,8 @@ test.describe('Storefront Navigation', () => {
   });
 
   test('navigates to Our Story page', async ({ page, isMobile }) => {
-    await page.goto(routes.home);
+    await page.goto(routes.home, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('nav', { state: 'visible', timeout: 15000 });
     
     if (isMobile) {
       // Open mobile menu first
@@ -46,7 +55,8 @@ test.describe('Storefront Navigation', () => {
   });
 
   test('navigates to Contact page', async ({ page, isMobile }) => {
-    await page.goto(routes.home);
+    await page.goto(routes.home, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('nav', { state: 'visible', timeout: 15000 });
     
     if (isMobile) {
       // Open mobile menu first
@@ -63,9 +73,13 @@ test.describe('Storefront Navigation', () => {
 });
 
 test.describe('Shop Page', () => {
-  test('displays products grid or empty state', async ({ page }) => {
-    await page.goto(routes.shop);
-    await page.waitForLoadState('networkidle');
+  test('displays products grid or empty state', async ({ page, browserName }) => {
+    if (browserName === 'firefox') {
+      test.setTimeout(60000);
+    }
+    
+    await page.goto(routes.shop, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('body', { state: 'visible', timeout: 15000 });
     
     // Check for product cards using stable data-testid
     const productCards = page.getByTestId('product-card');
