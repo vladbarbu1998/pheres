@@ -8,16 +8,16 @@ export function FeaturedProductsSection() {
   const { data, isLoading } = useFeaturedProducts(8);
   const products = data?.products || [];
 
-  // Get hero product and grid products
+  // Get hero product and flanking products
   const heroProduct = products[0];
-  const rightStackProducts = products.slice(1, 3); // 2 products stacked on right
-  const bottomRowProducts = products.slice(3, 5);  // 2 products in bottom row
+  const leftProducts = products.slice(1, 3);  // 2 products on left
+  const rightProducts = products.slice(3, 5); // 2 products on right
 
   return (
     <section className="border-t border-border/50">
       <div className="container py-16 md:py-24">
         {/* Section Header */}
-        <div className="mb-10 flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left md:mb-12">
+        <div className="mb-10 flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left md:mb-14">
           <div>
             <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-primary">
               Featured Pieces
@@ -36,39 +36,45 @@ export function FeaturedProductsSection() {
 
         {/* Loading State */}
         {isLoading ? (
-          <div className="space-y-4 md:space-y-6">
-            <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
-              <div className="col-span-2 lg:col-span-2 lg:row-span-2">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className={i === 0 ? "col-span-2 row-span-2" : ""}>
                 <ProductCardSkeleton />
               </div>
-              <ProductCardSkeleton />
-              <ProductCardSkeleton />
-            </div>
-            <div className="grid grid-cols-2 gap-4 md:gap-6">
-              <ProductCardSkeleton />
-              <ProductCardSkeleton />
-            </div>
+            ))}
           </div>
         ) : products.length > 0 ? (
           /* 
-           * ASYMMETRIC GRID LAYOUT:
+           * CENTERED SHOWCASE LAYOUT:
            * Desktop: 
-           *   Row 1: Featured (2/3) | Product 2 (1/3)
-           *          Featured       | Product 3 (1/3)
-           *   Row 2: Product 4 (1/2) | Product 5 (1/2)
+           *   |  Prod 2  |           |  Prod 4  |
+           *   |  small   |  FEATURED |  small   |
+           *   |  Prod 3  |   large   |  Prod 5  |
+           *   |  small   |           |  small   |
            * 
-           * Mobile: 2-column grid, all products
+           * Mobile: Featured on top, 4 products in 2x2 grid below
            */
-          <div className="space-y-4 md:space-y-6">
-            {/* Top Section: Featured + Stacked Products */}
-            <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
-              {/* Featured Product - 2/3 width on desktop */}
+          <div className="space-y-6 lg:space-y-0">
+            {/* Desktop: Centered layout with flanking products */}
+            <div className="hidden lg:grid lg:grid-cols-4 lg:gap-6 lg:items-center">
+              {/* Left Column - 2 stacked products */}
+              <div className="space-y-6">
+                {leftProducts.map((product, index) => (
+                  <SmallProductCard 
+                    key={product.id} 
+                    product={product} 
+                    index={index}
+                  />
+                ))}
+              </div>
+
+              {/* Center - Featured Product (spans 2 columns) */}
               {heroProduct && (
                 <Link
                   to={`/product/${heroProduct.slug}`}
-                  className="group col-span-2 lg:row-span-2 animate-fade-in"
+                  className="group col-span-2 animate-fade-in"
                 >
-                  <div className="relative aspect-square overflow-hidden rounded-sm bg-muted lg:aspect-[4/3]">
+                  <div className="relative aspect-square overflow-hidden rounded-sm bg-muted">
                     {(() => {
                       const primaryImage = heroProduct.product_images?.find((img) => img.is_primary);
                       const imageUrl = primaryImage?.image_url || heroProduct.product_images?.[0]?.image_url;
@@ -76,11 +82,11 @@ export function FeaturedProductsSection() {
                         <img
                           src={imageUrl}
                           alt={heroProduct.name}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center">
-                          <span className="font-display text-6xl font-light text-muted-foreground/20">
+                          <span className="font-display text-7xl font-light text-muted-foreground/20">
                             {heroProduct.name.charAt(0)}
                           </span>
                         </div>
@@ -89,63 +95,105 @@ export function FeaturedProductsSection() {
                     
                     {/* New Badge */}
                     {heroProduct.is_new && (
-                      <span className="absolute top-4 left-4 bg-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
+                      <span className="absolute top-5 left-5 bg-primary px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground">
                         New
                       </span>
                     )}
                   </div>
                   
-                  {/* Product Details */}
-                  <div className="pt-4 space-y-1">
+                  {/* Product Details - Centered */}
+                  <div className="pt-5 text-center space-y-1">
                     {heroProduct.product_collections?.[0]?.collections?.name && (
-                      <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
                         {heroProduct.product_collections[0].collections.name}
                       </p>
                     )}
-                    <h3 className="font-display text-base font-medium text-foreground transition-colors group-hover:text-primary md:text-lg">
+                    <h3 className="font-display text-xl font-medium text-foreground transition-colors group-hover:text-primary">
                       {heroProduct.name}
                     </h3>
-                    <p className="text-sm text-foreground">
+                    <p className="text-base text-foreground">
                       ${Number(heroProduct.base_price).toLocaleString()}
                     </p>
-                    <p className="inline-flex items-center text-xs text-primary pt-1 group-hover:underline">
+                    <p className="inline-flex items-center text-sm text-primary pt-1 group-hover:underline">
                       View Details
-                      <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </p>
                   </div>
                 </Link>
               )}
 
-              {/* Right Stack - 2 products (hidden on mobile, shown in bottom on mobile) */}
-              {rightStackProducts.map((product, index) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  index={index}
-                  className="hidden lg:flex"
-                />
-              ))}
+              {/* Right Column - 2 stacked products */}
+              <div className="space-y-6">
+                {rightProducts.map((product, index) => (
+                  <SmallProductCard 
+                    key={product.id} 
+                    product={product} 
+                    index={index + 2}
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Bottom Row - 2 products at 50% each */}
-            <div className="grid grid-cols-2 gap-4 md:gap-6">
-              {/* On mobile: show all 4 grid products here */}
-              {/* On desktop: show only bottom 2 */}
-              {rightStackProducts.map((product, index) => (
-                <ProductCard 
-                  key={`mobile-${product.id}`} 
-                  product={product} 
-                  index={index}
-                  className="lg:hidden"
-                />
-              ))}
-              {bottomRowProducts.map((product, index) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  index={index + 2}
-                />
-              ))}
+            {/* Mobile Layout: Featured + 2x2 Grid */}
+            <div className="lg:hidden space-y-6">
+              {/* Featured Product */}
+              {heroProduct && (
+                <Link
+                  to={`/product/${heroProduct.slug}`}
+                  className="group block animate-fade-in"
+                >
+                  <div className="relative aspect-square overflow-hidden rounded-sm bg-muted">
+                    {(() => {
+                      const primaryImage = heroProduct.product_images?.find((img) => img.is_primary);
+                      const imageUrl = primaryImage?.image_url || heroProduct.product_images?.[0]?.image_url;
+                      return imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={heroProduct.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <span className="font-display text-5xl font-light text-muted-foreground/20">
+                            {heroProduct.name.charAt(0)}
+                          </span>
+                        </div>
+                      );
+                    })()}
+                    
+                    {heroProduct.is_new && (
+                      <span className="absolute top-3 left-3 bg-primary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
+                        New
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="pt-4 text-center space-y-1">
+                    {heroProduct.product_collections?.[0]?.collections?.name && (
+                      <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                        {heroProduct.product_collections[0].collections.name}
+                      </p>
+                    )}
+                    <h3 className="font-display text-base font-medium text-foreground">
+                      {heroProduct.name}
+                    </h3>
+                    <p className="text-sm text-foreground">
+                      ${Number(heroProduct.base_price).toLocaleString()}
+                    </p>
+                  </div>
+                </Link>
+              )}
+
+              {/* 2x2 Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                {[...leftProducts, ...rightProducts].map((product, index) => (
+                  <SmallProductCard 
+                    key={product.id} 
+                    product={product} 
+                    index={index}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ) : (
@@ -160,7 +208,7 @@ export function FeaturedProductsSection() {
   );
 }
 
-/* Product Card Component */
+/* Small Product Card for flanking positions */
 interface ProductWithImages {
   id: string;
   slug: string;
@@ -172,14 +220,12 @@ interface ProductWithImages {
   product_collections?: Array<{ collections?: { name: string } }>;
 }
 
-function ProductCard({ 
+function SmallProductCard({ 
   product, 
-  index,
-  className = ""
+  index
 }: { 
   product: ProductWithImages; 
   index: number;
-  className?: string;
 }) {
   const primaryImage = product.product_images?.find((img) => img.is_primary);
   const imageUrl = primaryImage?.image_url || product.product_images?.[0]?.image_url;
@@ -188,8 +234,8 @@ function ProductCard({
   return (
     <Link
       to={`/product/${product.slug}`}
-      className={`group flex flex-col animate-fade-in ${className}`}
-      style={{ animationDelay: `${(index + 1) * 80}ms` }}
+      className="group flex flex-col animate-fade-in"
+      style={{ animationDelay: `${(index + 1) * 100}ms` }}
     >
       {/* Square Image */}
       <div className="relative aspect-square overflow-hidden rounded-sm bg-muted">
@@ -201,7 +247,7 @@ function ProductCard({
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="font-display text-3xl font-light text-muted-foreground/20">
+            <span className="font-display text-2xl font-light text-muted-foreground/20">
               {product.name.charAt(0)}
             </span>
           </div>
@@ -209,23 +255,23 @@ function ProductCard({
         
         {/* New Badge */}
         {product.is_new && (
-          <span className="absolute top-2 left-2 bg-primary px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary-foreground md:top-3 md:left-3 md:px-2.5 md:py-1 md:text-[10px]">
+          <span className="absolute top-2 left-2 bg-primary px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary-foreground lg:top-2.5 lg:left-2.5 lg:px-2 lg:py-0.5 lg:text-[9px]">
             New
           </span>
         )}
       </div>
       
       {/* Product Details */}
-      <div className="pt-3 space-y-0.5 md:pt-4">
+      <div className="pt-3 space-y-0.5">
         {collectionName && (
-          <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
+          <p className="text-[9px] font-medium uppercase tracking-[0.15em] text-muted-foreground lg:text-[10px]">
             {collectionName}
           </p>
         )}
-        <h3 className="font-display text-sm font-medium text-foreground transition-colors group-hover:text-primary md:text-base">
+        <h3 className="font-display text-xs font-medium text-foreground transition-colors group-hover:text-primary lg:text-sm">
           {product.name}
         </h3>
-        <p className="text-xs text-foreground md:text-sm">
+        <p className="text-[11px] text-foreground lg:text-xs">
           ${Number(product.base_price).toLocaleString()}
         </p>
       </div>
