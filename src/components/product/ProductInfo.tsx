@@ -185,7 +185,6 @@ export function ProductInfo({
           />
           <Button 
             size="lg" 
-            variant="outline"
             className="flex-1 py-6 text-base"
             onClick={handleAddToCart}
             disabled={!canAddToCart || isAdding}
