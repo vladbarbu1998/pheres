@@ -302,16 +302,16 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
           {/* Thumbnails at bottom */}
           {hasMultipleImages && (
-            <div className="border-t bg-muted/30 px-4 py-3 flex items-center justify-center">
-              <div className="flex gap-2 overflow-x-auto max-w-md">
+            <div className="border-t bg-muted/30 px-6 py-4 flex items-center justify-center">
+              <div className="flex gap-3 overflow-x-auto max-w-lg px-2">
                 {sortedImages.map((image, index) => (
                   <button
                     key={image.id}
                     onClick={() => lightboxEmblaApi?.scrollTo(index)}
                     className={cn(
-                      "relative h-10 w-10 flex-shrink-0 overflow-hidden rounded transition-all duration-200",
+                      "relative h-12 w-12 flex-shrink-0 overflow-hidden rounded transition-all duration-200",
                       selectedIndex === index
-                        ? "ring-2 ring-primary"
+                        ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
                         : "opacity-60 hover:opacity-100"
                     )}
                     aria-label={`View image ${index + 1}`}
