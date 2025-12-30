@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Lightbox from "yet-another-react-lightbox";
@@ -7,7 +7,6 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
 const TOTAL_PAGES = 25;
-const PDF_URL = "/documents/narcisa-pheres-bio-2025.pdf";
 
 // Generate page image paths
 const pages = Array.from({ length: TOTAL_PAGES }, (_, i) => ({
@@ -189,19 +188,6 @@ export function BiographyViewer() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Download link */}
-          <div className="mt-6 flex justify-center">
-            <a
-              href={PDF_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
-            >
-              <Download className="h-4 w-4" />
-              Download full biography (PDF)
-            </a>
           </div>
 
           {/* Lightbox for zoomed view */}

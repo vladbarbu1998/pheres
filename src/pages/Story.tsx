@@ -102,33 +102,40 @@ export default function Story() {
       </section>
 
       {/* Values Section */}
-      <section className="py-16 md:py-24">
+      <section className="border-t border-border/50 py-20 md:py-28">
         <div className="container max-w-6xl">
-          <div className="mb-12 text-center md:mb-16">
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+          <div className="mb-16 text-center md:mb-20">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
+              What We Stand For
+            </p>
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl lg:text-5xl">
               Our Principles
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              The values that guide every piece we create and every relationship we build.
-            </p>
           </div>
           
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-px bg-border/50 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((value, index) => (
               <div 
                 key={value.title} 
-                className="group text-center animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="group relative bg-background p-8 transition-all duration-500 hover:bg-muted/30 lg:p-10"
               >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-luxury group-hover:bg-primary/20">
-                  <value.icon className="h-6 w-6 text-primary" />
+                {/* Decorative corner accent */}
+                <div className="absolute right-6 top-6 h-8 w-8 border-r border-t border-primary/20 transition-all duration-500 group-hover:h-12 group-hover:w-12 group-hover:border-primary/40" />
+                
+                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center">
+                  <value.icon className="h-6 w-6 text-primary transition-transform duration-500 group-hover:scale-110" strokeWidth={1.5} />
                 </div>
-                <h3 className="mb-2 font-display text-lg font-semibold text-foreground">
+                
+                <h3 className="mb-3 font-display text-lg font-semibold tracking-tight text-foreground">
                   {value.title}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   {value.description}
                 </p>
+                
+                {/* Bottom accent line */}
+                <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               </div>
             ))}
           </div>
