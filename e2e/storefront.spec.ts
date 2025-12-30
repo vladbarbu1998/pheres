@@ -79,7 +79,18 @@ test.describe('Shop Page', () => {
     }
     
     await page.goto(routes.shop, { waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('body', { state: 'visible', timeout: 15000 });
+    
+    // Wait for either products to load OR empty state to appear
+    // This handles the loading state properly
+    await Promise.race([
+      page.waitForSelector('[data-testid="product-card"]', { timeout: 20000 }).catch(() => null),
+      page.waitForSelector('[data-testid="empty-state"]', { timeout: 20000 }).catch(() => null),
+      // Also wait for potential loading skeleton to disappear
+      page.waitForSelector('[data-testid="product-skeleton"]', { state: 'hidden', timeout: 20000 }).catch(() => null),
+    ]);
+    
+    // Give a moment for any animations/transitions
+    await page.waitForTimeout(500);
     
     // Check for product cards using stable data-testid
     const productCards = page.getByTestId('product-card');
