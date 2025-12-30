@@ -23,7 +23,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Raleway", "ui-serif", "Georgia", "serif"],
+        display: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
