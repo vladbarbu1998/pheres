@@ -35,26 +35,21 @@ export function FeaturedProductsSection() {
         </div>
 
         {isLoading ? (
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Hero skeleton - hidden on mobile */}
-            <div className="relative hidden lg:block lg:row-span-2 overflow-hidden rounded-sm bg-muted animate-pulse aspect-[4/5]" />
-            {/* Grid skeletons */}
-            <div className="grid grid-cols-2 gap-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
-              ))}
-            </div>
+          <div className="grid grid-cols-2 gap-4 lg:gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Hero Product - Hidden on mobile, visible on desktop with overlay text */}
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
+            {/* Hero Product - Hidden on mobile, spans full height on desktop */}
             {heroProduct && (
               <Link
                 to={`/product/${heroProduct.slug}`}
-                className="group relative hidden lg:block lg:row-span-2 animate-fade-in"
+                className="group hidden lg:flex lg:flex-col lg:row-span-2 animate-fade-in"
               >
                 {/* Product Image */}
-                <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-muted h-full">
+                <div className="relative flex-1 overflow-hidden rounded-sm bg-muted">
                   {(() => {
                     const primaryImage = heroProduct.product_images?.find((img) => img.is_primary);
                     const firstImage = heroProduct.product_images?.[0];
@@ -74,73 +69,60 @@ export function FeaturedProductsSection() {
                     );
                   })()}
                   
-                  {/* Gradient overlay for text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
-                  
                   {/* New Badge */}
                   {heroProduct.is_new && (
                     <div className="absolute top-4 left-4 z-10">
-                      <span className="inline-flex items-center gap-1.5 rounded-sm bg-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground shadow-lg">
+                      <span className="inline-flex items-center rounded-sm bg-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground shadow-lg">
                         New
                       </span>
                     </div>
                   )}
-                  
-                  {/* Product Info - Inside image at bottom left */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="space-y-1">
-                      {/* Collection Name */}
-                      {heroProduct.product_collections?.[0]?.collections?.name && (
-                        <p className="text-xs font-medium uppercase tracking-[0.2em] text-background/80">
-                          {heroProduct.product_collections[0].collections.name}
-                        </p>
-                      )}
-                      <h3 className="font-display text-xl font-medium text-background">
-                        {heroProduct.name}
-                      </h3>
-                      <p className="text-base text-background">
-                        ${Number(heroProduct.base_price).toLocaleString()}
-                        {heroProduct.compare_at_price && heroProduct.compare_at_price > heroProduct.base_price && (
-                          <span className="ml-2 text-sm text-background/60 line-through">
-                            ${Number(heroProduct.compare_at_price).toLocaleString()}
-                          </span>
-                        )}
-                      </p>
-                      <span className="inline-flex items-center text-sm text-primary-foreground group-hover:underline pt-1">
-                        View Details
-                        <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </div>
-                  </div>
+                </div>
+                
+                {/* Product Info - Below Image */}
+                <div className="pt-4 space-y-0.5">
+                  {heroProduct.product_collections?.[0]?.collections?.name && (
+                    <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                      {heroProduct.product_collections[0].collections.name}
+                    </p>
+                  )}
+                  <h3 className="font-display text-lg font-medium text-foreground group-hover:text-primary transition-colors">
+                    {heroProduct.name}
+                  </h3>
+                  <p className="text-sm text-foreground">
+                    ${Number(heroProduct.base_price).toLocaleString()}
+                  </p>
+                  <span className="inline-flex items-center text-sm text-primary group-hover:underline pt-1">
+                    View Details
+                    <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  </span>
                 </div>
               </Link>
             )}
 
-            {/* Product Grid - Full width on mobile, right column on desktop */}
-            <div className="grid grid-cols-2 gap-4">
-              {gridProducts.map((product, index) => {
-                const primaryImage = product.product_images?.find((img) => img.is_primary);
-                const firstImage = product.product_images?.[0];
-                const imageUrl = primaryImage?.image_url || firstImage?.image_url || null;
-                const collectionName = product.product_collections?.[0]?.collections?.name || null;
+            {/* Product Grid */}
+            {gridProducts.map((product, index) => {
+              const primaryImage = product.product_images?.find((img) => img.is_primary);
+              const firstImage = product.product_images?.[0];
+              const imageUrl = primaryImage?.image_url || firstImage?.image_url || null;
+              const collectionName = product.product_collections?.[0]?.collections?.name || null;
 
-                return (
-                  <ProductCard
-                    key={product.id}
-                    id={product.id}
-                    name={product.name}
-                    slug={product.slug}
-                    price={Number(product.base_price)}
-                    compareAtPrice={product.compare_at_price ? Number(product.compare_at_price) : null}
-                    imageUrl={imageUrl}
-                    collectionName={collectionName}
-                    isNew={product.is_new}
-                    className="animate-fade-in"
-                    style={{ animationDelay: `${(index + 1) * 100}ms` } as React.CSSProperties}
-                  />
-                );
-              })}
-            </div>
+              return (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  name={product.name}
+                  slug={product.slug}
+                  price={Number(product.base_price)}
+                  compareAtPrice={product.compare_at_price ? Number(product.compare_at_price) : null}
+                  imageUrl={imageUrl}
+                  collectionName={collectionName}
+                  isNew={product.is_new}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${(index + 1) * 100}ms` } as React.CSSProperties}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="rounded-sm border border-dashed border-border bg-card/50 p-12 text-center">
