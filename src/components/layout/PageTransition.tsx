@@ -5,33 +5,31 @@ interface PageTransitionProps {
   children: ReactNode;
 }
 
-// Animation variants for page transitions
+// Animation variants for page transitions - subtle opacity fade only
+// No vertical movement to prevent layout jumps
 const pageVariants: Variants = {
   initial: {
     opacity: 0,
-    y: 12,
   },
   enter: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.35,
-      ease: [0.25, 0.1, 0.25, 1] as const,
+      duration: 0.3,
+      ease: "easeOut",
     },
   },
   exit: {
     opacity: 0,
-    y: -8,
     transition: {
-      duration: 0.25,
-      ease: [0.25, 0.1, 0.25, 1] as const,
+      duration: 0.2,
+      ease: "easeIn",
     },
   },
 };
 
 /**
- * PageTransition - Wraps page content with smooth fade + slide animations.
- * Uses GPU-friendly properties (opacity, transform) only.
+ * PageTransition - Wraps page content with smooth fade animation.
+ * Uses GPU-friendly opacity only (no transform) to prevent layout shifts.
  * Respects prefers-reduced-motion via Framer Motion's built-in support.
  */
 export function PageTransition({ children }: PageTransitionProps) {
@@ -41,7 +39,7 @@ export function PageTransition({ children }: PageTransitionProps) {
       animate="enter"
       exit="exit"
       variants={pageVariants}
-      style={{ willChange: "opacity, transform" }}
+      style={{ willChange: "opacity" }}
     >
       {children}
     </motion.div>
