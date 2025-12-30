@@ -208,11 +208,11 @@ export function ProductInfo({
         </div>
         <Button 
           variant="outline"
-          className="w-full min-h-[48px] px-8 py-3 text-base sm:w-auto"
+          className="w-full h-11 px-8 sm:w-auto"
           onClick={toggleFavorite}
           disabled={isToggling}
         >
-          <Heart className={cn("mr-2 h-5 w-5", isFavorited && "fill-primary text-primary")} />
+          <Heart className={cn("mr-2 h-4 w-4", isFavorited && "fill-primary text-primary")} />
           {isFavorited ? "In Wishlist" : "Add to Wishlist"}
         </Button>
       </div>
