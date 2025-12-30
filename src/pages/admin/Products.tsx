@@ -294,7 +294,8 @@ export default function AdminProducts() {
                 <TableHead className="w-16">ID</TableHead>
                 <TableHead className="w-16">Image</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead className="hidden md:table-cell">Price</TableHead>
+              <TableHead className="hidden md:table-cell">Price</TableHead>
+                <TableHead className="hidden md:table-cell">Category</TableHead>
                 <TableHead className="hidden lg:table-cell">Collection</TableHead>
                 <TableHead className="hidden sm:table-cell">Status</TableHead>
                 <TableHead className="w-24">Actions</TableHead>
@@ -331,6 +332,11 @@ export default function AdminProducts() {
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     ${Number(product.base_price).toFixed(2)}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <span className="text-sm text-muted-foreground">
+                      {(product as any).category?.name || "—"}
+                    </span>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <span className="text-sm text-muted-foreground">
