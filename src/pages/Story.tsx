@@ -105,7 +105,7 @@ export default function Story() {
       <section className="border-t border-border/50 py-20 md:py-28">
         <div className="container max-w-6xl">
           <div className="mb-16 text-center md:mb-20">
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
+            <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.3em] text-primary">
               What We Stand For
             </p>
             <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl lg:text-5xl">

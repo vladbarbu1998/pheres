@@ -103,12 +103,12 @@ export function ProductInfo({
       {/* Badges */}
       <div className="flex flex-wrap gap-2">
         {isNew && (
-          <span className="bg-foreground px-3 py-1 text-xs font-medium tracking-wide text-background">
+          <span className="bg-foreground px-3 py-1 font-display text-xs font-medium tracking-wide text-background">
             NEW ARRIVAL
           </span>
         )}
         {hasDiscount && (
-          <span className="bg-primary px-3 py-1 text-xs font-medium tracking-wide text-primary-foreground">
+          <span className="bg-primary px-3 py-1 font-display text-xs font-medium tracking-wide text-primary-foreground">
             {discountPercent}% OFF
           </span>
         )}
@@ -118,7 +118,7 @@ export function ProductInfo({
       {collectionName && collectionSlug && (
         <Link
           to={`/shop/collection/${collectionSlug}`}
-          className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors"
+          className="font-display text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors"
         >
           {collectionName} Collection
         </Link>
