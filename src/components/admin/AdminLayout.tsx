@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { PageTransition } from "@/components/layout/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard,
@@ -137,24 +138,26 @@ export function AdminLayout({ children, title, description, backLink }: AdminLay
 
       {/* Main content */}
       <main className="lg:pl-64">
-        <div className="container max-w-6xl py-6 px-4 lg:px-8">
-          {(title || backLink) && (
-            <div className="mb-6">
-              {backLink && (
-                <Link
-                  to={backLink}
-                  className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-2"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Back
-                </Link>
-              )}
-              {title && <h1 className="font-display text-2xl font-semibold">{title}</h1>}
-              {description && <p className="text-muted-foreground mt-1">{description}</p>}
-            </div>
-          )}
-          {children}
-        </div>
+        <PageTransition key={location.pathname}>
+          <div className="container max-w-6xl py-6 px-4 lg:px-8">
+            {(title || backLink) && (
+              <div className="mb-6">
+                {backLink && (
+                  <Link
+                    to={backLink}
+                    className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-2"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Back
+                  </Link>
+                )}
+                {title && <h1 className="font-display text-2xl font-semibold">{title}</h1>}
+                {description && <p className="text-muted-foreground mt-1">{description}</p>}
+              </div>
+            )}
+            {children}
+          </div>
+        </PageTransition>
       </main>
     </div>
   );
