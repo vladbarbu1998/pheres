@@ -83,25 +83,28 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
   
-  /* Prevent lightbox/dialogs from adding extra padding/margin when scrollbar-gutter is already stable */
-  body.yarl__no_scroll,
-  body[data-scroll-locked] {
+  /* 
+   * Prevent layout shift when modals/lightboxes open
+   * The issue: When a modal opens, Radix adds margin-right to body to compensate for scrollbar disappearing.
+   * But since we use scrollbar-gutter: stable, the scrollbar space is already reserved, causing double compensation.
+   * Solution: Override margin/padding added to body when modals are open with maximum specificity.
+   */
+  
+  /* Force body to never have margin/padding compensation when scroll is locked */
+  html body[data-scroll-locked],
+  html body.yarl__no_scroll {
     padding-right: 0 !important;
     margin-right: 0 !important;
-    overflow: hidden !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
   }
   
-  /* Ensure scrollbar gutter remains stable when any modal/lightbox is open */
+  /* Keep scrollbar gutter stable when any overlay is present */
+  html:has([data-radix-dialog-overlay]),
+  html:has([role="dialog"][data-state="open"]),
   html:has(body.yarl__no_scroll),
-  html:has(body[data-scroll-locked]),
-  html:has([data-radix-dialog-overlay]) {
+  html:has(body[data-scroll-locked]) {
     scrollbar-gutter: stable !important;
-    overflow-y: scroll !important;
-  }
-  
-  /* Override Radix Dialog's body style injection */
-  body[style*="padding-right"] {
-    padding-right: 0 !important;
   }
   
   h1, h2, h3, h4, h5, h6 {

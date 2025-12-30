@@ -4,12 +4,9 @@ import useEmblaCarousel from "embla-carousel-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import "yet-another-react-lightbox/styles.css";
 
 interface ProductImage {
   id: string;
@@ -42,14 +39,6 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     containScroll: "trimSnaps",
   });
 
-  // Embla carousel for lightbox
-  const [lightboxEmblaRef, lightboxEmblaApi] = useEmblaCarousel({
-    loop: false,
-    dragFree: false,
-    containScroll: "trimSnaps",
-    startIndex: selectedIndex,
-  });
-
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
@@ -71,27 +60,6 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     };
   }, [emblaApi, onSelect]);
 
-  // Sync lightbox carousel with main carousel when opened
-  useEffect(() => {
-    if (lightboxOpen && lightboxEmblaApi) {
-      lightboxEmblaApi.scrollTo(selectedIndex, true);
-    }
-  }, [lightboxOpen, lightboxEmblaApi, selectedIndex]);
-
-  // Sync lightbox selection back to main
-  useEffect(() => {
-    if (!lightboxEmblaApi) return;
-    const onLightboxSelect = () => {
-      const index = lightboxEmblaApi.selectedScrollSnap();
-      setSelectedIndex(index);
-      emblaApi?.scrollTo(index);
-    };
-    lightboxEmblaApi.on("select", onLightboxSelect);
-    return () => {
-      lightboxEmblaApi.off("select", onLightboxSelect);
-    };
-  }, [lightboxEmblaApi, emblaApi]);
-
   const scrollPrev = useCallback(() => {
     emblaApi?.scrollPrev();
   }, [emblaApi]);
@@ -107,24 +75,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     [emblaApi]
   );
 
-  const lightboxScrollPrev = useCallback(() => {
-    lightboxEmblaApi?.scrollPrev();
-  }, [lightboxEmblaApi]);
-
-  const lightboxScrollNext = useCallback(() => {
-    lightboxEmblaApi?.scrollNext();
-  }, [lightboxEmblaApi]);
-
-  // Keyboard navigation
+  // Keyboard navigation for main carousel (when lightbox is closed)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (lightboxOpen) {
-        if (e.key === "ArrowLeft") {
-          lightboxEmblaApi?.scrollPrev();
-        } else if (e.key === "ArrowRight") {
-          lightboxEmblaApi?.scrollNext();
-        }
-      } else {
+      if (!lightboxOpen) {
         if (e.key === "ArrowLeft") {
           emblaApi?.scrollPrev();
         } else if (e.key === "ArrowRight") {
@@ -135,7 +89,13 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [emblaApi, lightboxEmblaApi, lightboxOpen]);
+  }, [emblaApi, lightboxOpen]);
+
+  // Prepare slides for lightbox
+  const lightboxSlides = sortedImages.map((image, index) => ({
+    src: image.image_url,
+    alt: image.alt_text || `${productName} - Image ${index + 1}`,
+  }));
 
   if (sortedImages.length === 0) {
     return (
@@ -160,7 +120,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                   className="relative aspect-square flex-[0_0_100%] min-w-0 bg-secondary/30"
                 >
                   <button
-                    onClick={() => setLightboxOpen(true)}
+                    onClick={() => {
+                      setSelectedIndex(index);
+                      setLightboxOpen(true);
+                    }}
                     className="w-full h-full cursor-zoom-in"
                     aria-label="Open image gallery"
                   >
@@ -226,6 +189,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                   onClick={() => scrollTo(index)}
                   onDoubleClick={() => {
                     scrollTo(index);
+                    setSelectedIndex(index);
                     setLightboxOpen(true);
                   }}
                   className={cn(
@@ -248,86 +212,33 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         )}
       </div>
 
-      {/* Lightbox Dialog */}
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] p-0 bg-background border overflow-hidden">
-          <VisuallyHidden>
-            <DialogTitle>{productName} - Image Gallery</DialogTitle>
-          </VisuallyHidden>
-
-          {/* Lightbox carousel */}
-          <div className="relative">
-            <div ref={lightboxEmblaRef} className="overflow-hidden">
-              <div className="flex">
-                {sortedImages.map((image, index) => (
-                  <div
-                    key={image.id}
-                    className="flex-[0_0_100%] min-w-0 flex items-center justify-center p-6"
-                  >
-                    <img
-                      src={image.image_url}
-                      alt={image.alt_text || `${productName} - Image ${index + 1}`}
-                      className="max-w-full max-h-[60vh] object-contain"
-                      draggable={false}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Navigation buttons */}
-            {hasMultipleImages && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
-                  onClick={lightboxScrollPrev}
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"
-                  onClick={lightboxScrollNext}
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-              </>
-            )}
-          </div>
-
-          {/* Thumbnails at bottom */}
-          {hasMultipleImages && (
-            <div className="border-t bg-muted/30 px-6 py-6 flex items-center justify-center">
-              <div className="flex gap-3 overflow-x-auto max-w-lg px-2 py-1">
-                {sortedImages.map((image, index) => (
-                  <button
-                    key={image.id}
-                    onClick={() => lightboxEmblaApi?.scrollTo(index)}
-                    className={cn(
-                      "relative h-12 w-12 flex-shrink-0 overflow-hidden rounded transition-all duration-200",
-                      selectedIndex === index
-                        ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                        : "opacity-60 hover:opacity-100"
-                    )}
-                    aria-label={`View image ${index + 1}`}
-                  >
-                    <img
-                      src={image.image_url}
-                      alt={image.alt_text || `${productName} - Image ${index + 1}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Lightbox - using yet-another-react-lightbox for consistent behavior */}
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={selectedIndex}
+        slides={lightboxSlides}
+        plugins={[Zoom]}
+        on={{
+          view: ({ index }) => {
+            setSelectedIndex(index);
+            emblaApi?.scrollTo(index);
+          },
+        }}
+        zoom={{
+          maxZoomPixelRatio: 3,
+          zoomInMultiplier: 2,
+        }}
+        carousel={{
+          finite: !hasMultipleImages,
+        }}
+        controller={{
+          closeOnBackdropClick: true,
+        }}
+        styles={{
+          container: { backgroundColor: "rgba(0, 0, 0, 0.9)" },
+        }}
+      />
     </>
   );
 }
