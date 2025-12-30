@@ -2,15 +2,14 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
-import { ProductGrid } from "@/components/shop/ProductGrid";
 import { useCollections } from "@/hooks/useProducts";
-import { useFeaturedProducts } from "@/hooks/useHomepage";
 import { useFeaturedPress } from "@/hooks/usePress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
+import { BrandHeritageSection } from "@/components/home/BrandHeritageSection";
 
 export default function Index() {
   const { data: collections, isLoading: collectionsLoading } = useCollections();
-  const { data: productsData, isLoading: productsLoading } = useFeaturedProducts();
   const { data: pressEntries } = useFeaturedPress();
 
   const featuredCollections = collections?.filter(c => c.is_featured).slice(0, 4) || [];
@@ -142,6 +141,12 @@ export default function Index() {
           )}
         </div>
       </section>
+
+      {/* Featured Products Section */}
+      <FeaturedProductsSection />
+
+      {/* Brand Heritage Section */}
+      <BrandHeritageSection />
 
       {/* Press Teaser */}
       <section className="border-t border-b border-border/50 bg-primary/5">
