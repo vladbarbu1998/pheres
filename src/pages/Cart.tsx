@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CartItem } from "@/components/cart/CartItem";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { CartCheckoutLayout } from "@/components/cart/CartCheckoutLayout";
-import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/contexts/CartContext";
 
 export default function Cart() {
@@ -39,11 +38,10 @@ export default function Cart() {
   // Empty cart state
   if (items.length === 0) {
     return (
-      <Layout>
-        <div className="container max-w-6xl py-8 lg:py-12">
-          <h1 className="font-display text-3xl font-semibold text-foreground md:text-4xl mb-8">
-            Your Cart
-          </h1>
+      <CartCheckoutLayout
+        title="Your Cart"
+        backLink={{ to: "/shop", label: "Continue Shopping" }}
+        leftContent={
           <div className="text-center py-16 border border-dashed border-border rounded-sm" data-testid="empty-state">
             <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground/50 mb-6" />
             <h2 className="font-display text-2xl font-semibold text-foreground mb-2">
@@ -57,8 +55,9 @@ export default function Cart() {
               <Link to="/shop">Explore the Collection</Link>
             </Button>
           </div>
-        </div>
-      </Layout>
+        }
+        rightContent={<div />}
+      />
     );
   }
 
