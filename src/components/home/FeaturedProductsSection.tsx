@@ -74,8 +74,8 @@ export function FeaturedProductsSection() {
                   );
                 })()}
                 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+                {/* Gradient Overlay - stronger for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/30" />
                 
                 {/* New Badge */}
                 {heroProduct.is_new && (

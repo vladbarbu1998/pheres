@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Quote } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import narcisaPhoto from "@/assets/narcisa-pheres-founder.jpg";
 
@@ -39,37 +39,29 @@ export function BrandHeritageSection() {
               Our Heritage
             </p>
 
-            {/* Quote Block */}
-            <div className="relative">
-              {/* Decorative quote icon */}
-              <Quote className="absolute -top-2 -left-2 h-8 w-8 text-primary/20 rotate-180" />
-              
-              <blockquote className="pl-8 border-l-2 border-primary/30">
-                <p className="font-display text-2xl font-medium leading-relaxed text-foreground md:text-3xl italic">
-                  "True elegance is not about following trends—it's about creating 
-                  timeless pieces that become part of a woman's story."
-                </p>
-                <footer className="mt-4 text-muted-foreground">
-                  <cite className="not-italic">
-                    <span className="font-semibold text-foreground">Narcisa Pheres</span>
-                    <span className="block text-sm mt-1">Founder & Creative Director</span>
-                  </cite>
-                </footer>
-              </blockquote>
-            </div>
+            {/* Founder Name */}
+            <h3 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
+              Narcisa Pheres
+            </h3>
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              Founder
+            </p>
 
             {/* Story Excerpt */}
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Narcisa Pheres brings decades of passion for exceptional craftsmanship 
-                and rare gemstones to every creation. Her journey began in Romania, 
-                where she developed an eye for beauty that would later define one of 
-                the world's most coveted jewelry houses.
+                PHERES brings luxury back to its roots by creating very exclusive products 
+                of extremely high quality that the niche market of connoisseurs truly appreciates.
               </p>
               <p>
-                Today, Pheres pieces adorn celebrities on red carpets worldwide, each 
-                creation a testament to the founder's unwavering vision: jewelry that 
-                doesn't merely accessorize but transforms.
+                Founded by designer Narcisa Pheres over a decade ago as a highly exclusive 
+                Italian fashion house, PHERES has taken on a new life of its own—maintaining 
+                its focus on creating unique luxury experiences that walk the fine line between 
+                elegance and extravagance.
+              </p>
+              <p>
+                With the belief that true opulence is in the detail, the greatest of consideration 
+                and care is paid to even the smallest of steps in the design and creation process.
               </p>
             </div>
 
@@ -89,21 +81,6 @@ export function BrandHeritageSection() {
               </Button>
             </div>
 
-            {/* Trust indicators */}
-            <div className="flex flex-wrap gap-6 pt-4 border-t border-border/50">
-              <div className="text-center">
-                <p className="font-display text-2xl font-semibold text-foreground">25+</p>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Years of Excellence</p>
-              </div>
-              <div className="text-center">
-                <p className="font-display text-2xl font-semibold text-foreground">100+</p>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Celebrity Clients</p>
-              </div>
-              <div className="text-center">
-                <p className="font-display text-2xl font-semibold text-foreground">50+</p>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Red Carpet Events</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
