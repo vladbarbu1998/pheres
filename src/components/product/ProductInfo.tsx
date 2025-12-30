@@ -181,10 +181,10 @@ export function ProductInfo({
             value={quantity}
             onChange={setQuantity}
             disabled={isAdding}
-            className="shrink-0 [&_button]:h-11 [&_input]:h-11"
+            className="shrink-0 w-full sm:w-auto [&_button]:h-11 [&_input]:h-11 [&_input]:flex-1"
           />
           <Button 
-            className="flex-1 h-11 px-8"
+            className="flex-1 h-11 px-8 w-full sm:w-auto"
             onClick={handleAddToCart}
             disabled={!canAddToCart || isAdding}
           >
