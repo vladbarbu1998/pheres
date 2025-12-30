@@ -27,7 +27,7 @@ export interface FilterState {
   stoneType: string | null;
 }
 
-export type SortOption = "newest" | "price-asc" | "price-desc" | "bestsellers";
+export type SortOption = "featured" | "price-asc" | "price-desc" | "alpha-asc" | "alpha-desc" | "oldest" | "newest" | "bestsellers";
 
 interface Category {
   id: string;
@@ -317,14 +317,18 @@ export function ShopFilters({
 
       {/* Sort dropdown */}
       <Select value={sortBy} onValueChange={(value) => onSortChange(value as SortOption)}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="newest">Newest</SelectItem>
+          <SelectItem value="featured">Featured</SelectItem>
           <SelectItem value="price-asc">Price: Low to High</SelectItem>
           <SelectItem value="price-desc">Price: High to Low</SelectItem>
-          <SelectItem value="bestsellers">Bestsellers</SelectItem>
+          <SelectItem value="alpha-asc">Alphabetically: A-Z</SelectItem>
+          <SelectItem value="alpha-desc">Alphabetically: Z-A</SelectItem>
+          <SelectItem value="oldest">Oldest to Newest</SelectItem>
+          <SelectItem value="newest">Newest to Oldest</SelectItem>
+          <SelectItem value="bestsellers">Best Selling</SelectItem>
         </SelectContent>
       </Select>
     </div>
