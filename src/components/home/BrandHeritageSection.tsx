@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Gem, Shield, Award } from "lucide-react";
+import { ArrowRight, Gem, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import narcisaPhoto from "@/assets/narcisa-pheres-founder.jpg";
 
@@ -84,7 +84,7 @@ export function BrandHeritageSection() {
               </div>
 
               {/* Brand Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 border-t border-border/50 mt-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-10 border-t border-border/50 mt-10">
                 <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
                   <Gem className="h-5 w-5 text-primary" />
                   <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
@@ -92,15 +92,6 @@ export function BrandHeritageSection() {
                   </h4>
                   <p className="text-sm text-muted-foreground">
                     Each piece meticulously crafted by master artisans
-                  </p>
-                </div>
-                <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
-                  <Shield className="h-5 w-5 text-primary" />
-                  <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
-                    Ethically Sourced
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Conflict-free diamonds and responsibly sourced materials
                   </p>
                 </div>
                 <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
@@ -115,16 +106,10 @@ export function BrandHeritageSection() {
               </div>
 
               {/* CTA */}
-              <div className="flex flex-col gap-4 sm:flex-row pt-10">
+              <div className="pt-10">
                 <Button asChild className="group">
                   <Link to="/story">
                     Discover Our Full Story
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="group">
-                  <Link to="/celebrities">
-                    See Who Wears Pheres
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
