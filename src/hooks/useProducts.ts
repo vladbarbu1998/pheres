@@ -140,11 +140,23 @@ export function useProducts({
 
       // Apply sorting
       switch (sortBy) {
+        case "featured":
+          query = query.order("is_featured", { ascending: false }).order("is_bestseller", { ascending: false }).order("created_at", { ascending: false });
+          break;
         case "price-asc":
           query = query.order("base_price", { ascending: true });
           break;
         case "price-desc":
           query = query.order("base_price", { ascending: false });
+          break;
+        case "alpha-asc":
+          query = query.order("name", { ascending: true });
+          break;
+        case "alpha-desc":
+          query = query.order("name", { ascending: false });
+          break;
+        case "oldest":
+          query = query.order("created_at", { ascending: true });
           break;
         case "bestsellers":
           query = query.order("is_bestseller", { ascending: false }).order("created_at", { ascending: false });

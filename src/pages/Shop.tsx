@@ -27,7 +27,7 @@ export default function ShopPage() {
   const [page, setPage] = useState(1);
 
   const sortParam = searchParams.get("sort") as SortOption | null;
-  const sortBy: SortOption = sortParam || "newest";
+  const sortBy: SortOption = sortParam || "featured";
 
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
   const { data: collectionsData, isLoading: collectionsLoading } = useCollections();
