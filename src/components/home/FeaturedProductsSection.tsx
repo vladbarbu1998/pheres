@@ -16,7 +16,7 @@ export function FeaturedProductsSection() {
     <section className="border-t border-border/50">
       <div className="container py-16 md:py-24">
         {/* Section Header */}
-        <div className="mb-10 flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left md:mb-12">
+        <div className="mb-10 text-center sm:flex sm:flex-row sm:items-center sm:justify-between sm:text-left md:mb-12">
           <div>
             <p className="mb-2 text-xs font-medium uppercase tracking-[0.25em] text-primary">
               Featured Pieces
@@ -25,7 +25,7 @@ export function FeaturedProductsSection() {
               New Arrivals & Icons
             </h2>
           </div>
-          <Button asChild variant="outline" size="sm" className="group">
+          <Button asChild variant="outline" size="sm" className="group hidden sm:inline-flex">
             <Link to="/shop">
               View All Pieces
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -79,6 +79,16 @@ export function FeaturedProductsSection() {
             </p>
           </div>
         )}
+
+        {/* Mobile-only button at end of section */}
+        <div className="mt-8 text-center sm:hidden">
+          <Button asChild variant="outline" size="sm" className="group">
+            <Link to="/shop">
+              View All Pieces
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
