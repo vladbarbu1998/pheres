@@ -181,26 +181,26 @@ export function ProductInfo({
             value={quantity}
             onChange={setQuantity}
             disabled={isAdding}
-            className="shrink-0"
+            className="shrink-0 [&_button]:h-11 [&_input]:h-11"
           />
           <Button 
-            className="flex-1 min-h-[52px] px-8 py-4 text-base"
+            className="flex-1 h-11 px-8"
             onClick={handleAddToCart}
             disabled={!canAddToCart || isAdding}
           >
             {isAdding ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Adding...
               </>
             ) : justAdded ? (
               <>
-                <Check className="mr-2 h-5 w-5" />
+                <Check className="mr-2 h-4 w-4" />
                 Added to Cart
               </>
             ) : (
               <>
-                <ShoppingBag className="mr-2 h-5 w-5" />
+                <ShoppingBag className="mr-2 h-4 w-4" />
                 {hasVariants && !selectedVariantId ? "Select an option" : "Add to Cart"}
               </>
             )}
