@@ -208,7 +208,7 @@ export function ProductInfo({
         </div>
         <Button 
           variant="outline"
-          className="w-full min-h-[52px] px-8 py-4 text-base sm:w-auto"
+          className="w-full min-h-[48px] px-8 py-3 text-base sm:w-auto"
           onClick={toggleFavorite}
           disabled={isToggling}
         >
