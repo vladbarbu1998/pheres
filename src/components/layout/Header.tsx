@@ -74,7 +74,7 @@ export function Header() {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "font-display text-sm font-medium transition-colors hover:text-foreground",
                   location.pathname === item.href 
                     ? "text-foreground" 
                     : "text-muted-foreground"
@@ -174,7 +174,7 @@ export function Header() {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "block py-3 text-base font-medium transition-colors hover:text-foreground",
+                    "font-display block py-3 text-base font-medium transition-colors hover:text-foreground",
                     location.pathname === item.href 
                       ? "text-foreground" 
                       : "text-muted-foreground"
@@ -196,7 +196,7 @@ export function Header() {
                   setMobileMenuOpen(false);
                   setSearchOpen(true);
                 }}
-                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="font-display flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <Search className="h-5 w-5" />
                 Search
@@ -206,7 +206,7 @@ export function Header() {
                   setMobileMenuOpen(false);
                   handleAccountClick();
                 }}
-                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="font-display flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <User className="h-5 w-5" />
                 {user ? "My Account" : "Sign In"}
@@ -216,7 +216,7 @@ export function Header() {
                   setMobileMenuOpen(false);
                   handleFavoritesClick();
                 }}
-                className="flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="font-display flex w-full items-center gap-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <Heart className="h-5 w-5" />
                 Favorites
