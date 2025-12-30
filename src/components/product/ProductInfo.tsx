@@ -185,7 +185,7 @@ export function ProductInfo({
           />
           <Button 
             size="lg" 
-            className="flex-1 h-11 md:h-12 text-base"
+            className="flex-1 py-5 text-base h-10"
             onClick={handleAddToCart}
             disabled={!canAddToCart || isAdding}
           >
@@ -210,7 +210,7 @@ export function ProductInfo({
         <Button 
           size="lg" 
           variant="outline"
-          className="w-full h-11 md:h-12 text-base sm:w-auto"
+          className="w-full py-6 text-base sm:w-auto"
           onClick={toggleFavorite}
           disabled={isToggling}
         >
