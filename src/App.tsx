@@ -48,7 +48,6 @@ import AdminNews from "./pages/admin/News";
 import AdminCelebrities from "./pages/admin/Celebrities";
 import AdminStory from "./pages/admin/Story";
 import AdminInbox from "./pages/admin/Inbox";
-import AdminSettings from "./pages/admin/Settings";
 import NotFound from "./pages/NotFound";
 import RoutesDebug from "./pages/RoutesDebug";
 
@@ -113,7 +112,6 @@ const App = () => (
             <Route path="/admin/celebrities" element={<AdminProtectedRoute><AdminCelebrities /></AdminProtectedRoute>} />
             <Route path="/admin/story" element={<AdminProtectedRoute><AdminStory /></AdminProtectedRoute>} />
             <Route path="/admin/inbox" element={<AdminProtectedRoute><AdminInbox /></AdminProtectedRoute>} />
-            <Route path="/admin/settings" element={<AdminProtectedRoute><AdminSettings /></AdminProtectedRoute>} />
             {/* Debug route - not linked in navigation */}
             <Route path="/_routes" element={<RoutesDebug />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
