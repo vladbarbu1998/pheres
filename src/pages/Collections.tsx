@@ -32,7 +32,7 @@ export default function CollectionsPage() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="overflow-hidden rounded-sm">
-                <Skeleton className="aspect-[4/5] w-full" />
+                <Skeleton className="aspect-square w-full" />
                 <div className="pt-4 space-y-2">
                   <Skeleton className="h-6 w-1/2" />
                   <Skeleton className="h-4 w-full" />
@@ -56,7 +56,7 @@ export default function CollectionsPage() {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Image Container */}
-                <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-muted shadow-md transition-shadow duration-300 group-hover:shadow-xl">
+                <div className="relative aspect-square overflow-hidden rounded-sm bg-muted shadow-md transition-shadow duration-300 group-hover:shadow-xl">
                   {collection.image_url ? (
                     <img
                       src={collection.image_url}
