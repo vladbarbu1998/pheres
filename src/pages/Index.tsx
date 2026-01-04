@@ -75,92 +75,90 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Collections Highlight - Card-based design */}
-      <section className="border-t border-border/50 bg-secondary/30">
-        <div className="container py-16 md:py-24">
-          <div className="mb-12 text-center sm:flex sm:flex-row sm:items-center sm:justify-between sm:text-left">
-            <div>
-              <p className="mb-2 font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
-                Curated Collections
-              </p>
-              <h2 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
-                Worlds of Wonder
-              </h2>
-            </div>
-            <Button asChild variant="outline" className="group hidden sm:inline-flex">
-              <Link to="/shop">
-                View All Collections
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
+      {/* Collections Highlight - Luxury Editorial Design */}
+      <section className="bg-background">
+        <div className="container py-20 md:py-32">
+          <div className="mb-16 text-center">
+            <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.3em] text-primary">
+              Curated Collections
+            </p>
+            <h2 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
+              Worlds of Wonder
+            </h2>
           </div>
 
           {collectionsLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="rounded-sm border border-border bg-card overflow-hidden">
-                  <Skeleton className="aspect-[4/3] w-full" />
-                  <div className="p-5 space-y-3">
-                    <Skeleton className="h-5 w-2/3" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
+            <div className="grid gap-8 md:grid-cols-2">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="overflow-hidden">
+                  <Skeleton className="aspect-[4/5] w-full" />
                 </div>
               ))}
             </div>
           ) : displayCollections.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {displayCollections.map((collection, index) => (
+            <div className="grid gap-8 md:grid-cols-2">
+              {displayCollections.slice(0, 2).map((collection, index) => (
                 <Link
                   key={collection.id}
                   to={`/shop/collection/${collection.slug}`}
-                  className="group block rounded-sm border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-lg animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="group relative block overflow-hidden animate-fade-in"
+                  style={{ animationDelay: `${index * 150}ms` }}
                 >
-                  <div className="relative aspect-square overflow-hidden bg-muted">
+                  {/* Image Container */}
+                  <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                     {collection.image_url ? (
                       <img
                         src={collection.image_url}
                         alt={collection.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                        <span className="font-display text-3xl font-semibold text-primary/40">
+                      <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+                        <span className="font-serif text-6xl font-light text-primary/20">
                           {collection.name.charAt(0)}
                         </span>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    
+                    {/* Permanent gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/20" />
                   </div>
-                  <div className="p-5 space-y-2">
-                    <h3 className="font-display text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                  
+                  {/* Text Overlay */}
+                  <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 lg:p-10">
+                    <p className="mb-2 font-display text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+                      Collection
+                    </p>
+                    <h3 className="mb-3 font-serif text-2xl font-light tracking-wide text-white md:text-3xl lg:text-4xl">
                       {collection.name}
                     </h3>
                     {collection.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="mb-4 max-w-md text-sm leading-relaxed text-white/80 line-clamp-2">
                         {collection.description}
                       </p>
                     )}
-                    <span className="inline-flex items-center text-sm font-medium text-primary group-hover:underline">
-                      Explore Collection
-                      <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+                    <span className="inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:gap-3">
+                      Explore
+                      <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="rounded-sm border border-dashed border-border bg-card/50 p-12 text-center">
-              <p className="text-muted-foreground">
-                Collections coming soon. Check back for our curated worlds of wonder.
+            <div className="py-16 text-center">
+              <p className="font-display text-sm tracking-wide text-muted-foreground">
+                Collections coming soon
               </p>
             </div>
           )}
 
-          {/* Mobile-only button at end of section */}
-          <div className="mt-8 text-center sm:hidden">
-            <Button asChild variant="outline" className="group">
+          {/* View All Button */}
+          <div className="mt-12 text-center">
+            <Button asChild variant="outline" size="lg" className="group border-primary/30 hover:border-primary hover:bg-primary/5">
               <Link to="/shop">
                 View All Collections
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -169,6 +167,7 @@ export default function Index() {
           </div>
         </div>
       </section>
+
 
       {/* Featured Products Section */}
       <FeaturedProductsSection />
