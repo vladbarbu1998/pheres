@@ -24,6 +24,7 @@ export default {
     extend: {
       fontFamily: {
         display: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["Times New Roman", "Times", "Georgia", "serif"],
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
