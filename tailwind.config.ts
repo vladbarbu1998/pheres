@@ -102,10 +102,6 @@ export default {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
-        "ken-burns": {
-          "0%": { transform: "scale(1)" },
-          "100%": { transform: "scale(1.1)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -113,7 +109,6 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "fade-in-up": "fade-in-up 0.4s ease-out",
         shimmer: "shimmer 2s infinite",
-        "ken-burns": "ken-burns 20s ease-out forwards",
       },
       spacing: {
         "18": "4.5rem",
