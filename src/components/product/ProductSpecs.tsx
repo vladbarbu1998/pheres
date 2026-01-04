@@ -48,7 +48,6 @@ export function ProductSpecs({
     { label: "Metal", value: metalType },
     { label: "Metal Weight", value: metalWeight },
     { label: "Gross Weight", value: grossWeight },
-    { label: "Size", value: size },
     { label: "Certification", value: certification },
   ].filter((spec) => spec.value);
 
@@ -92,10 +91,13 @@ export function ProductSpecs({
     }
   });
 
+  // Size right above collection
+  const sizeSpec = size ? [{ label: "Size", value: size }] : [];
+  
   // Collection always last
   const collectionSpec = collectionName ? [{ label: "Collection", value: collectionName }] : [];
 
-  const allSpecs = [...baseSpecs, ...stoneSpecs, ...collectionSpec];
+  const allSpecs = [...baseSpecs, ...stoneSpecs, ...sizeSpec, ...collectionSpec];
 
   if (allSpecs.length === 0) {
     return null;
