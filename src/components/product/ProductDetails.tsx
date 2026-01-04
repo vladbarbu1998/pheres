@@ -116,19 +116,19 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
       <div className="mt-12 border-t border-border pt-8">
         <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
           <div>
-            <p className="font-display text-sm font-semibold text-foreground">Certified</p>
+            <p className="font-label text-sm font-semibold text-foreground">Certified</p>
             <p className="mt-1 text-xs text-muted-foreground">GIA Certified Diamonds</p>
           </div>
           <div>
-            <p className="font-display text-sm font-semibold text-foreground">Handcrafted</p>
+            <p className="font-label text-sm font-semibold text-foreground">Handcrafted</p>
             <p className="mt-1 text-xs text-muted-foreground">Master Artisans</p>
           </div>
           <div>
-            <p className="font-display text-sm font-semibold text-foreground">Secure</p>
+            <p className="font-label text-sm font-semibold text-foreground">Secure</p>
             <p className="mt-1 text-xs text-muted-foreground">Insured Shipping</p>
           </div>
           <div>
-            <p className="font-display text-sm font-semibold text-foreground">Lifetime</p>
+            <p className="font-label text-sm font-semibold text-foreground">Lifetime</p>
             <p className="mt-1 text-xs text-muted-foreground">Warranty & Care</p>
           </div>
         </div>
