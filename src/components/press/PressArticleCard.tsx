@@ -22,16 +22,16 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
             <img
               src={article.thumbnail_url}
               alt={article.title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
               {article.outlet?.logo_url && (
                 <img
                   src={article.outlet.logo_url}
                   alt={article.outlet.name}
-                  className="h-12 w-auto max-w-[60%] object-contain opacity-30"
+                  className="h-8 w-auto max-w-[50%] object-contain opacity-20 grayscale"
                 />
               )}
             </div>
