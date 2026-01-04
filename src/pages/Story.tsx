@@ -6,21 +6,25 @@ import { Diamond, Gem, Globe, Leaf } from "lucide-react";
 import narcisaPhoto from "@/assets/narcisa-pheres-founder.jpg";
 const values = [
   {
+    id: "craftsmanship",
     icon: Diamond,
     title: "Exceptional Craftsmanship",
     description: "Every piece is meticulously handcrafted by master artisans, honoring centuries-old techniques while embracing modern precision.",
   },
   {
+    id: "rarity",
     icon: Gem,
     title: "Uncompromising Rarity",
     description: "We source only the finest diamonds and gemstones, each selected for its exceptional quality and unique character.",
   },
   {
+    id: "luxury",
     icon: Leaf,
-    title: "Responsible Luxury",
+    title: <>Responsible<br className="hidden lg:block" /> Luxury</>,
     description: "Our commitment to ethical sourcing and sustainable practices ensures beauty without compromise.",
   },
   {
+    id: "transcendence",
     icon: Globe,
     title: "Cultural Transcendence",
     description: "East and West converge—symbolism and structure in a refined, timeless harmony; each piece becomes a bridge.",
@@ -136,7 +140,7 @@ export default function Story() {
           <div className="grid gap-px bg-border/50 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((value, index) => (
               <div 
-                key={value.title} 
+                key={value.id} 
                 className="group relative bg-background p-8 transition-all duration-500 hover:bg-muted/30 lg:p-10"
               >
                 {/* Decorative corner accent */}
