@@ -41,7 +41,7 @@ export default function GioroPage() {
             <div className="mt-12 flex items-center gap-4">
               <div className="h-px flex-1 max-w-24 bg-border" />
               <span className="font-label text-xs uppercase tracking-widest text-muted-foreground/60">
-                2025
+                2026
               </span>
             </div>
           </div>
