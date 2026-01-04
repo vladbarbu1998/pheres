@@ -19,10 +19,13 @@ const navigation = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isHomepage = location.pathname === "/";
 
   const handleAccountClick = () => {
     if (user) {
@@ -49,15 +52,40 @@ export function Header() {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Track scroll position for transparent header on homepage
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    
+    if (isHomepage) {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll(); // Check initial position
+      return () => window.removeEventListener("scroll", handleScroll);
+    } else {
+      setScrolled(true); // Always solid on other pages
+    }
+  }, [isHomepage]);
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header 
+        className={cn(
+          "fixed top-0 z-50 w-full transition-all duration-300",
+          isHomepage && !scrolled
+            ? "bg-transparent border-transparent"
+            : "bg-background/95 backdrop-blur border-b border-border/50 supports-[backdrop-filter]:bg-background/80"
+        )}
+      >
         <nav className="container flex h-16 items-center justify-between lg:h-20">
           {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className={cn(
+              "lg:hidden",
+              isHomepage && !scrolled && "text-white hover:bg-white/10 hover:text-white"
+            )}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -65,7 +93,10 @@ export function Header() {
           </Button>
 
           {/* Logo - centered on mobile */}
-          <Logo className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0" />
+          <Logo 
+            className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0" 
+            inverted={isHomepage && !scrolled}
+          />
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex lg:items-center lg:gap-8">
@@ -74,10 +105,12 @@ export function Header() {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "font-display text-sm font-medium transition-colors hover:text-foreground",
-                  location.pathname === item.href 
-                    ? "text-foreground" 
-                    : "text-muted-foreground"
+                  "font-display text-sm font-medium transition-colors",
+                  isHomepage && !scrolled
+                    ? "text-white/80 hover:text-white"
+                    : location.pathname === item.href 
+                      ? "text-foreground" 
+                      : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.name}
@@ -93,7 +126,10 @@ export function Header() {
               size="icon" 
               aria-label="Search"
               onClick={() => setSearchOpen(true)}
-              className="hidden lg:flex"
+              className={cn(
+                "hidden lg:flex",
+                isHomepage && !scrolled && "text-white hover:bg-white/10 hover:text-white"
+              )}
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -102,7 +138,10 @@ export function Header() {
               size="icon" 
               aria-label="Favorites"
               onClick={handleFavoritesClick}
-              className="hidden lg:flex"
+              className={cn(
+                "hidden lg:flex",
+                isHomepage && !scrolled && "text-white hover:bg-white/10 hover:text-white"
+              )}
             >
               <Heart className="h-5 w-5" />
             </Button>
@@ -111,7 +150,10 @@ export function Header() {
               size="icon" 
               aria-label="Account"
               onClick={handleAccountClick}
-              className="hidden lg:flex"
+              className={cn(
+                "hidden lg:flex",
+                isHomepage && !scrolled && "text-white hover:bg-white/10 hover:text-white"
+              )}
             >
               <User className="h-5 w-5" />
             </Button>
@@ -121,7 +163,10 @@ export function Header() {
               variant="ghost" 
               size="icon" 
               aria-label="Cart" 
-              className="relative"
+              className={cn(
+                "relative",
+                isHomepage && !scrolled && "text-white hover:bg-white/10 hover:text-white"
+              )}
               onClick={handleCartClick}
             >
               <ShoppingBag className="h-5 w-5" />
