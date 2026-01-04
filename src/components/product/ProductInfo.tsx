@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useFavoriteToggle } from "@/hooks/useFavoriteToggle";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 import {
   Select,
   SelectContent,
@@ -145,9 +146,10 @@ export function ProductInfo({
 
       {/* Short description */}
       {shortDescription && (
-        <p className="text-base leading-relaxed text-muted-foreground">
-          {shortDescription}
-        </p>
+        <div 
+          className="prose prose-neutral dark:prose-invert max-w-none text-base leading-relaxed text-muted-foreground"
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(shortDescription) }}
+        />
       )}
 
       {/* Variant selector */}
