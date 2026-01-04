@@ -12,7 +12,7 @@ export default function GioroPage() {
             <img
               src={gioroRing}
               alt="Gioro by Pheres"
-              className="h-full w-full object-contain bg-muted/30"
+              className="h-full w-full object-cover scale-110"
             />
           </div>
 
