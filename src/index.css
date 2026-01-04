@@ -74,6 +74,7 @@
   font-family: "Times New Roman", "Times", serif;
   text-transform: uppercase;
   letter-spacing: 0.2em;
+  margin-right: -0.2em; /* Compensate for letter-spacing after last character */
 }
 
 @layer base {
