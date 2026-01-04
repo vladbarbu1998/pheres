@@ -13,7 +13,7 @@ export function PageHero({ label, title, intro, className }: PageHeroProps) {
     <section className={cn("py-20 md:py-28 lg:py-36", className)}>
       <div className="container max-w-4xl text-center">
         {label && (
-          <p className="mb-4 font-display text-sm font-medium uppercase tracking-[0.3em] text-primary animate-fade-in">
+          <p className="mb-4 font-label text-sm font-medium uppercase tracking-[0.3em] text-primary animate-fade-in">
             {label}
           </p>
         )}
