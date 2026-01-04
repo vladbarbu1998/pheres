@@ -34,31 +34,11 @@ const values = [
 export default function Story() {
   return (
     <Layout>
-      {/* Hero Section with Background Image */}
-      <section className="relative py-24 md:py-32 lg:py-40 overflow-hidden">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/story-hero.webp')" }}
-        />
-        {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/20" />
-        
-        <div className="container relative z-10 max-w-4xl text-center">
-          <p className="mb-4 font-label text-sm font-medium uppercase tracking-[0.3em] text-white/90 animate-fade-in">
-            Since 2006
-          </p>
-          <h1 className="font-serif text-3xl font-light tracking-wide text-white md:text-4xl lg:text-5xl animate-fade-in text-balance">
-            Our Story
-          </h1>
-          <p 
-            className="mx-auto mt-6 max-w-2xl text-lg text-white/85 md:text-xl animate-fade-in leading-relaxed" 
-            style={{ animationDelay: "100ms" }}
-          >
-            Creating unique luxury experiences that walk the fine line between elegance and extravagance—boldly innovating a symbiosis of style.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        label="Since 2006"
+        title="Our Story"
+        intro="Creating unique luxury experiences that walk the fine line between elegance and extravagance—boldly innovating a symbiosis of style."
+      />
 
       {/* Founder Section */}
       <section className="border-t border-border/50 py-16 md:py-24">

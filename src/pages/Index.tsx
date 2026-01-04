@@ -25,7 +25,7 @@ export default function Index() {
         {/* TODO: Replace /images/hero-model.webp with your actual hero image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/hero-model.webp')" }}
+          style={{ backgroundImage: "url('/images/story-hero.webp')" }}
         />
         
         {/* Dark Gradient Overlay - transparent at top, dark at bottom */}
