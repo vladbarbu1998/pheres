@@ -1,5 +1,6 @@
 import { Layout } from "@/components/layout/Layout";
 import gioroRing from "@/assets/gioro-ring.png";
+import gioroRingMobile from "@/assets/gioro-ring-mobile.png";
 
 export default function GioroPage() {
   return (
@@ -7,12 +8,19 @@ export default function GioroPage() {
       {/* Editorial Asymmetric Layout */}
       <section className="relative min-h-[calc(100vh-5rem)] overflow-hidden">
         <div className="flex min-h-[calc(100vh-5rem)] flex-col lg:flex-row">
-          {/* Image Section - 70% on desktop */}
-          <div className="relative h-[50vh] w-full lg:h-auto lg:w-[70%]">
+          {/* Image Section - Square on mobile, 70% on desktop */}
+          <div className="relative aspect-square w-full lg:aspect-auto lg:h-auto lg:w-[70%]">
+            {/* Mobile image */}
+            <img
+              src={gioroRingMobile}
+              alt="Gioro by Pheres"
+              className="h-full w-full object-cover lg:hidden"
+            />
+            {/* Desktop image */}
             <img
               src={gioroRing}
               alt="Gioro by Pheres"
-              className="h-full w-full object-cover scale-110"
+              className="hidden h-full w-full object-cover scale-110 lg:block"
             />
           </div>
 
