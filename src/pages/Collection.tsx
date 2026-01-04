@@ -14,6 +14,7 @@ import {
 } from "@/components/shop/ShopFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { sanitizeHtml } from "@/lib/sanitize";
 import {
   useCollection,
   useProducts,
@@ -156,9 +157,10 @@ export default function CollectionPage() {
                 {collection?.name}
               </h1>
               {collection?.description && (
-                <p className="mt-4 text-base text-muted-foreground lg:text-lg">
-                  {collection.description}
-                </p>
+                <div 
+                  className="mt-4 prose prose-neutral dark:prose-invert max-w-none text-muted-foreground leading-relaxed lg:text-lg"
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(collection.description) }}
+                />
               )}
             </div>
           )}
