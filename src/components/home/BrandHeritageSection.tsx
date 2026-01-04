@@ -44,7 +44,7 @@ export function BrandHeritageSection() {
                     Narcisa Pheres
                   </h3>
                   <p className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mt-1">
-                    Founder
+                    Founder & Creative Director
                   </p>
                 </div>
               </div>
