@@ -153,7 +153,7 @@ export default function CollectionPage() {
             </div>
           ) : (
             <div className="mx-auto max-w-2xl text-center">
-              <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground lg:text-4xl">
+              <h1 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl animate-fade-in text-balance">
                 {collection?.name}
               </h1>
               {collection?.description && (
