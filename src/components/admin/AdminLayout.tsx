@@ -19,6 +19,8 @@ import {
   Menu,
   X,
   ChevronLeft,
+  FileText,
+  Building2,
 } from "lucide-react";
 
 const navItems = [
@@ -30,6 +32,8 @@ const navItems = [
   { title: "Customers", href: "/admin/customers", icon: Users },
   { title: "News", href: "/admin/news", icon: Newspaper },
   { title: "Celebrities", href: "/admin/celebrities", icon: Star },
+  { title: "Press Outlets", href: "/admin/press-outlets", icon: Building2 },
+  { title: "Press Articles", href: "/admin/press-articles", icon: FileText },
   { title: "Story", href: "/admin/story", icon: BookOpen },
   { title: "Inbox", href: "/admin/inbox", icon: Mail },
 ];
