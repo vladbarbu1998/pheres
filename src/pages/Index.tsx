@@ -66,52 +66,46 @@ export default function Index() {
               ))}
             </div>
           ) : displayCollections.length > 0 ? (
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid gap-10 md:grid-cols-2">
               {displayCollections.slice(0, 2).map((collection, index) => (
                 <Link
                   key={collection.id}
                   to={`/shop/collection/${collection.slug}`}
-                  className="group relative block overflow-hidden animate-fade-in"
+                  className="group block animate-fade-in"
                   style={{ animationDelay: `${index * 150}ms` }}
                 >
-                  {/* Image Container */}
-                  <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                  {/* Image Container - Clean, no overlay */}
+                  <div className="relative aspect-[3/4] overflow-hidden bg-muted">
                     {collection.image_url ? (
                       <img
                         src={collection.image_url}
                         alt={collection.name}
-                        className="h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-                        <span className="font-serif text-6xl font-light text-primary/20">
+                        <span className="font-serif text-7xl font-light text-primary/20">
                           {collection.name.charAt(0)}
                         </span>
                       </div>
                     )}
-                    
-                    {/* Permanent gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/20" />
                   </div>
                   
-                  {/* Text Overlay */}
-                  <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 lg:p-10">
-                    <p className="mb-2 font-display text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+                  {/* Text Below Image */}
+                  <div className="pt-6">
+                    <p className="mb-2 font-display text-xs font-medium uppercase tracking-[0.25em] text-primary">
                       Collection
                     </p>
-                    <h3 className="mb-3 font-serif text-2xl font-light tracking-wide text-white md:text-3xl lg:text-4xl">
+                    <h3 className="mb-2 font-serif text-2xl font-light tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary md:text-3xl">
                       {collection.name}
                     </h3>
                     {collection.description && (
-                      <p className="mb-4 max-w-md text-sm leading-relaxed text-white/80 line-clamp-2">
+                      <p className="mb-4 text-sm leading-relaxed text-muted-foreground line-clamp-2">
                         {collection.description}
                       </p>
                     )}
-                    <span className="inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:gap-3">
-                      Explore
+                    <span className="inline-flex items-center gap-2 text-sm font-medium tracking-wide text-foreground/70 transition-all duration-300 group-hover:text-primary group-hover:gap-3">
+                      Explore Collection
                       <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
