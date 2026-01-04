@@ -58,20 +58,20 @@ export function BrandHeritageSection() {
               <div className="space-y-6">
                 {/* Opening statement with decorative border */}
                 <p className="border-l-2 border-primary/40 pl-5 font-medium leading-relaxed text-foreground">
-                  <span className="brand-word">Pheres</span> brings luxury back to its roots by creating very exclusive 
+                  PHERES brings luxury back to its roots by creating very exclusive 
                   products of extremely high quality that the niche market of 
                   connoisseurs truly appreciates.
                 </p>
                 
                 <div className="space-y-5 text-muted-foreground leading-relaxed">
                   <p>
-                    <span className="brand-word">Narcisa Pheres</span>, a line dedicated exclusively for fine jewelry, 
+                    Narcisa Pheres, a line dedicated exclusively for fine jewelry, 
                     enthuses with one-of-a-kind diamonds and resonates opulence for 
                     the high-end market.
                   </p>
                   <p>
                     Founded over a decade ago as a highly exclusive Italian fashion 
-                    house, <span className="brand-word">Pheres</span> has taken on a new life of its own—maintaining its 
+                    house, PHERES has taken on a new life of its own—maintaining its 
                     focus on creating unique luxury experiences that walk the fine line 
                     between elegance and extravagance.
                   </p>
