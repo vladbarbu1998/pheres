@@ -91,7 +91,7 @@ export default function Story() {
               Designer Biography
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Discover the remarkable journey of Narcisa Pheres — from her education at 
+              Discover the remarkable journey of <span className="brand-word">Narcisa Pheres</span> — from her education at 
               Instituto di Moda Burgo in Milan to becoming a globally recognized luxury jewelry 
               designer whose creations grace the world's most prestigious red carpets.
             </p>
