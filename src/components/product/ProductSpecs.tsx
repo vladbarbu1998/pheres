@@ -91,8 +91,9 @@ export function ProductSpecs({
     }
   });
 
-  // Size right above collection
-  const sizeSpec = size ? [{ label: "Size", value: size }] : [];
+  // Size right above collection - add " symbol if not present
+  const formatSize = (s: string) => s.endsWith('"') || s.endsWith("'") || s.endsWith("in") ? s : `${s}"`;
+  const sizeSpec = size ? [{ label: "Size", value: formatSize(size) }] : [];
   
   // Collection always last
   const collectionSpec = collectionName ? [{ label: "Collection", value: collectionName }] : [];
