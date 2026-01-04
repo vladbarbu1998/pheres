@@ -34,7 +34,7 @@ export default function Index() {
         {/* Brand Text - positioned at bottom center */}
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 md:pb-24 lg:pb-32">
           <h1 
-            className="font-serif text-4xl font-thin tracking-[0.3em] text-white/90 md:text-5xl lg:text-6xl uppercase animate-fade-in"
+            className="brand-word text-4xl font-thin tracking-[0.3em] text-white/90 md:text-5xl lg:text-6xl animate-fade-in"
             style={{ 
               textShadow: '0 1px 2px rgba(0,0,0,0.3)' 
             }}

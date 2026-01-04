@@ -28,7 +28,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
             />
           ) : (
             <p className="text-muted-foreground leading-relaxed">
-              Each Pheres piece is meticulously crafted by master artisans, combining 
+              Each <span className="brand-word">Pheres</span> piece is meticulously crafted by master artisans, combining 
               centuries-old techniques with contemporary design. Our commitment to 
               excellence ensures that every detail reflects the pinnacle of luxury jewelry.
             </p>

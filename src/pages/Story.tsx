@@ -31,7 +31,7 @@ export default function Story() {
   return (
     <Layout>
       <PageHero
-        label="PHERES"
+        label={<span className="brand-word">Pheres</span>}
         title="Our Story"
         intro="Creating unique luxury experiences that walk the fine line between elegance and extravagance—boldly innovating a symbiosis of style."
       />
@@ -45,7 +45,7 @@ export default function Story() {
                 <img
                   src={narcisaPhoto}
                   alt="Narcisa Pheres, Founder of Pheres"
-                  className="h-full w-full object-cover transition-luxury hover:scale-105"
+                  className="h-full w-full object-cover transition-luxury hover:scale-105 object-top"
                 />
               </div>
             </div>
@@ -54,25 +54,25 @@ export default function Story() {
                 <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
                   The Founder
                 </p>
-                <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              <h2 className="brand-word text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                   Narcisa Pheres
                 </h2>
               </div>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  PHERES brings luxury back to its roots by creating very exclusive products of extremely high quality that the niche market of connoisseurs truly appreciates.
+                  <span className="brand-word">Pheres</span> brings luxury back to its roots by creating very exclusive products of extremely high quality that the niche market of connoisseurs truly appreciates.
                 </p>
                 <p>
-                  Narcisa Pheres, a line dedicated exclusively for fine jewelry enthuses with one-of-a-kind diamonds and resonates opulence for the high-end market.
+                  <span className="brand-word">Narcisa Pheres</span>, a line dedicated exclusively for fine jewelry enthuses with one-of-a-kind diamonds and resonates opulence for the high-end market.
                 </p>
                 <p>
-                  Founded by designer Narcisa Pheres over a decade ago, as a highly exclusive Italian fashion house, PHERES has taken on a new life of its own.
+                  Founded by designer <span className="brand-word">Narcisa Pheres</span> over a decade ago, as a highly exclusive Italian fashion house, <span className="brand-word">Pheres</span> has taken on a new life of its own.
                 </p>
                 <p>
-                  PHERES maintains its focus on creating unique luxury experiences that walk the fine line between elegance and extravagance—tearing down walls of limitation and boldly innovating a symbiosis of style.
+                  <span className="brand-word">Pheres</span> maintains its focus on creating unique luxury experiences that walk the fine line between elegance and extravagance—tearing down walls of limitation and boldly innovating a symbiosis of style.
                 </p>
                 <p>
-                  Among the PHERES brand are the Narcisa Pheres Fine Jewelry pieces that have been gracing many a red carpet event. With these pieces, in the belief that true opulence is in the detail, the greatest of consideration and care is paid to even the smallest of steps in the design and creation process.
+                  Among the <span className="brand-word">Pheres</span> brand are the <span className="brand-word">Narcisa Pheres</span> Fine Jewelry pieces that have been gracing many a red carpet event. With these pieces, in the belief that true opulence is in the detail, the greatest of consideration and care is paid to even the smallest of steps in the design and creation process.
                 </p>
               </div>
             </div>
@@ -91,7 +91,7 @@ export default function Story() {
               Designer Biography
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Discover the remarkable journey of Narcisa Pheres — from her education at 
+              Discover the remarkable journey of <span className="brand-word">Narcisa Pheres</span> — from her education at 
               Instituto di Moda Burgo in Milan to becoming a globally recognized luxury jewelry 
               designer whose creations grace the world's most prestigious red carpets.
             </p>

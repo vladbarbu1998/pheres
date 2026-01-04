@@ -6,7 +6,7 @@ export default function Returns() {
       <div className="space-y-8 text-muted-foreground">
         <section className="space-y-4">
           <p className="text-lg font-medium text-foreground">
-            At PHERES, our top priority is our customer satisfaction. If you are not entirely satisfied with your purchase, we're here to help.
+            At <span className="brand-word">Pheres</span>, our top priority is our customer satisfaction. If you are not entirely satisfied with your purchase, we're here to help.
           </p>
           <p>
             Our products can be exchanged or used as store credit. We do not accept any returns.
@@ -35,7 +35,7 @@ export default function Returns() {
             Send the product in its original packaging and the RMA number, along with a note indicating whether you want an exchange (and if so, what other product you want to order) or credit note towards your next purchase to:
           </p>
           <p className="font-medium text-foreground">
-            PHERES HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
+            <span className="brand-word">Pheres</span> HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
           </p>
           <p>
             The customer will have to ensure the return of the parcel at their own cost and bare the return fees.
@@ -55,7 +55,7 @@ export default function Returns() {
         <section className="space-y-4">
           <h2 className="font-display text-xl font-semibold text-foreground">Shipping charges</h2>
           <p>
-            Shipping charges incurred in connection with the return of a product are non-refundable. The customer is responsible for paying for the shipping cost and for the risk of loss of or damage to the product during the return to PHERES HK LTD.
+            Shipping charges incurred in connection with the return of a product are non-refundable. The customer is responsible for paying for the shipping cost and for the risk of loss of or damage to the product during the return to <span className="brand-word">Pheres</span> HK LTD.
           </p>
         </section>
 
@@ -106,7 +106,7 @@ export default function Returns() {
             <a href="mailto:customercare@pheres.com" className="text-primary hover:underline">customercare@pheres.com</a>
           </p>
           <p className="font-medium text-foreground">
-            Hong Kong Office: PHERES HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
+            Hong Kong Office: <span className="brand-word">Pheres</span> HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
           </p>
         </section>
       </div>

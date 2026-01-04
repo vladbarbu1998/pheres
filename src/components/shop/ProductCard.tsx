@@ -131,8 +131,8 @@ export function ProductCard({
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <span className="font-display text-lg text-muted-foreground/50">
-                  PHERES
+                <span className="brand-word text-lg text-muted-foreground/50">
+                  Pheres
                 </span>
               </div>
             )}

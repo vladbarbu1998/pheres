@@ -65,7 +65,7 @@ export default function AccountOverview() {
           Hello, {firstName}
         </h2>
         <p className="mt-1 text-muted-foreground">
-          Welcome to your Pheres account dashboard
+          Welcome to your <span className="brand-word">Pheres</span> account dashboard
         </p>
       </div>
 

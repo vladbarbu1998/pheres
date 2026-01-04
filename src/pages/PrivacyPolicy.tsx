@@ -6,10 +6,10 @@ export default function PrivacyPolicy() {
       <div className="space-y-8 text-muted-foreground">
         <section className="space-y-4">
           <p className="text-lg font-medium text-foreground">
-            PHERES Co., Ltd is committed to protecting your privacy.
+            <span className="brand-word">Pheres</span> Co., Ltd is committed to protecting your privacy.
           </p>
           <p>
-            Our customers are at the heart of everything we do, and we strive to ensure your experience with PHERES is one that you will want to repeat and share with loved ones. Part of our commitment to you is to respect and protect the privacy of the personal information you provide to us.
+            Our customers are at the heart of everything we do, and we strive to ensure your experience with <span className="brand-word">Pheres</span> is one that you will want to repeat and share with loved ones. Part of our commitment to you is to respect and protect the privacy of the personal information you provide to us.
           </p>
           <p>
             By using our website or by purchasing products or services from us, you agree to be bound by this policy. Please check occasionally as this policy may change from time-to-time.
@@ -45,13 +45,13 @@ export default function PrivacyPolicy() {
             How we Protect Your Information
           </h2>
           <p>
-            PHERES Co., Ltd strives to protect your privacy.
+            <span className="brand-word">Pheres</span> Co., Ltd strives to protect your privacy.
           </p>
           <p>
-            Pheres Co., Ltd will not sell or disclose any of your information to a third party without your consent with the exception of the following purposes:
+            <span className="brand-word">Pheres</span> Co., Ltd will not sell or disclose any of your information to a third party without your consent with the exception of the following purposes:
           </p>
           <ul className="list-none space-y-2 pl-4">
-            <li>– Any person or organization who are bound by confidentiality agreements with us including PHERES HK LTD and PHERES Co., LTD</li>
+            <li>– Any person or organization who are bound by confidentiality agreements with us including <span className="brand-word">Pheres</span> HK LTD and <span className="brand-word">Pheres</span> Co., LTD</li>
             <li>– Any service provider who provides order processing, administrative, credit reference, payment clearing, debt collecting or other services for the operation of our business; and</li>
             <li>– Any person to whom we are under an obligation to make disclosure as required by any applicable law.</li>
           </ul>
@@ -77,7 +77,7 @@ export default function PrivacyPolicy() {
             <li>– Understand our customer demographics, preferences, interests and behavior,</li>
             <li>– Administer and fulfill our contests and other promotions,</li>
             <li>– Contact you regarding products and services that we believe may be of interest to you</li>
-            <li>– Comply with applicable legal requirements and PHERES' policies and procedures, and</li>
+            <li>– Comply with applicable legal requirements and <span className="brand-word">Pheres</span>' policies and procedures, and</li>
             <li>– Other uses with your consent.</li>
           </ul>
         </section>
@@ -99,7 +99,7 @@ export default function PrivacyPolicy() {
             To receive our website's newsletter and/or periodic emails with special offers, you need to provide your email address. To order from us, you must register on pheres.com by providing us with you email address.
           </p>
           <p>
-            If you have created a PHERES account, you can review and change certain personal information relating to your PHERES account at any time by logging on to your account. Otherwise, to learn more, please contact us as set forth below.
+            If you have created a <span className="brand-word">Pheres</span> account, you can review and change certain personal information relating to your <span className="brand-word">Pheres</span> account at any time by logging on to your account. Otherwise, to learn more, please contact us as set forth below.
           </p>
         </section>
 
@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
             </a>
           </p>
           <p className="font-medium text-foreground">
-            PHERES HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
+            <span className="brand-word">Pheres</span> HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
           </p>
         </section>
       </div>

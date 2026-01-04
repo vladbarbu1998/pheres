@@ -92,7 +92,7 @@ export function Footer() {
 
         <div className="mt-12 border-t border-border pt-8 flex items-center justify-center">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Pheres. All rights reserved.
+            © {new Date().getFullYear()} <span className="brand-word">Pheres</span>. All rights reserved.
           </p>
         </div>
       </div>
