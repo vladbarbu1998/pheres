@@ -43,7 +43,7 @@ export function BrandHeritageSection() {
                   <h3 className="brand-word text-lg font-semibold text-foreground tracking-wide">
                     Narcisa Pheres
                   </h3>
-                  <p className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mt-1">
+                  <p className="font-label text-xs uppercase tracking-[0.2em] text-muted-foreground mt-1">
                     Founder & Creative Director
                   </p>
                 </div>
