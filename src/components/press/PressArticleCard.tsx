@@ -17,7 +17,7 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
     >
       <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary/20">
         {/* Thumbnail */}
-        <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+        <div className="relative aspect-video overflow-hidden bg-muted">
           {article.thumbnail_url ? (
             <img
               src={article.thumbnail_url}
