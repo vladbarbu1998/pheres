@@ -69,6 +69,13 @@
 
 }
 
+/* Brand word styling - Times New Roman + uppercase for PHERES / NARCISA PHERES */
+.brand-word {
+  font-family: "Times New Roman", "Times", serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 @layer base {
   * {
     @apply border-border;

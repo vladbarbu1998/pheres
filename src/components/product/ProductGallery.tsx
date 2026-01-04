@@ -100,7 +100,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   if (sortedImages.length === 0) {
     return (
       <div className="aspect-square w-full bg-secondary/50 flex items-center justify-center">
-        <span className="font-display text-2xl text-muted-foreground/30">PHERES</span>
+        <span className="brand-word text-2xl text-muted-foreground/30">Pheres</span>
       </div>
     );
   }
