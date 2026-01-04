@@ -66,8 +66,8 @@ export default function Index() {
               ))}
             </div>
           ) : displayCollections.length > 0 ? (
-            <div className="grid gap-10 md:grid-cols-2">
-              {displayCollections.slice(0, 2).map((collection, index) => (
+            <div className="grid gap-10 md:grid-cols-3">
+              {displayCollections.slice(0, 3).map((collection, index) => (
                 <Link
                   key={collection.id}
                   to={`/shop/collection/${collection.slug}`}
