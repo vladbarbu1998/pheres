@@ -22,11 +22,11 @@ import {
 } from "@/hooks/useProducts";
 
 const initialFilters: FilterState = {
-  categoryId: null,
-  collectionId: null,
+  categoryIds: [],
+  collectionIds: [],
   minPrice: null,
   maxPrice: null,
-  stoneType: null,
+  stoneTypes: [],
 };
 
 export default function CollectionPage() {
@@ -98,7 +98,11 @@ export default function CollectionPage() {
   const products = productsData?.products || [];
   const totalCount = productsData?.totalCount || 0;
   const totalPages = productsData?.totalPages || 1;
-  const hasActiveFilters = Object.values(filters).some((v) => v !== null);
+  const hasActiveFilters = 
+    filters.categoryIds.length > 0 ||
+    filters.minPrice !== null ||
+    filters.maxPrice !== null ||
+    filters.stoneTypes.length > 0;
 
   // Collection not found
   if (!collectionLoading && !collection && !collectionError) {

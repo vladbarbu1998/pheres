@@ -20,25 +20,25 @@ export function useProducts({
   return useQuery({
     queryKey: ["products", filters, sortBy, collectionSlug, page, pageSize],
     queryFn: async () => {
-      // If filtering by collection, get product IDs from product_collections first
+      // If filtering by collections, get product IDs from product_collections first
       let collectionProductIds: string[] | null = null;
-      if (filters?.collectionId) {
+      if (filters?.collectionIds && filters.collectionIds.length > 0) {
         const { data: collectionProducts, error: collectionError } = await supabase
           .from("product_collections")
           .select("product_id")
-          .eq("collection_id", filters.collectionId);
+          .in("collection_id", filters.collectionIds);
 
         if (collectionError) throw collectionError;
         collectionProductIds = collectionProducts?.map((cp) => cp.product_id) || [];
       }
 
-      // If filtering by stone type, get product IDs from product_stones first
+      // If filtering by stone types, get product IDs from product_stones first
       let stoneProductIds: string[] | null = null;
-      if (filters?.stoneType) {
+      if (filters?.stoneTypes && filters.stoneTypes.length > 0) {
         const { data: stoneProducts, error: stoneError } = await supabase
           .from("product_stones")
           .select("product_id")
-          .eq("stone_type", filters.stoneType);
+          .in("stone_type", filters.stoneTypes);
 
         if (stoneError) throw stoneError;
         stoneProductIds = stoneProducts?.map((sp) => sp.product_id) || [];
@@ -105,16 +105,16 @@ export function useProducts({
       }
 
       // Apply filters
-      if (filters?.categoryId) {
-        query = query.eq("category_id", filters.categoryId);
+      if (filters?.categoryIds && filters.categoryIds.length > 0) {
+        query = query.in("category_id", filters.categoryIds);
       }
 
-      // Filter by collection ID
-      if (filters?.collectionId && collectionProductIds !== null) {
+      // Filter by collection IDs
+      if (filters?.collectionIds && filters.collectionIds.length > 0 && collectionProductIds !== null) {
         if (collectionProductIds.length > 0) {
           query = query.in("id", collectionProductIds);
         } else {
-          // No products in this collection, return empty
+          // No products in these collections, return empty
           query = query.eq("id", "00000000-0000-0000-0000-000000000000");
         }
       }
@@ -127,14 +127,15 @@ export function useProducts({
         query = query.lte("base_price", filters.maxPrice);
       }
 
-      // Filter by stone type - check both product.stone_type AND product_stones table
-      if (filters?.stoneType && stoneProductIds !== null) {
-        // Build OR filter: products where stone_type matches OR id is in stoneProductIds
+      // Filter by stone types - check both product.stone_type AND product_stones table
+      if (filters?.stoneTypes && filters.stoneTypes.length > 0 && stoneProductIds !== null) {
+        // Build OR filter: products where stone_type is in the list OR id is in stoneProductIds
         if (stoneProductIds.length > 0) {
-          query = query.or(`stone_type.eq.${filters.stoneType},id.in.(${stoneProductIds.join(",")})`);
+          const stoneTypesStr = filters.stoneTypes.map(s => `stone_type.eq.${s}`).join(',');
+          query = query.or(`${stoneTypesStr},id.in.(${stoneProductIds.join(",")})`);
         } else {
           // No products in product_stones, just filter by stone_type on product
-          query = query.eq("stone_type", filters.stoneType);
+          query = query.in("stone_type", filters.stoneTypes);
         }
       }
 
