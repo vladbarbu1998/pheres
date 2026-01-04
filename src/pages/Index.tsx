@@ -12,8 +12,10 @@ export default function Index() {
   const { data: collections, isLoading: collectionsLoading } = useCollections();
   const { data: pressEntries } = useFeaturedPress();
 
-  const featuredCollections = collections?.filter(c => c.is_featured).slice(0, 4) || [];
-  const displayCollections = featuredCollections.length > 0 ? featuredCollections : (collections?.slice(0, 4) || []);
+  // Featured collections first, then fill with non-featured
+  const featured = collections?.filter(c => c.is_featured) || [];
+  const nonFeatured = collections?.filter(c => !c.is_featured) || [];
+  const displayCollections = [...featured, ...nonFeatured].slice(0, 3);
 
   return (
     <Layout>
