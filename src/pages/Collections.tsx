@@ -10,8 +10,8 @@ export default function CollectionsPage() {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="border-b border-border bg-secondary/30">
-        <div className="container py-12 lg:py-20">
+      <section className="border-b border-border bg-secondary/30 py-20 md:py-28 lg:py-36">
+        <div className="container">
           <div className="mx-auto max-w-2xl text-center">
             <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.3em] text-primary">
               Explore Our World
