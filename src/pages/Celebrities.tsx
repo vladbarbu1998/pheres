@@ -71,7 +71,7 @@ function CelebrityCard({ appearance, index, onImageClick }: CelebrityCardProps) 
 
       {/* Caption - not clickable */}
       <div className="mt-5">
-        <h3 className="font-display text-lg font-semibold text-foreground tracking-tight">
+        <h3 className="font-label text-lg font-semibold text-foreground tracking-tight">
           {appearance.celebrity_name}
         </h3>
         
@@ -326,7 +326,7 @@ export default function Celebrities() {
             return (
               <div className="absolute bottom-0 left-0 right-0 p-4 text-center bg-gradient-to-t from-black/60 to-transparent">
                 {currentLightboxAppearance.celebrity_name && (
-                  <p className="font-display text-lg font-semibold text-white">
+                  <p className="font-label text-lg font-semibold text-white">
                     {currentLightboxAppearance.celebrity_name}
                   </p>
                 )}
