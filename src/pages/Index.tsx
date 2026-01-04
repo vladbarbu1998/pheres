@@ -34,7 +34,7 @@ export default function Index() {
           <h1 
             className="font-serif text-4xl font-thin tracking-[0.3em] text-white/90 md:text-5xl lg:text-6xl uppercase animate-fade-in"
             style={{ 
-              textShadow: '1px 1px 2px rgba(255,255,255,0.4), -1px -1px 2px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.1)' 
+              textShadow: '0 1px 2px rgba(0,0,0,0.3)' 
             }}
           >
             Pheres
