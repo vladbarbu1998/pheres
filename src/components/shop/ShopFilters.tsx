@@ -116,6 +116,31 @@ function FilterContent({
 
   return (
     <div className="divide-y divide-border">
+      {/* Collections - First */}
+      {collections.length > 0 && (
+        <FilterSection title="Collection">
+          <div className="space-y-2">
+            {collections.map((collection) => (
+              <div key={collection.id} className="flex items-center gap-2">
+                <Checkbox
+                  id={`col-${collection.id}`}
+                  checked={filters.collectionId === collection.id}
+                  onCheckedChange={(checked) =>
+                    handleCollectionChange(collection.id, checked as boolean)
+                  }
+                />
+                <Label
+                  htmlFor={`col-${collection.id}`}
+                  className="text-sm font-normal text-muted-foreground cursor-pointer"
+                >
+                  {collection.name}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </FilterSection>
+      )}
+
       {/* Categories */}
       {categories.length > 0 && (
         <FilterSection title="Category">
@@ -134,31 +159,6 @@ function FilterContent({
                   className="text-sm font-normal text-muted-foreground cursor-pointer"
                 >
                   {category.name}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </FilterSection>
-      )}
-
-      {/* Collections */}
-      {collections.length > 0 && (
-        <FilterSection title="Collection">
-          <div className="space-y-2">
-            {collections.map((collection) => (
-              <div key={collection.id} className="flex items-center gap-2">
-                <Checkbox
-                  id={`col-${collection.id}`}
-                  checked={filters.collectionId === collection.id}
-                  onCheckedChange={(checked) =>
-                    handleCollectionChange(collection.id, checked as boolean)
-                  }
-                />
-                <Label
-                  htmlFor={`col-${collection.id}`}
-                  className="text-sm font-normal text-muted-foreground cursor-pointer"
-                >
-                  {collection.name}
                 </Label>
               </div>
             ))}
