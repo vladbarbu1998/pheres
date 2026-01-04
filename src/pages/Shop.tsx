@@ -14,11 +14,11 @@ import { Pagination } from "@/components/shop/Pagination";
 import { useProducts, useCategories, useCollections, useProductFilterOptions } from "@/hooks/useProducts";
 
 const initialFilters: FilterState = {
-  categoryId: null,
-  collectionId: null,
+  categoryIds: [],
+  collectionIds: [],
   minPrice: null,
   maxPrice: null,
-  stoneType: null,
+  stoneTypes: [],
 };
 
 export default function ShopPage() {
@@ -88,7 +88,12 @@ export default function ShopPage() {
   const stoneTypes = filterOptionsData?.stoneTypes || [];
 
   const isLoading = productsLoading || categoriesLoading || collectionsLoading || filterOptionsLoading;
-  const hasActiveFilters = Object.values(filters).some((v) => v !== null);
+  const hasActiveFilters = 
+    filters.categoryIds.length > 0 ||
+    filters.collectionIds.length > 0 ||
+    filters.minPrice !== null ||
+    filters.maxPrice !== null ||
+    filters.stoneTypes.length > 0;
 
   return (
     <Layout>

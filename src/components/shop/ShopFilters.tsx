@@ -20,11 +20,11 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 export interface FilterState {
-  categoryId: string | null;
-  collectionId: string | null;
+  categoryIds: string[];
+  collectionIds: string[];
   minPrice: number | null;
   maxPrice: number | null;
-  stoneType: string | null;
+  stoneTypes: string[];
 }
 
 export type SortOption = "featured" | "price-asc" | "price-desc" | "alpha-asc" | "alpha-desc" | "oldest" | "newest" | "bestsellers";
@@ -86,16 +86,22 @@ function FilterContent({
   stoneTypes = [],
 }: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes">) {
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
+    const newCategoryIds = checked
+      ? [...filters.categoryIds, categoryId]
+      : filters.categoryIds.filter((id) => id !== categoryId);
     onFiltersChange({
       ...filters,
-      categoryId: checked ? categoryId : null,
+      categoryIds: newCategoryIds,
     });
   };
 
   const handleCollectionChange = (collectionId: string, checked: boolean) => {
+    const newCollectionIds = checked
+      ? [...filters.collectionIds, collectionId]
+      : filters.collectionIds.filter((id) => id !== collectionId);
     onFiltersChange({
       ...filters,
-      collectionId: checked ? collectionId : null,
+      collectionIds: newCollectionIds,
     });
   };
 
@@ -108,9 +114,12 @@ function FilterContent({
   };
 
   const handleStoneChange = (stone: string, checked: boolean) => {
+    const newStoneTypes = checked
+      ? [...filters.stoneTypes, stone]
+      : filters.stoneTypes.filter((s) => s !== stone);
     onFiltersChange({
       ...filters,
-      stoneType: checked ? stone : null,
+      stoneTypes: newStoneTypes,
     });
   };
 
@@ -124,7 +133,7 @@ function FilterContent({
               <div key={collection.id} className="flex items-center gap-2">
                 <Checkbox
                   id={`col-${collection.id}`}
-                  checked={filters.collectionId === collection.id}
+                  checked={filters.collectionIds.includes(collection.id)}
                   onCheckedChange={(checked) =>
                     handleCollectionChange(collection.id, checked as boolean)
                   }
@@ -149,7 +158,7 @@ function FilterContent({
               <div key={category.id} className="flex items-center gap-2">
                 <Checkbox
                   id={`cat-${category.id}`}
-                  checked={filters.categoryId === category.id}
+                  checked={filters.categoryIds.includes(category.id)}
                   onCheckedChange={(checked) =>
                     handleCategoryChange(category.id, checked as boolean)
                   }
@@ -197,7 +206,7 @@ function FilterContent({
               <div key={stone} className="flex items-center gap-2">
                 <Checkbox
                   id={`stone-${stone}`}
-                  checked={filters.stoneType === stone}
+                  checked={filters.stoneTypes.includes(stone)}
                   onCheckedChange={(checked) =>
                     handleStoneChange(stone, checked as boolean)
                   }
@@ -229,19 +238,19 @@ export function ShopFilters({
   stoneTypes = [],
 }: ShopFiltersProps) {
   const hasActiveFilters =
-    filters.categoryId ||
-    filters.collectionId ||
+    filters.categoryIds.length > 0 ||
+    filters.collectionIds.length > 0 ||
     filters.minPrice !== null ||
     filters.maxPrice !== null ||
-    filters.stoneType;
+    filters.stoneTypes.length > 0;
 
   const clearFilters = () => {
     onFiltersChange({
-      categoryId: null,
-      collectionId: null,
+      categoryIds: [],
+      collectionIds: [],
       minPrice: null,
       maxPrice: null,
-      stoneType: null,
+      stoneTypes: [],
     });
   };
 
@@ -344,19 +353,19 @@ export function ShopFiltersSidebar({
   stoneTypes = [],
 }: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes">) {
   const hasActiveFilters =
-    filters.categoryId ||
-    filters.collectionId ||
+    filters.categoryIds.length > 0 ||
+    filters.collectionIds.length > 0 ||
     filters.minPrice !== null ||
     filters.maxPrice !== null ||
-    filters.stoneType;
+    filters.stoneTypes.length > 0;
 
   const clearFilters = () => {
     onFiltersChange({
-      categoryId: null,
-      collectionId: null,
+      categoryIds: [],
+      collectionIds: [],
       minPrice: null,
       maxPrice: null,
-      stoneType: null,
+      stoneTypes: [],
     });
   };
 

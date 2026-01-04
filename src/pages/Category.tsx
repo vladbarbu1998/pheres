@@ -28,11 +28,11 @@ import {
 } from "@/hooks/useProducts";
 
 const initialFilters: FilterState = {
-  categoryId: null,
-  collectionId: null,
+  categoryIds: [],
+  collectionIds: [],
   minPrice: null,
   maxPrice: null,
-  stoneType: null,
+  stoneTypes: [],
 };
 
 export default function CategoryPage() {
@@ -96,10 +96,10 @@ export default function CategoryPage() {
   };
 
   const handleFiltersChange = (newFilters: FilterState) => {
-    // Don't allow changing categoryId from filters on category page
+    // Don't allow changing categoryIds from filters on category page
     setFilters({
       ...newFilters,
-      categoryId: null, // Keep null, we use category from URL
+      categoryIds: [], // Keep empty, we use category from URL
     });
     setPage(1);
   };
@@ -133,10 +133,10 @@ export default function CategoryPage() {
   
   // Check if non-category filters are active
   const hasActiveFilters = 
-    filters.collectionId !== null ||
+    filters.collectionIds.length > 0 ||
     filters.minPrice !== null ||
     filters.maxPrice !== null ||
-    filters.stoneType !== null;
+    filters.stoneTypes.length > 0;
 
   // Category not found
   if (!categoryLoading && !category && !categoryError) {
