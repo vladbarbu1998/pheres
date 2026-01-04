@@ -105,7 +105,7 @@ export default function Contact() {
       {/* Header */}
       <section className="container py-12 md:py-16">
         <div className="max-w-2xl">
-          <p className="mb-3 font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
+          <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
             Get in Touch
           </p>
           <h1 className="font-display text-4xl font-semibold text-foreground md:text-5xl mb-4">
