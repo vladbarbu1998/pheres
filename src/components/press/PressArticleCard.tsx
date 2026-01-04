@@ -40,24 +40,12 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
           {/* Content - Right side */}
           <div className="flex flex-1 flex-col justify-between p-5">
             <div>
-              {/* Outlet logo + date row */}
-              <div className="mb-3 flex items-center gap-3">
-                {article.outlet?.logo_url && (
-                  <img
-                    src={article.outlet.logo_url}
-                    alt={article.outlet.name}
-                    className="h-5 w-auto object-contain"
-                  />
-                )}
-                {article.publish_date && (
-                  <>
-                    <span className="text-muted-foreground">•</span>
-                    <span className="text-xs text-muted-foreground">
-                      {format(new Date(article.publish_date), "MMM d, yyyy")}
-                    </span>
-                  </>
-                )}
-              </div>
+              {/* Date */}
+              {article.publish_date && (
+                <p className="mb-2 text-xs text-muted-foreground">
+                  {format(new Date(article.publish_date), "MMM d, yyyy")}
+                </p>
+              )}
 
               {/* Title */}
               <h3 className="mb-2 font-display text-lg font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
