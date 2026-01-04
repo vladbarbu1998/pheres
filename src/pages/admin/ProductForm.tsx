@@ -707,15 +707,17 @@ export default function ProductForm() {
             {/* Short Description */}
             <div className="space-y-2">
               <Label htmlFor="short_description">Short Description</Label>
-              <Input
-                id="short_description"
-                {...register("short_description")}
-                placeholder="A brief tagline shown near the top of the product page"
-                className={errors.short_description ? "border-destructive" : ""}
+              <Controller
+                control={control}
+                name="short_description"
+                render={({ field }) => (
+                  <RichTextEditor
+                    content={field.value || ""}
+                    onChange={field.onChange}
+                    placeholder="A brief tagline shown near the top of the product page"
+                  />
+                )}
               />
-              {errors.short_description && (
-                <p className="text-sm text-destructive">{errors.short_description.message}</p>
-              )}
             </div>
 
             {/* Full Description */}
