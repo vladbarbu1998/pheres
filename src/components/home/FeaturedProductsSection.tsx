@@ -18,7 +18,7 @@ export function FeaturedProductsSection() {
         {/* Section Header */}
         <div className="mb-10 text-center sm:flex sm:flex-row sm:items-center sm:justify-between sm:text-left md:mb-12">
           <div>
-            <p className="mb-2 font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
+            <p className="mb-2 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
               Featured Pieces
             </p>
             <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
@@ -138,7 +138,7 @@ function MainProductCard({ product }: { product: ProductWithImages }) {
         
         {/* New Badge */}
         {product.is_new && (
-          <span className="absolute top-4 left-4 bg-primary px-3 py-1 font-display text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
+          <span className="absolute top-4 left-4 bg-primary px-3 py-1 font-label text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
             New
           </span>
         )}
@@ -147,7 +147,7 @@ function MainProductCard({ product }: { product: ProductWithImages }) {
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
           <div className="space-y-0.5 md:space-y-1">
             {collectionName && (
-              <p className="font-display text-[9px] font-medium uppercase tracking-[0.15em] text-foreground/80 md:text-[11px]">
+              <p className="font-label text-[9px] font-medium uppercase tracking-[0.15em] text-foreground/80 md:text-[11px]">
                 {collectionName}
               </p>
             )}
@@ -209,7 +209,7 @@ function GridProductCard({
         
         {/* New Badge */}
         {product.is_new && (
-          <span className="absolute top-2 left-2 bg-primary px-2 py-0.5 font-display text-[9px] font-semibold uppercase tracking-wider text-primary-foreground md:top-3 md:left-3 md:px-2.5 md:py-1 md:text-[10px]">
+          <span className="absolute top-2 left-2 bg-primary px-2 py-0.5 font-label text-[9px] font-semibold uppercase tracking-wider text-primary-foreground md:top-3 md:left-3 md:px-2.5 md:py-1 md:text-[10px]">
             New
           </span>
         )}
@@ -218,7 +218,7 @@ function GridProductCard({
       {/* Product Details */}
       <div className="pt-3 space-y-0.5 md:pt-4">
         {collectionName && (
-          <p className="font-display text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
+          <p className="font-label text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground md:text-[11px]">
             {collectionName}
           </p>
         )}

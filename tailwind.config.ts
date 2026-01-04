@@ -26,6 +26,7 @@ export default {
         display: ["Times New Roman", "Times", "serif"],
         serif: ["Times New Roman", "Times", "Georgia", "serif"],
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        label: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
         brand: {
