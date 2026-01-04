@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductGrid } from "@/components/shop/ProductGrid";
@@ -25,13 +25,32 @@ export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [page, setPage] = useState(1);
+  const [initialized, setInitialized] = useState(false);
 
   const sortParam = searchParams.get("sort") as SortOption | null;
   const sortBy: SortOption = sortParam || "featured";
+  const collectionSlugParam = searchParams.get("collection");
 
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
   const { data: collectionsData, isLoading: collectionsLoading } = useCollections();
   const { data: filterOptionsData, isLoading: filterOptionsLoading } = useProductFilterOptions();
+
+  // Initialize collection filter from URL param
+  useEffect(() => {
+    if (!initialized && collectionsData && collectionSlugParam) {
+      const collection = collectionsData.find(c => c.slug === collectionSlugParam);
+      if (collection) {
+        setFilters(prev => ({
+          ...prev,
+          collectionIds: [collection.id],
+        }));
+      }
+      setInitialized(true);
+    } else if (!initialized && !collectionSlugParam) {
+      setInitialized(true);
+    }
+  }, [collectionsData, collectionSlugParam, initialized]);
+
   const {
     data: productsData,
     isLoading: productsLoading,
