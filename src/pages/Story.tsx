@@ -51,7 +51,7 @@ export default function Story() {
             </div>
             <div className="space-y-6">
               <div>
-                <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
+                <p className="mb-2 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
                   The Founder
                 </p>
               <h2 className="brand-word text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
@@ -84,7 +84,7 @@ export default function Story() {
       <section className="border-t border-border/50 py-16 md:py-24">
         <div className="container max-w-6xl">
           <div className="mb-12 text-center md:mb-16">
-            <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
+            <p className="mb-2 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
               The Journey
             </p>
             <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
