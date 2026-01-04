@@ -98,14 +98,9 @@ export default function Index() {
                     <p className="mb-2 font-display text-xs font-medium uppercase tracking-[0.25em] text-primary">
                       Collection
                     </p>
-                    <h3 className="mb-2 font-serif text-2xl font-light tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary md:text-3xl">
+                    <h3 className="mb-3 font-serif text-2xl font-light tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary md:text-3xl">
                       {collection.name}
                     </h3>
-                    {collection.description && (
-                      <p className="mb-4 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                        {collection.description}
-                      </p>
-                    )}
                     <span className="inline-flex items-center gap-2 text-sm font-medium tracking-wide text-foreground/70 transition-all duration-300 group-hover:text-primary group-hover:gap-3">
                       Explore Collection
                       <ArrowRight className="h-4 w-4" />
