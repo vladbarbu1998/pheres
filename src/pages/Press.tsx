@@ -98,13 +98,15 @@ export default function PressPage() {
 
           {/* Articles Grid */}
           {isLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="space-y-4">
-                  <Skeleton className="aspect-[16/10] w-full rounded-lg" />
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
+            <div className="grid gap-6 lg:grid-cols-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex gap-4 rounded-lg border p-4">
+                  <Skeleton className="h-28 w-28 flex-shrink-0 rounded-lg" />
+                  <div className="flex-1 space-y-3">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -125,7 +127,7 @@ export default function PressPage() {
               )}
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-2">
               {filteredArticles.map((article) => (
                 <PressArticleCard key={article.id} article={article} />
               ))}
