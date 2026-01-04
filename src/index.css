@@ -73,7 +73,7 @@
 .brand-word {
   font-family: "Times New Roman", "Times", serif;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
 }
 
 @layer base {
