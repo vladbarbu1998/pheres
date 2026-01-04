@@ -15,7 +15,7 @@ export function BrandHeritageSection() {
           <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
             Our Heritage
           </p>
-          <h2 className="font-display text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
+          <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
             The Story of <span className="brand-word">Pheres</span>
           </h2>
           <div className="mx-auto mt-6 h-px w-24 bg-primary/40" />
