@@ -28,7 +28,7 @@ export default function GioroPage() {
             <h1 className="mb-6 font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
               Gioro
               <span className="mt-1 block text-2xl text-muted-foreground md:text-3xl lg:text-4xl">
-                by <span className="tracking-[0.2em]">PHERES</span>
+                <span style={{ color: '#765228' }}>by</span> <span className="tracking-[0.2em]" style={{ color: '#765228' }}>PHERES</span>
               </span>
             </h1>
             
