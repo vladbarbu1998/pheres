@@ -102,6 +102,18 @@ export default {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        "hero-reveal": {
+          "0%": { 
+            opacity: "0", 
+            filter: "blur(12px)", 
+            letterSpacing: "0.5em" 
+          },
+          "100%": { 
+            opacity: "1", 
+            filter: "blur(0)", 
+            letterSpacing: "0.3em" 
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -109,6 +121,7 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "fade-in-up": "fade-in-up 0.4s ease-out",
         shimmer: "shimmer 2s infinite",
+        "hero-reveal": "hero-reveal 1.5s ease-out forwards",
       },
       spacing: {
         "18": "4.5rem",
