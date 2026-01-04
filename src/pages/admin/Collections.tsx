@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -188,9 +188,10 @@ export default function AdminCollections() {
               </div>
               <div className="space-y-2">
                 <Label>Description</Label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                <RichTextEditor
+                  content={formData.description}
+                  onChange={(description) => setFormData((prev) => ({ ...prev, description }))}
+                  placeholder="Collection description with rich formatting"
                 />
               </div>
               <div className="space-y-2">

@@ -4,9 +4,9 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -721,11 +721,16 @@ export default function ProductForm() {
             {/* Full Description */}
             <div className="space-y-2">
               <Label htmlFor="description">Full Description</Label>
-              <Textarea
-                id="description"
-                rows={4}
-                {...register("description")}
-                placeholder="Detailed description of the product (optional)"
+              <Controller
+                control={control}
+                name="description"
+                render={({ field }) => (
+                  <RichTextEditor
+                    content={field.value || ""}
+                    onChange={field.onChange}
+                    placeholder="Detailed description of the product (optional)"
+                  />
+                )}
               />
             </div>
 
