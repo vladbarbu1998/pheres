@@ -32,6 +32,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -51,31 +52,6 @@ import { Search, Plus, Pencil, Trash2, Image as ImageIcon, ExternalLink, Star } 
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-interface ArticleFormData {
-  id?: string;
-  title: string;
-  outlet_id: string;
-  external_url: string;
-  publish_date: string;
-  short_description: string;
-  thumbnail_url: string;
-  is_highlight: boolean;
-  is_active: boolean;
-  display_order: number;
-}
-
-const defaultFormData: ArticleFormData = {
-  title: "",
-  outlet_id: "",
-  external_url: "",
-  publish_date: "",
-  short_description: "",
-  thumbnail_url: "",
-  is_highlight: false,
-  is_active: true,
-  display_order: 0,
-};
-
 export default function AdminPressArticles() {
   const { data: articles, isLoading, error } = useAdminPressArticles();
   const { data: outlets } = useAdminPressOutlets();
@@ -88,7 +64,18 @@ export default function AdminPressArticles() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ArticleFormData>(defaultFormData);
+  
+  // Separate state for each form field to prevent re-render issues
+  const [formId, setFormId] = useState<string | undefined>(undefined);
+  const [formTitle, setFormTitle] = useState("");
+  const [formOutletId, setFormOutletId] = useState("");
+  const [formExternalUrl, setFormExternalUrl] = useState("");
+  const [formPublishDate, setFormPublishDate] = useState("");
+  const [formShortDescription, setFormShortDescription] = useState("");
+  const [formThumbnailUrl, setFormThumbnailUrl] = useState("");
+  const [formIsHighlight, setFormIsHighlight] = useState(false);
+  const [formIsActive, setFormIsActive] = useState(true);
+  const [formDisplayOrder, setFormDisplayOrder] = useState(0);
 
   const filteredArticles = articles?.filter((article) => {
     const matchesSearch =
@@ -98,27 +85,36 @@ export default function AdminPressArticles() {
     return matchesSearch && matchesOutlet;
   });
 
+  const resetForm = () => {
+    setFormId(undefined);
+    setFormTitle("");
+    setFormOutletId("");
+    setFormExternalUrl("");
+    setFormPublishDate("");
+    setFormShortDescription("");
+    setFormThumbnailUrl("");
+    setFormIsHighlight(false);
+    setFormIsActive(true);
+    setFormDisplayOrder(0);
+  };
+
   const handleCreate = () => {
-    setFormData({
-      ...defaultFormData,
-      display_order: (articles?.length || 0) + 1,
-    });
+    resetForm();
+    setFormDisplayOrder((articles?.length || 0) + 1);
     setIsDialogOpen(true);
   };
 
   const handleEdit = (article: PressArticleWithOutlet) => {
-    setFormData({
-      id: article.id,
-      title: article.title,
-      outlet_id: article.outlet_id,
-      external_url: article.external_url,
-      publish_date: article.publish_date || "",
-      short_description: article.short_description || "",
-      thumbnail_url: article.thumbnail_url || "",
-      is_highlight: article.is_highlight,
-      is_active: article.is_active,
-      display_order: article.display_order,
-    });
+    setFormId(article.id);
+    setFormTitle(article.title);
+    setFormOutletId(article.outlet_id);
+    setFormExternalUrl(article.external_url);
+    setFormPublishDate(article.publish_date || "");
+    setFormShortDescription(article.short_description || "");
+    setFormThumbnailUrl(article.thumbnail_url || "");
+    setFormIsHighlight(article.is_highlight);
+    setFormIsActive(article.is_active);
+    setFormDisplayOrder(article.display_order);
     setIsDialogOpen(true);
   };
 
@@ -128,51 +124,52 @@ export default function AdminPressArticles() {
   };
 
   const handleSave = async () => {
-    if (!formData.title.trim()) {
+    if (!formTitle.trim()) {
       toast.error("Article title is required");
       return;
     }
 
-    if (!formData.outlet_id) {
+    if (!formOutletId) {
       toast.error("Please select an outlet");
       return;
     }
 
-    if (!formData.external_url.trim()) {
+    if (!formExternalUrl.trim()) {
       toast.error("External URL is required");
       return;
     }
 
     try {
-      if (formData.id) {
+      if (formId) {
         await updateMutation.mutateAsync({
-          id: formData.id,
-          title: formData.title,
-          outlet_id: formData.outlet_id,
-          external_url: formData.external_url,
-          publish_date: formData.publish_date || null,
-          short_description: formData.short_description || null,
-          thumbnail_url: formData.thumbnail_url || null,
-          is_highlight: formData.is_highlight,
-          is_active: formData.is_active,
-          display_order: formData.display_order,
+          id: formId,
+          title: formTitle,
+          outlet_id: formOutletId,
+          external_url: formExternalUrl,
+          publish_date: formPublishDate || null,
+          short_description: formShortDescription || null,
+          thumbnail_url: formThumbnailUrl || null,
+          is_highlight: formIsHighlight,
+          is_active: formIsActive,
+          display_order: formDisplayOrder,
         });
         toast.success("Press article updated");
       } else {
         await createMutation.mutateAsync({
-          title: formData.title,
-          outlet_id: formData.outlet_id,
-          external_url: formData.external_url,
-          publish_date: formData.publish_date || null,
-          short_description: formData.short_description || null,
-          thumbnail_url: formData.thumbnail_url || null,
-          is_highlight: formData.is_highlight,
-          is_active: formData.is_active,
-          display_order: formData.display_order,
+          title: formTitle,
+          outlet_id: formOutletId,
+          external_url: formExternalUrl,
+          publish_date: formPublishDate || null,
+          short_description: formShortDescription || null,
+          thumbnail_url: formThumbnailUrl || null,
+          is_highlight: formIsHighlight,
+          is_active: formIsActive,
+          display_order: formDisplayOrder,
         });
         toast.success("Press article created");
       }
       setIsDialogOpen(false);
+      resetForm();
     } catch (err) {
       console.error("Save error:", err);
       toast.error("Failed to save press article");
@@ -344,7 +341,10 @@ export default function AdminPressArticles() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{formData.id ? "Edit Article" : "New Press Article"}</DialogTitle>
+              <DialogTitle>{formId ? "Edit Article" : "New Press Article"}</DialogTitle>
+              <DialogDescription>
+                {formId ? "Update the article details below." : "Add a new press article with external link."}
+              </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
@@ -352,8 +352,8 @@ export default function AdminPressArticles() {
                 <Label htmlFor="title">Article Title *</Label>
                 <Input
                   id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="e.g., Pheres Jewelry Shines at Met Gala"
                 />
               </div>
@@ -361,8 +361,8 @@ export default function AdminPressArticles() {
               <div className="space-y-2">
                 <Label htmlFor="outlet_id">Outlet *</Label>
                 <Select
-                  value={formData.outlet_id}
-                  onValueChange={(value) => setFormData({ ...formData, outlet_id: value })}
+                  value={formOutletId}
+                  onValueChange={setFormOutletId}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select an outlet" />
@@ -382,8 +382,8 @@ export default function AdminPressArticles() {
                 <Input
                   id="external_url"
                   type="url"
-                  value={formData.external_url}
-                  onChange={(e) => setFormData({ ...formData, external_url: e.target.value })}
+                  value={formExternalUrl}
+                  onChange={(e) => setFormExternalUrl(e.target.value)}
                   placeholder="https://www.vogue.com/article/..."
                 />
               </div>
@@ -393,8 +393,8 @@ export default function AdminPressArticles() {
                 <Input
                   id="publish_date"
                   type="date"
-                  value={formData.publish_date}
-                  onChange={(e) => setFormData({ ...formData, publish_date: e.target.value })}
+                  value={formPublishDate}
+                  onChange={(e) => setFormPublishDate(e.target.value)}
                 />
               </div>
 
@@ -402,8 +402,8 @@ export default function AdminPressArticles() {
                 <Label htmlFor="short_description">Short Description</Label>
                 <Textarea
                   id="short_description"
-                  value={formData.short_description}
-                  onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                  value={formShortDescription}
+                  onChange={(e) => setFormShortDescription(e.target.value)}
                   placeholder="Brief summary of the article..."
                   rows={3}
                 />
@@ -412,8 +412,8 @@ export default function AdminPressArticles() {
               <div className="space-y-2">
                 <Label>Thumbnail Image</Label>
                 <ImageUploadField
-                  value={formData.thumbnail_url}
-                  onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                  value={formThumbnailUrl}
+                  onChange={setFormThumbnailUrl}
                   folder="press-articles"
                   aspectRatio="landscape"
                   placeholder="Upload article thumbnail"
@@ -424,8 +424,8 @@ export default function AdminPressArticles() {
                 <Label htmlFor="is_highlight">Highlight (Featured)</Label>
                 <Switch
                   id="is_highlight"
-                  checked={formData.is_highlight}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_highlight: checked })}
+                  checked={formIsHighlight}
+                  onCheckedChange={setFormIsHighlight}
                 />
               </div>
 
@@ -433,8 +433,8 @@ export default function AdminPressArticles() {
                 <Label htmlFor="is_active">Active</Label>
                 <Switch
                   id="is_active"
-                  checked={formData.is_active}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                  checked={formIsActive}
+                  onCheckedChange={setFormIsActive}
                 />
               </div>
 
