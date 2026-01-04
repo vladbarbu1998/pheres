@@ -38,30 +38,28 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
           </div>
 
           {/* Content - Right side */}
-          <div className="flex flex-1 flex-col justify-between p-5">
-            <div>
-              {/* Date */}
-              {article.publish_date && (
-                <p className="mb-2 text-xs text-muted-foreground">
-                  {format(new Date(article.publish_date), "MMM d, yyyy")}
-                </p>
-              )}
+          <div className="flex flex-1 flex-col justify-center p-5">
+            {/* Date */}
+            {article.publish_date && (
+              <p className="mb-2 text-xs text-muted-foreground">
+                {format(new Date(article.publish_date), "MMM d, yyyy")}
+              </p>
+            )}
 
-              {/* Title */}
-              <h3 className="mb-2 font-display text-lg font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                {article.title}
-              </h3>
+            {/* Title */}
+            <h3 className="font-label text-base font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+              {article.title}
+            </h3>
 
-              {/* Description */}
-              {article.short_description && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {article.short_description}
-                </p>
-              )}
-            </div>
+            {/* Description */}
+            {article.short_description && (
+              <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+                {article.short_description}
+              </p>
+            )}
 
             {/* Read more link */}
-            <div className="mt-4 flex items-center gap-1.5 text-sm font-medium text-primary">
+            <div className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary">
               <span>Read Article</span>
               <ExternalLink className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
             </div>
