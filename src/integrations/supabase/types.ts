@@ -740,6 +740,7 @@ export type Database = {
           name: string
           product_number: string | null
           short_description: string | null
+          size: string | null
           sku: string | null
           slug: string
           stone_carat: string | null
@@ -767,6 +768,7 @@ export type Database = {
           name: string
           product_number?: string | null
           short_description?: string | null
+          size?: string | null
           sku?: string | null
           slug: string
           stone_carat?: string | null
@@ -794,6 +796,7 @@ export type Database = {
           name?: string
           product_number?: string | null
           short_description?: string | null
+          size?: string | null
           sku?: string | null
           slug?: string
           stone_carat?: string | null

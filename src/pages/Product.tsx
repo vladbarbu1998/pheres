@@ -151,6 +151,7 @@ export default function ProductPage() {
                 metalType={product!.metal_type}
                 metalWeight={product!.metal_weight}
                 grossWeight={(product as any).gross_weight}
+                size={(product as any).size}
                 stones={(product as any).product_stones || []}
                 certification={product!.certification}
                 isNew={product!.is_new}

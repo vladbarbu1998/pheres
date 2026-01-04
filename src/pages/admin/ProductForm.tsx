@@ -48,6 +48,7 @@ const productSchema = z.object({
   metal_type: z.string().optional(),
   metal_weight: z.string().optional(),
   gross_weight: z.string().optional(),
+  size: z.string().optional(),
   certification: z.string().optional(),
   category_id: z.string().optional().nullable(),
   is_active: z.boolean(),
@@ -742,7 +743,7 @@ export default function ProductForm() {
               <p className="text-sm text-muted-foreground">
                 Only filled specifications will be shown on the storefront.
               </p>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                 <div className="space-y-2">
                   <Label htmlFor="metal_type" className="text-sm font-normal">Metal Type</Label>
                   <Input id="metal_type" placeholder="18K Rose Gold" {...register("metal_type")} />
@@ -754,6 +755,10 @@ export default function ProductForm() {
                 <div className="space-y-2">
                   <Label htmlFor="gross_weight" className="text-sm font-normal">Gross Weight</Label>
                   <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="size" className="text-sm font-normal">Size</Label>
+                  <Input id="size" placeholder='16.5"' {...register("size")} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="certification" className="text-sm font-normal">Certification</Label>
