@@ -75,7 +75,7 @@ export default function Index() {
                   style={{ animationDelay: `${index * 150}ms` }}
                 >
                   {/* Image Container - Clean, no overlay */}
-                  <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+                  <div className="relative aspect-square overflow-hidden bg-muted">
                     {collection.image_url ? (
                       <img
                         src={collection.image_url}
