@@ -23,13 +23,8 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 const locations = [
   {
-    name: "Hong Kong Studio",
-    address: "World Trust Tower 7C, 50 Stanley Street, Central, Hong Kong",
-    phone: "+852 9211 7727",
-  },
-  {
     name: "Hong Kong Office",
-    address: "Level 10, Central Building, 1-3 Pedder Street, Central, Hong Kong",
+    address: "Level 29, Infinitus Plaza, 199 Des Voeux Road, Sheung Wan, Hong Kong",
     phone: "+852 3182 7554",
   },
   {

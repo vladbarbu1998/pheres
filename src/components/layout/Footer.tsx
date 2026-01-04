@@ -31,7 +31,7 @@ export function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Exquisite jewelry crafted with passion, precision, and timeless elegance.
+              Italian Luxury Brand; Fine Jewelry & Couture. A one-of-a-kind luxury experience for powerful and independent women.
             </p>
           </div>
 
