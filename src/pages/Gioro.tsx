@@ -19,9 +19,9 @@ export default function GioroPage() {
           {/* Content Section - 30% on desktop, overlaps image slightly */}
           <div className="relative flex w-full flex-col justify-center bg-background px-8 py-16 lg:-ml-20 lg:w-[35%] lg:py-0">
             {/* Decorative line */}
-            <div className="mb-8 h-px w-16 bg-brand" />
+            <div className="mb-8 h-px w-16" style={{ backgroundColor: '#765228' }} />
             
-            <p className="mb-4 font-label text-xs font-medium uppercase tracking-[0.4em] text-muted-foreground">
+            <p className="mb-4 font-label text-xs font-medium uppercase tracking-[0.4em]" style={{ color: '#765228' }}>
               Coming Soon
             </p>
             
