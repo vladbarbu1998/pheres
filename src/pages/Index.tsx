@@ -177,7 +177,7 @@ export default function Index() {
       {/* Final CTA */}
       <section className="border-t border-border/50 bg-secondary/30">
         <div className="container py-16 md:py-24 text-center">
-          <h2 className="font-display text-3xl font-semibold text-foreground md:text-4xl mb-4">
+          <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl mb-4">
             Begin Your Journey
           </h2>
           <p className="mx-auto max-w-lg text-muted-foreground mb-8">
