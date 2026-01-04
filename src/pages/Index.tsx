@@ -22,7 +22,7 @@ export default function Index() {
         {/* Background Image */}
         {/* TODO: Replace /images/hero-model.webp with your actual hero image */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-contain bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/hero-model.webp')" }}
         />
         
