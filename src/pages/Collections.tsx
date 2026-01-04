@@ -13,7 +13,7 @@ export default function CollectionsPage() {
       <section className="border-b border-border bg-secondary/30">
         <div className="container py-12 lg:py-20">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.3em] text-primary">
+            <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.3em] text-primary">
               Explore Our World
             </p>
             <h1 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
