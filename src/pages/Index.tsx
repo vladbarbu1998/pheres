@@ -51,7 +51,7 @@ export default function Index() {
       <section className="bg-background">
         <div className="container py-20 md:py-32">
           <div className="mb-16 text-center">
-            <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.3em] text-primary">
+            <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.3em] text-primary">
               Curated Collections
             </p>
             <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
