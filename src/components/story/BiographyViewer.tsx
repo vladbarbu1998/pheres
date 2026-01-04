@@ -212,10 +212,30 @@ export function BiographyViewer() {
               </div>
 
               {/* Page thumbnails - horizontal scroll with improved spacing */}
-              <div className="border-t border-border/50 px-4 py-5 md:py-6">
+              <div className="relative border-t border-border/50 py-5 md:py-6">
+                {/* Left arrow */}
+                <button
+                  onClick={goToPrevious}
+                  disabled={currentPage === 0}
+                  className="absolute left-0 top-1/2 z-10 -translate-y-1/2 flex h-full items-center px-2 bg-gradient-to-r from-card via-card/80 to-transparent disabled:opacity-30"
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="h-5 w-5 text-muted-foreground" />
+                </button>
+                
+                {/* Right arrow */}
+                <button
+                  onClick={goToNext}
+                  disabled={currentPage === TOTAL_PAGES - 1}
+                  className="absolute right-0 top-1/2 z-10 -translate-y-1/2 flex h-full items-center px-2 bg-gradient-to-l from-card via-card/80 to-transparent disabled:opacity-30"
+                  aria-label="Next page"
+                >
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </button>
+                
                 <div 
                   ref={thumbnailsRef}
-                  className="flex gap-2 overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-muted"
+                  className="flex gap-2 overflow-x-auto px-8 py-1 scrollbar-thin scrollbar-thumb-muted"
                 >
                   {pages.map((page, index) => (
                     <button
