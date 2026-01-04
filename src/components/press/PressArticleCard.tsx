@@ -17,7 +17,7 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
     >
       <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary/20">
         {/* Thumbnail */}
-        <div className="relative aspect-video overflow-hidden bg-muted">
+        <div className="relative aspect-[2/1] overflow-hidden bg-muted">
           {article.thumbnail_url ? (
             <img
               src={article.thumbnail_url}
@@ -31,7 +31,7 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
                 <img
                   src={article.outlet.logo_url}
                   alt={article.outlet.name}
-                  className="h-8 w-auto max-w-[50%] object-contain opacity-20 grayscale"
+                  className="h-6 w-auto max-w-[40%] object-contain opacity-20 grayscale"
                 />
               )}
             </div>
@@ -39,11 +39,11 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
           
           {/* Outlet badge - logo only */}
           {article.outlet?.logo_url && (
-            <div className="absolute left-3 top-3 rounded-full bg-background/90 p-2 backdrop-blur-sm">
+            <div className="absolute left-2 top-2 rounded-full bg-background/90 p-1.5 backdrop-blur-sm">
               <img
                 src={article.outlet.logo_url}
                 alt={article.outlet.name}
-                className="h-4 w-auto object-contain"
+                className="h-3 w-auto object-contain"
               />
             </div>
           )}
