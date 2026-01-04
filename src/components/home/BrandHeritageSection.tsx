@@ -12,7 +12,7 @@ export function BrandHeritageSection() {
       <div className="container relative py-20 md:py-32">
         {/* Elegant centered header */}
         <div className="mb-16 text-center">
-          <p className="mb-3 font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
+          <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
             Our Heritage
           </p>
           <h2 className="font-display text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
@@ -87,7 +87,7 @@ export function BrandHeritageSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-10 border-t border-border/50 mt-10">
                 <div className="flex flex-col items-center text-center sm:items-start sm:text-left gap-2">
                   <Gem className="h-5 w-5 text-primary" />
-                  <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
+                  <h4 className="font-label text-sm font-semibold tracking-wide text-foreground">
                     Handcrafted Excellence
                   </h4>
                   <p className="text-sm text-muted-foreground">
@@ -96,7 +96,7 @@ export function BrandHeritageSection() {
                 </div>
                 <div className="flex flex-col items-center text-center sm:items-start sm:text-left gap-2">
                   <Award className="h-5 w-5 text-primary" />
-                  <h4 className="font-display text-sm font-semibold tracking-wide text-foreground">
+                  <h4 className="font-label text-sm font-semibold tracking-wide text-foreground">
                     Timeless Design
                   </h4>
                   <p className="text-sm text-muted-foreground">

@@ -41,7 +41,7 @@ export default function Index() {
           >
             Pheres
           </h1>
-          <p className="mt-3 font-display text-sm font-medium tracking-[0.2em] text-white/80 uppercase animate-fade-in" style={{ animationDelay: "150ms" }}>
+          <p className="mt-3 font-label text-sm font-medium tracking-[0.2em] text-white/80 uppercase animate-fade-in" style={{ animationDelay: "150ms" }}>
             Fine Jewelry House
           </p>
         </div>
@@ -51,7 +51,7 @@ export default function Index() {
       <section className="bg-background">
         <div className="container py-20 md:py-32">
           <div className="mb-16 text-center">
-            <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.3em] text-primary">
+            <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.3em] text-primary">
               Curated Collections
             </p>
             <h2 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
@@ -95,7 +95,7 @@ export default function Index() {
                   
                   {/* Text Below Image */}
                   <div className="pt-6">
-                    <p className="mb-2 font-display text-xs font-medium uppercase tracking-[0.25em] text-primary">
+                    <p className="mb-2 font-label text-xs font-medium uppercase tracking-[0.25em] text-primary">
                       Collection
                     </p>
                     <h3 className="mb-3 font-serif text-2xl font-light tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary md:text-3xl">
@@ -111,7 +111,7 @@ export default function Index() {
             </div>
           ) : (
             <div className="py-16 text-center">
-              <p className="font-display text-sm tracking-wide text-muted-foreground">
+              <p className="font-label text-sm tracking-wide text-muted-foreground">
                 Collections coming soon
               </p>
             </div>
@@ -127,7 +127,7 @@ export default function Index() {
       <section className="border-t border-border/50 bg-primary/5">
         <div className="container py-12 md:py-16">
           <div className="flex flex-col items-center gap-6 text-center">
-            <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
+            <p className="font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
               Worn by Icons
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
@@ -135,26 +135,26 @@ export default function Index() {
                 pressEntries.slice(0, 6).map((entry) => (
                   <span
                     key={entry.id}
-                    className="font-display text-lg font-medium text-muted-foreground/80 md:text-xl"
+                    className="font-label text-lg font-medium text-muted-foreground/80 md:text-xl"
                   >
                     {entry.celebrity_name || entry.title}
                   </span>
                 ))
               ) : (
                 <>
-                  <span className="font-display text-lg font-medium text-muted-foreground/80 md:text-xl">
+                  <span className="font-label text-lg font-medium text-muted-foreground/80 md:text-xl">
                     Michelle Obama
                   </span>
-                  <span className="font-display text-lg font-medium text-muted-foreground/80 md:text-xl">
+                  <span className="font-label text-lg font-medium text-muted-foreground/80 md:text-xl">
                     Rihanna
                   </span>
-                  <span className="font-display text-lg font-medium text-muted-foreground/80 md:text-xl">
+                  <span className="font-label text-lg font-medium text-muted-foreground/80 md:text-xl">
                     Jennifer Lopez
                   </span>
-                  <span className="font-display text-lg font-medium text-muted-foreground/80 md:text-xl">
+                  <span className="font-label text-lg font-medium text-muted-foreground/80 md:text-xl">
                     Beyoncé
                   </span>
-                  <span className="font-display text-lg font-medium text-muted-foreground/80 md:text-xl">
+                  <span className="font-label text-lg font-medium text-muted-foreground/80 md:text-xl">
                     Lady Gaga
                   </span>
                 </>
