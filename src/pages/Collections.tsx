@@ -79,7 +79,7 @@ export default function CollectionsPage() {
                   
                   {/* Text overlay on image */}
                   <div className="absolute inset-x-0 bottom-0 p-6">
-                    <h2 className="font-serif text-3xl font-light tracking-wide text-white md:text-4xl lg:text-5xl">
+                    <h2 className="font-serif text-xl font-light tracking-wide text-white md:text-2xl">
                       {collection.name}
                     </h2>
                     <span className="mt-2 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white/80 transition-all duration-300 group-hover:gap-3 group-hover:text-white">
