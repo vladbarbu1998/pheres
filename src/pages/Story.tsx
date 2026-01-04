@@ -22,8 +22,8 @@ const values = [
   },
   {
     icon: Globe,
-    title: "Global Perspective",
-    description: "From Milan to Hong Kong, our designs reflect a worldly appreciation for diverse cultures and timeless elegance.",
+    title: "Cultural Transcendence",
+    description: "East and West converge—symbolism and structure in a refined, timeless harmony; each piece becomes a bridge.",
   },
 ];
 
