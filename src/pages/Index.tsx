@@ -31,7 +31,9 @@ export default function Index() {
         
         {/* Brand Text - positioned at bottom center */}
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 md:pb-24 lg:pb-32">
-          <h1 className="font-serif text-4xl font-thin tracking-[0.3em] text-white md:text-5xl lg:text-6xl uppercase animate-fade-in">
+          <h1 
+            className="font-serif text-4xl font-thin tracking-[0.3em] md:text-5xl lg:text-6xl uppercase animate-fade-in bg-gradient-to-r from-[#d4af37] via-[#f5e6c3] via-[#d4af37] to-[#f5e6c3] bg-[length:200%_auto] bg-clip-text text-transparent animate-text-shimmer motion-reduce:animate-none motion-reduce:text-white drop-shadow-[0_2px_4px_rgba(212,175,55,0.3)]"
+          >
             Pheres
           </h1>
           <p className="mt-3 font-display text-sm font-medium tracking-[0.2em] text-white/80 uppercase animate-fade-in" style={{ animationDelay: "150ms" }}>
