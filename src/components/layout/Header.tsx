@@ -13,7 +13,8 @@ const navigation = [
   { name: "Collections", href: "/collections" },
   { name: "Our Story", href: "/story" },
   { name: "Celebrities", href: "/celebrities" },
-  { name: "Contact", href: "/contact" },
+  { name: "Press", href: "/press" },
+  { name: "Gioro", href: "/gioro" },
 ];
 
 export function Header() {
