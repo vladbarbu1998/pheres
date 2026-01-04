@@ -51,7 +51,7 @@ export default function CollectionsPage() {
             {collections.map((collection, index) => (
               <Link
                 key={collection.id}
-                to={`/shop?collection=${collection.slug}`}
+                to={`/shop/collection/${collection.slug}`}
                 className="group block animate-fade-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
