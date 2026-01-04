@@ -18,7 +18,7 @@ export default function Index() {
   return (
     <Layout>
       {/* Full-Screen Hero */}
-      <section className="relative h-screen w-full overflow-hidden">
+      <section className="relative h-screen w-full overflow-hidden -mt-[73px]">
         {/* Background Image */}
         {/* TODO: Replace /images/hero-model.webp with your actual hero image */}
         <div 
