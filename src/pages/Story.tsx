@@ -31,7 +31,7 @@ export default function Story() {
   return (
     <Layout>
       <PageHero
-        label={<span className="brand-word">Pheres</span>}
+        label="Since 2006"
         title="Our Story"
         intro="Creating unique luxury experiences that walk the fine line between elegance and extravagance—boldly innovating a symbiosis of style."
       />
