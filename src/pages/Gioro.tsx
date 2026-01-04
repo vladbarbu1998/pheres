@@ -6,7 +6,7 @@ export default function GioroPage() {
     <Layout>
       <PageHero
         label="New Chapter"
-        title={<>Gioro by <span className="tracking-[0.3em]">PHERES</span></>}
+        title={<>Gioro by <span className="tracking-[0.2em]">PHERES</span></>}
         intro="A new dimension of luxury is coming. Stay tuned for an extraordinary experience."
       />
 
