@@ -10,7 +10,7 @@ import { Logo } from "@/components/layout/Logo";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Shop", href: "/shop" },
+  { name: "Collections", href: "/collections" },
   { name: "Our Story", href: "/story" },
   { name: "Celebrities", href: "/celebrities" },
   { name: "Contact", href: "/contact" },

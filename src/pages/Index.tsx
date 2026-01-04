@@ -159,7 +159,7 @@ export default function Index() {
           {/* View All Button */}
           <div className="mt-12 text-center">
             <Button asChild variant="outline" size="lg" className="group border-primary/30 hover:border-primary hover:bg-primary/5">
-              <Link to="/shop">
+              <Link to="/collections">
                 View All Collections
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
