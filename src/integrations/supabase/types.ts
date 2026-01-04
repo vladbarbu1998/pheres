@@ -496,6 +496,59 @@ export type Database = {
         }
         Relationships: []
       }
+      press_articles: {
+        Row: {
+          created_at: string
+          display_order: number
+          external_url: string
+          id: string
+          is_active: boolean
+          is_highlight: boolean
+          outlet_id: string
+          publish_date: string | null
+          short_description: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          external_url: string
+          id?: string
+          is_active?: boolean
+          is_highlight?: boolean
+          outlet_id: string
+          publish_date?: string | null
+          short_description?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          external_url?: string
+          id?: string
+          is_active?: boolean
+          is_highlight?: boolean
+          outlet_id?: string
+          publish_date?: string | null
+          short_description?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "press_articles_outlet_id_fkey"
+            columns: ["outlet_id"]
+            isOneToOne: false
+            referencedRelation: "press_outlets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       press_entries: {
         Row: {
           celebrity_name: string | null
@@ -556,6 +609,42 @@ export type Database = {
           slug?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      press_outlets: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          logo_url: string
+          name: string
+          slug: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          logo_url: string
+          name: string
+          slug: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          logo_url?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+          website_url?: string | null
         }
         Relationships: []
       }

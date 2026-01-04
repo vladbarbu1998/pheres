@@ -48,6 +48,8 @@ import AdminOrderDetail from "./pages/admin/OrderDetail";
 import AdminCustomers from "./pages/admin/Customers";
 import AdminNews from "./pages/admin/News";
 import AdminCelebrities from "./pages/admin/Celebrities";
+import AdminPressOutlets from "./pages/admin/PressOutlets";
+import AdminPressArticles from "./pages/admin/PressArticles";
 import AdminStory from "./pages/admin/Story";
 import AdminInbox from "./pages/admin/Inbox";
 import NotFound from "./pages/NotFound";
@@ -114,6 +116,8 @@ const App = () => (
             <Route path="/admin/customers" element={<AdminProtectedRoute><AdminCustomers /></AdminProtectedRoute>} />
             <Route path="/admin/news" element={<AdminProtectedRoute><AdminNews /></AdminProtectedRoute>} />
             <Route path="/admin/celebrities" element={<AdminProtectedRoute><AdminCelebrities /></AdminProtectedRoute>} />
+            <Route path="/admin/press-outlets" element={<AdminProtectedRoute><AdminPressOutlets /></AdminProtectedRoute>} />
+            <Route path="/admin/press-articles" element={<AdminProtectedRoute><AdminPressArticles /></AdminProtectedRoute>} />
             <Route path="/admin/story" element={<AdminProtectedRoute><AdminStory /></AdminProtectedRoute>} />
             <Route path="/admin/inbox" element={<AdminProtectedRoute><AdminInbox /></AdminProtectedRoute>} />
             {/* Debug route - not linked in navigation */}
