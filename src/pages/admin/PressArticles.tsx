@@ -276,7 +276,7 @@ export default function AdminPressArticles() {
                           <img
                             src={article.thumbnail_url}
                             alt={article.title}
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-cover object-center"
                           />
                         ) : (
                           <ImageIcon className="h-4 w-4 text-muted-foreground" />
