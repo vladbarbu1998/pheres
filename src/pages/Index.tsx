@@ -17,41 +17,54 @@ export default function Index() {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="container py-16 md:py-24 lg:py-32">
-          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
-            <div className="space-y-6 animate-fade-in">
-              <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
-                Fine Jewelry House
-              </p>
-              <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
-                The Art of Rare Beauty
-              </h1>
-              <p className="max-w-lg text-lg text-muted-foreground leading-relaxed">
-                Pheres creates extraordinary pieces for those who seek the exceptional. 
-                One-of-a-kind diamonds, masterful craftsmanship, and a dedication to 
-                timeless elegance—worn by icons on the world's most celebrated stages.
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row">
-                <Button asChild size="lg" className="group">
-                  <Link to="/shop">
-                    Explore the Collection
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link to="/story">Discover Our Story</Link>
-                </Button>
-              </div>
-            </div>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-muted animate-fade-in" style={{ animationDelay: "150ms" }}>
-              <img
-                src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80"
-                alt="Pheres fine jewelry"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
+      {/* Full-Screen Hero */}
+      <section className="relative h-screen w-full overflow-hidden -mt-[73px]">
+        {/* Background Image */}
+        {/* TODO: Replace /images/hero-model.webp with your actual hero image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/hero-model.webp')" }}
+        />
+        
+        {/* Dark Gradient Overlay - transparent at top, dark at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        
+        {/* Brand Text - positioned at bottom center */}
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 md:pb-24 lg:pb-32">
+          <h1 className="font-display text-4xl font-semibold tracking-[0.3em] text-white md:text-5xl lg:text-6xl uppercase animate-fade-in">
+            Pheres
+          </h1>
+          <p className="mt-3 font-display text-sm font-medium tracking-[0.2em] text-white/80 uppercase animate-fade-in" style={{ animationDelay: "150ms" }}>
+            Fine Jewelry House
+          </p>
+        </div>
+      </section>
+
+      {/* Brand Introduction Section */}
+      <section className="bg-background">
+        <div className="container py-16 md:py-24 lg:py-28">
+          <div className="mx-auto max-w-2xl text-center space-y-6">
+            <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
+              Fine Jewelry House
+            </p>
+            <h2 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">
+              The Art of Rare Beauty
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Pheres creates extraordinary pieces for those who seek the exceptional. 
+              One-of-a-kind diamonds, masterful craftsmanship, and a dedication to 
+              timeless elegance—worn by icons on the world's most celebrated stages.
+            </p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center pt-2">
+              <Button asChild size="lg" className="group">
+                <Link to="/shop">
+                  Explore the Collection
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link to="/story">Discover Our Story</Link>
+              </Button>
             </div>
           </div>
         </div>
