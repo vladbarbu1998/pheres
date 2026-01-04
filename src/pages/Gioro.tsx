@@ -27,8 +27,8 @@ export default function GioroPage() {
             
             <h1 className="mb-6 font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
               Gioro
-              <span className="mt-2 block text-2xl tracking-[0.3em] text-muted-foreground md:text-3xl lg:text-4xl">
-                by PHERES
+              <span className="mt-1 block text-2xl text-muted-foreground md:text-3xl lg:text-4xl">
+                by <span className="tracking-[0.2em]">PHERES</span>
               </span>
             </h1>
             
