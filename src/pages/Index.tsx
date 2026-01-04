@@ -45,36 +45,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Brand Introduction Section */}
-      <section className="bg-background">
-        <div className="container py-16 md:py-24 lg:py-28">
-          <div className="mx-auto max-w-2xl text-center space-y-6">
-            <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-primary">
-              Fine Jewelry House
-            </p>
-            <h2 className="font-display text-3xl font-semibold leading-tight tracking-tight text-foreground md:text-4xl lg:text-5xl text-balance">
-              The Art of Rare Beauty
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Pheres creates extraordinary pieces for those who seek the exceptional. 
-              One-of-a-kind diamonds, masterful craftsmanship, and a dedication to 
-              timeless elegance—worn by icons on the world's most celebrated stages.
-            </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center pt-2">
-              <Button asChild size="lg" className="group">
-                <Link to="/shop">
-                  Explore the Collection
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/story">Discover Our Story</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Collections Highlight - Luxury Editorial Design */}
       <section className="bg-background">
         <div className="container py-20 md:py-32">
