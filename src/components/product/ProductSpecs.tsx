@@ -13,6 +13,7 @@ interface ProductSpecsProps {
   metalType?: string | null;
   metalWeight?: string | null;
   grossWeight?: string | null;
+  size?: string | null;
   stones?: ProductStone[];
   certification?: string | null;
   collectionName?: string | null;
@@ -37,6 +38,7 @@ export function ProductSpecs({
   metalType,
   metalWeight,
   grossWeight,
+  size,
   stones = [],
   certification,
   collectionName,
@@ -46,6 +48,7 @@ export function ProductSpecs({
     { label: "Metal", value: metalType },
     { label: "Metal Weight", value: metalWeight },
     { label: "Gross Weight", value: grossWeight },
+    { label: "Size", value: size },
     { label: "Certification", value: certification },
   ].filter((spec) => spec.value);
 

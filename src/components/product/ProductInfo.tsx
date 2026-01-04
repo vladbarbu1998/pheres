@@ -46,6 +46,7 @@ interface ProductInfoProps {
   metalType?: string | null;
   metalWeight?: string | null;
   grossWeight?: string | null;
+  size?: string | null;
   stones?: ProductStone[];
   certification?: string | null;
   isNew?: boolean;
@@ -64,6 +65,7 @@ export function ProductInfo({
   metalType,
   metalWeight,
   grossWeight,
+  size,
   stones = [],
   certification,
   isNew,
@@ -228,6 +230,7 @@ export function ProductInfo({
           metalType={metalType}
           metalWeight={metalWeight}
           grossWeight={grossWeight}
+          size={size}
           stones={stones}
           certification={certification}
           collectionName={collectionName}
