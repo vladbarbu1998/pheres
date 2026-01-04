@@ -70,7 +70,7 @@ function FilterSection({
 }) {
   return (
     <div className="py-4">
-      <h4 className="mb-3 font-display text-sm font-semibold tracking-wide">
+      <h4 className="mb-3 font-label text-sm font-semibold tracking-wide">
         {title}
       </h4>
       {children}
@@ -140,7 +140,7 @@ function FilterContent({
                 />
                 <Label
                   htmlFor={`col-${collection.id}`}
-                  className="text-sm font-normal text-muted-foreground cursor-pointer"
+                  className="font-label text-sm font-normal text-muted-foreground cursor-pointer"
                 >
                   {collection.name}
                 </Label>
@@ -165,7 +165,7 @@ function FilterContent({
                 />
                 <Label
                   htmlFor={`cat-${category.id}`}
-                  className="text-sm font-normal text-muted-foreground cursor-pointer"
+                  className="font-label text-sm font-normal text-muted-foreground cursor-pointer"
                 >
                   {category.name}
                 </Label>
@@ -189,7 +189,7 @@ function FilterContent({
               />
               <Label
                 htmlFor={`price-${index}`}
-                className="text-sm font-normal text-muted-foreground cursor-pointer"
+                className="font-label text-sm font-normal text-muted-foreground cursor-pointer"
               >
                 {range.label}
               </Label>
@@ -211,12 +211,12 @@ function FilterContent({
                     handleStoneChange(stone, checked as boolean)
                   }
                 />
-                <Label
-                  htmlFor={`stone-${stone}`}
-                  className="text-sm font-normal text-muted-foreground cursor-pointer"
-                >
-                  {stone}
-                </Label>
+              <Label
+                htmlFor={`stone-${stone}`}
+                className="font-label text-sm font-normal text-muted-foreground cursor-pointer"
+              >
+                {stone}
+              </Label>
               </div>
             ))}
           </div>
@@ -272,7 +272,7 @@ export function ShopFilters({
           </SheetTrigger>
           <SheetContent side="left" className="w-80 overflow-y-auto">
             <SheetHeader>
-              <SheetTitle className="font-display">Filters</SheetTitle>
+              <SheetTitle className="font-label">Filters</SheetTitle>
             </SheetHeader>
             <div className="mt-4">
               <FilterContent
@@ -297,7 +297,7 @@ export function ShopFilters({
         </Sheet>
 
         {/* Product count */}
-        <p className="text-sm text-muted-foreground">
+        <p className="font-label text-sm text-muted-foreground">
           {isLoading ? (
             "Loading..."
           ) : (
@@ -373,7 +373,7 @@ export function ShopFiltersSidebar({
     <aside className="hidden w-64 shrink-0 lg:block">
       <div className="sticky top-24">
         <div className="flex items-center justify-between">
-          <h3 className="font-display text-lg font-semibold">Filters</h3>
+          <h3 className="font-label text-lg font-semibold">Filters</h3>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearFilters} className="h-7 px-2 text-xs">
               Clear all
