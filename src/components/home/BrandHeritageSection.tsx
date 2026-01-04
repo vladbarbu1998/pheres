@@ -58,7 +58,7 @@ export function BrandHeritageSection() {
               <div className="space-y-6">
                 {/* Opening statement with decorative border */}
                 <p className="border-l-2 border-primary/40 pl-5 font-medium leading-relaxed text-foreground">
-                  PHERES brings luxury back to its roots by creating very exclusive 
+                  <span className="brand-word">Pheres</span> brings luxury back to its roots by creating very exclusive 
                   products of extremely high quality that the niche market of 
                   connoisseurs truly appreciates.
                 </p>
