@@ -25,9 +25,9 @@ export function Footer() {
       <div className="container py-12 lg:py-16">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-          <div>
+          <div className="flex-1">
             <Logo />
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
+            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
               Italian Luxury Brand; Fine Jewelry & Couture. A one-of-a-kind luxury experience for powerful and independent women.
             </p>
           </div>
