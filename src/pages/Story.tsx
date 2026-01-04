@@ -74,7 +74,7 @@ export default function Story() {
                 <p className="mb-2 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
                   The Founder
                 </p>
-              <h2 className="brand-word text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
                   Narcisa Pheres
                 </h2>
               </div>
@@ -107,7 +107,7 @@ export default function Story() {
             <p className="mb-2 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
               The Journey
             </p>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
               Designer Biography
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
@@ -128,7 +128,7 @@ export default function Story() {
             <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.3em] text-primary">
               What We Stand For
             </p>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+            <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
               Our Principles
             </h2>
           </div>
@@ -165,7 +165,7 @@ export default function Story() {
       {/* CTA Section */}
       <section className="border-t border-border/50 py-16 md:py-20">
         <div className="container max-w-3xl text-center">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+          <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
             Experience the Extraordinary
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
