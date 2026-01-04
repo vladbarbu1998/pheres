@@ -54,7 +54,7 @@ export default function Index() {
             <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.3em] text-primary">
               Curated Collections
             </p>
-            <h2 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
+            <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
               Worlds of Wonder
             </h2>
           </div>
