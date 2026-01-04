@@ -108,8 +108,8 @@ export default function Contact() {
           <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
             Get in Touch
           </p>
-          <h1 className="font-display text-4xl font-semibold text-foreground md:text-5xl mb-4">
-            Contact Pheres
+          <h1 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl mb-4">
+            Contact <span className="brand-word">Pheres</span>
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
             Whether you have a question about a piece or are interested in a bespoke creation, 

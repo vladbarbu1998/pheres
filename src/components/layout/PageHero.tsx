@@ -17,7 +17,7 @@ export function PageHero({ label, title, intro, className }: PageHeroProps) {
             {label}
           </p>
         )}
-        <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in text-balance">
+        <h1 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl animate-fade-in text-balance">
           {title}
         </h1>
         <p 
