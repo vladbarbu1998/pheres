@@ -78,7 +78,7 @@ export default function Story() {
                 <p className="mb-2 font-label text-sm font-medium uppercase tracking-[0.2em] text-primary">
                   The Founder
                 </p>
-              <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
+              <h2 className="font-serif text-2xl font-semibold uppercase tracking-[0.2em] text-foreground md:text-3xl lg:text-4xl">
                   Narcisa Pheres
                 </h2>
               </div>
