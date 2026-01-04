@@ -39,19 +39,14 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
             </div>
           )}
           
-          {/* Outlet badge */}
-          {article.outlet && (
-            <div className="absolute left-3 top-3 rounded-full bg-background/90 px-3 py-1.5 backdrop-blur-sm">
-              <div className="flex items-center gap-2">
-                {article.outlet.logo_url && (
-                  <img
-                    src={article.outlet.logo_url}
-                    alt={article.outlet.name}
-                    className="h-4 w-auto object-contain"
-                  />
-                )}
-                <span className="text-xs font-medium">{article.outlet.name}</span>
-              </div>
+          {/* Outlet badge - logo only */}
+          {article.outlet?.logo_url && (
+            <div className="absolute left-3 top-3 rounded-full bg-background/90 p-2 backdrop-blur-sm">
+              <img
+                src={article.outlet.logo_url}
+                alt={article.outlet.name}
+                className="h-4 w-auto object-contain"
+              />
             </div>
           )}
         </div>
