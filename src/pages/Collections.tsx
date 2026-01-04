@@ -13,7 +13,7 @@ export default function CollectionsPage() {
       <section className="border-b border-border bg-secondary/30">
         <div className="container py-12 lg:py-20">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.3em] text-primary">
+            <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.3em] text-primary">
               Explore Our World
             </p>
             <h1 className="font-serif text-3xl font-light tracking-wide text-foreground md:text-4xl lg:text-5xl">
@@ -42,7 +42,7 @@ export default function CollectionsPage() {
           </div>
         ) : isError ? (
           <div className="py-16 text-center">
-            <p className="font-display text-sm tracking-wide text-muted-foreground">
+            <p className="font-label text-sm tracking-wide text-muted-foreground">
               Unable to load collections. Please try again later.
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function CollectionsPage() {
           </div>
         ) : (
           <div className="py-16 text-center">
-            <p className="font-display text-sm tracking-wide text-muted-foreground">
+            <p className="font-label text-sm tracking-wide text-muted-foreground">
               Collections coming soon. Check back for our curated worlds of wonder.
             </p>
           </div>

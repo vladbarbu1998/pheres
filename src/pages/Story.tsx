@@ -105,7 +105,7 @@ export default function Story() {
       <section className="border-t border-border/50 py-20 md:py-28">
         <div className="container max-w-6xl">
           <div className="mb-16 text-center md:mb-20">
-            <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.3em] text-primary">
+            <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.3em] text-primary">
               What We Stand For
             </p>
             <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl lg:text-5xl">
@@ -126,7 +126,7 @@ export default function Story() {
                   <value.icon className="h-6 w-6 text-primary transition-transform duration-500 group-hover:scale-110" strokeWidth={1.5} />
                 </div>
                 
-                <h3 className="mb-3 font-display text-lg font-semibold tracking-tight text-foreground">
+                <h3 className="mb-3 font-label text-lg font-semibold tracking-tight text-foreground">
                   {value.title}
                 </h3>
                 
