@@ -47,16 +47,14 @@ export default function PressPage() {
       {/* Divider */}
       <div className="border-t border-border" />
 
-      {/* Logo Carousel Section */}
+      {/* Logo Carousel Section - Full width */}
       {!outletsLoading && outlets && outlets.length > 0 && (
-        <section className="border-b border-border bg-muted/30">
-          <div className="container">
-            <PressLogoCarousel
-              outlets={outlets}
-              onOutletClick={handleOutletSelect}
-              selectedOutletId={selectedOutletId}
-            />
-          </div>
+        <section className="border-b border-border">
+          <PressLogoCarousel
+            outlets={outlets}
+            onOutletClick={handleOutletSelect}
+            selectedOutletId={selectedOutletId}
+          />
         </section>
       )}
 

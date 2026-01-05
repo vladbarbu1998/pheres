@@ -52,19 +52,15 @@ export function PressLogoCarousel({
   if (outlets.length === 0) return null;
 
   return (
-    <div
-      className="relative overflow-hidden py-8"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {/* Gradient fade edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-background to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background to-transparent" />
-
+    <div className="w-full overflow-hidden bg-muted/30 py-8">
       <div
         ref={scrollRef}
-        className="flex gap-12 overflow-x-hidden scroll-smooth"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="flex w-max animate-marquee gap-16"
+        style={{
+          animationPlayState: isPaused ? "paused" : "running",
+        }}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
         {duplicatedOutlets.map((outlet, index) => (
           <button
@@ -73,7 +69,7 @@ export function PressLogoCarousel({
             className={cn(
               "flex-shrink-0 transition-all duration-300",
               "grayscale hover:grayscale-0 focus:grayscale-0",
-              "opacity-60 hover:opacity-100 focus:opacity-100",
+              "opacity-50 hover:opacity-100 focus:opacity-100",
               selectedOutletId === outlet.id && "grayscale-0 opacity-100"
             )}
             aria-label={`Filter by ${outlet.name}`}
@@ -81,7 +77,7 @@ export function PressLogoCarousel({
             <img
               src={outlet.logo_url}
               alt={outlet.name}
-              className="h-10 w-auto max-w-[120px] object-contain"
+              className="h-8 w-auto max-w-[140px] object-contain"
               loading="lazy"
             />
           </button>
