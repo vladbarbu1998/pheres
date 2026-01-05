@@ -20,6 +20,13 @@ export default function PressPage() {
   const { data: outlets, isLoading: outletsLoading } = usePressOutlets();
   const { data: articles, isLoading: articlesLoading } = usePressArticles();
 
+  // Get outlets that have articles (for filter dropdown)
+  const outletsWithArticles = useMemo(() => {
+    if (!outlets || !articles) return [];
+    const outletIdsWithArticles = new Set(articles.map(a => a.outlet_id));
+    return outlets.filter(outlet => outletIdsWithArticles.has(outlet.id));
+  }, [outlets, articles]);
+
   const filteredArticles = useMemo(() => {
     if (!articles) return [];
     if (!selectedOutletId) return articles;
@@ -84,7 +91,7 @@ export default function PressPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Outlets</SelectItem>
-                  {outlets?.map((outlet) => (
+                  {outletsWithArticles.map((outlet) => (
                     <SelectItem key={outlet.id} value={outlet.id}>
                       {outlet.name}
                     </SelectItem>
