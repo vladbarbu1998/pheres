@@ -17,27 +17,10 @@ export function usePressOutlets() {
   return useQuery({
     queryKey: ["press-outlets"],
     queryFn: async () => {
-      // First get outlet IDs that have at least one active article
-      const { data: articlesData, error: articlesError } = await supabase
-        .from("press_articles")
-        .select("outlet_id")
-        .eq("is_active", true);
-
-      if (articlesError) throw articlesError;
-
-      // Get unique outlet IDs that have articles
-      const outletIdsWithArticles = [...new Set(articlesData?.map(a => a.outlet_id) || [])];
-
-      if (outletIdsWithArticles.length === 0) {
-        return [];
-      }
-
-      // Fetch only outlets that have articles
       const { data, error } = await supabase
         .from("press_outlets")
         .select("*")
         .eq("is_active", true)
-        .in("id", outletIdsWithArticles)
         .order("display_order", { ascending: true });
 
       if (error) throw error;
