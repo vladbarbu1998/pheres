@@ -389,27 +389,6 @@ export default function AdminPressArticles() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="publish_date">Publish Date</Label>
-                <Input
-                  id="publish_date"
-                  type="date"
-                  value={formPublishDate}
-                  onChange={(e) => setFormPublishDate(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="short_description">Short Description</Label>
-                <Textarea
-                  id="short_description"
-                  value={formShortDescription}
-                  onChange={(e) => setFormShortDescription(e.target.value)}
-                  placeholder="Brief summary of the article..."
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label>Thumbnail Image</Label>
                 <ImageUploadField
                   value={formThumbnailUrl}
