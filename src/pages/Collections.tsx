@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useRef, useEffect, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 
 interface UniverseCardProps {
@@ -12,18 +13,52 @@ interface UniverseCardProps {
   imageAlt: string;
 }
 
+function useParallax(speed: number = 0.3) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Calculate how far the element is from the center of the viewport
+      const elementCenter = rect.top + rect.height / 2;
+      const viewportCenter = windowHeight / 2;
+      const distanceFromCenter = elementCenter - viewportCenter;
+      
+      // Apply parallax offset
+      setOffset(distanceFromCenter * speed * -1);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial calculation
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [speed]);
+
+  return { ref, offset };
+}
+
 function UniverseCard({ title, overline, subtitle, cta, href, imageUrl, imageAlt }: UniverseCardProps) {
+  const { ref, offset } = useParallax(0.15);
+
   return (
     <Link
       to={href}
       className="group relative block w-full overflow-hidden bg-muted"
     >
-      {/* Image */}
-      <div className="absolute inset-0">
+      {/* Image with parallax */}
+      <div ref={ref} className="absolute inset-0">
         <img
           src={imageUrl}
           alt={imageAlt}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          className="h-[120%] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          style={{ 
+            transform: `translateY(${offset}px) scale(${1 + (offset > 0 ? 0 : 0)})`,
+            willChange: "transform"
+          }}
         />
       </div>
       
