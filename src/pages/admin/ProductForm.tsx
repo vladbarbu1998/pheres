@@ -421,8 +421,8 @@ export default function ProductForm() {
       backLink={`/admin/products?type=${productType}`}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Product Type Badge */}
-        <div className="flex items-center justify-between">
+        {/* Header Row: Product Type Badge + Actions */}
+        <div className="flex items-center justify-between gap-4">
           <span className={cn(
             "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium",
             isCouture 
@@ -431,14 +431,14 @@ export default function ProductForm() {
           )}>
             {isCouture ? "Couture (Inquiry Only)" : "Ready To Wear (Purchasable)"}
           </span>
-          {/* Actions - visible on mobile */}
-          <div className="flex gap-2 lg:hidden">
-            <Button type="button" variant="outline" size="sm" onClick={() => navigate("/admin/products")}>
+          {/* Actions - always visible */}
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" onClick={() => navigate("/admin/products")}>
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isSaving}>
+            <Button type="submit" disabled={isSaving}>
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isNew ? "Create" : "Save"}
+              {isNew ? "Create Product" : "Save Changes"}
             </Button>
           </div>
         </div>
@@ -560,14 +560,12 @@ export default function ProductForm() {
                   <div className="space-y-1.5 flex-1">
                     <Label>Collections</Label>
                     {availableCollections && availableCollections.length > 0 ? (
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-2">
                         {availableCollections.map((col) => (
                           <Button
                             key={col.id}
                             type="button"
-                            size="sm"
                             variant={selectedCollections.includes(col.id) ? "default" : "outline"}
-                            className="h-7 text-xs"
                             onClick={() =>
                               setSelectedCollections((prev) =>
                                 prev.includes(col.id)
@@ -671,168 +669,165 @@ export default function ProductForm() {
               </CardContent>
             </Card>
 
-            {/* Section 3: Specifications */}
+            {/* Section 3: Specifications - Full Width with Two Columns */}
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Specifications</CardTitle>
                 <CardDescription>Only filled specs will be shown on the storefront.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-                  <div className="space-y-1">
-                    <Label htmlFor="metal_type" className="text-xs">Metal Type</Label>
-                    <Input id="metal_type" placeholder="18K Rose Gold" {...register("metal_type")} className="h-9" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="metal_weight" className="text-xs">Metal Weight</Label>
-                    <Input id="metal_weight" placeholder="4.5g" {...register("metal_weight")} className="h-9" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="gross_weight" className="text-xs">Gross Weight</Label>
-                    <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} className="h-9" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="size" className="text-xs">Size</Label>
-                    <Input id="size" placeholder='16.5"' {...register("size")} className="h-9" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="certification" className="text-xs">Certification</Label>
-                    <Input id="certification" placeholder="GIA" {...register("certification")} className="h-9" />
-                  </div>
-                </div>
-
-                {/* Stones Section - Compact */}
-                <div className="pt-2 border-t">
-                  <div className="flex items-center justify-between mb-3">
-                    <Label className="text-sm">Stones</Label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() =>
-                        setStones((prev) => [
-                          ...prev,
-                          {
-                            stone_type: "",
-                            stone_carat: "",
-                            stone_color: "",
-                            stone_clarity: "",
-                            stone_cut: "",
-                            display_order: prev.length,
-                          },
-                        ])
-                      }
-                    >
-                      <Plus className="mr-1 h-3 w-3" />
-                      Add Stone
-                    </Button>
-                  </div>
-
-                  {stones.length === 0 ? (
-                    <p className="text-xs text-muted-foreground italic py-3 text-center border border-dashed rounded">
-                      No stones added yet.
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {stones.map((stone, index) => (
-                        <div key={index} className="border rounded-lg p-3 bg-muted/30">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-medium text-muted-foreground">
-                              Stone {index + 1}
-                            </span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 text-destructive hover:text-destructive"
-                              onClick={() =>
-                                setStones((prev) => prev.filter((_, i) => i !== index))
-                              }
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                          <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-                            <div className="space-y-1">
-                              <Label className="text-xs">Type *</Label>
-                              <StoneTypeCombobox
-                                value={stone.stone_type}
-                                onChange={(newType) =>
-                                  setStones((prev) =>
-                                    prev.map((s, i) =>
-                                      i === index ? { ...s, stone_type: newType } : s
-                                    )
-                                  )
-                                }
-                                placeholder="Select..."
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <Label className="text-xs">Weight</Label>
-                              <Input
-                                placeholder="7.94 ct"
-                                className="h-9"
-                                value={stone.stone_carat}
-                                onChange={(e) =>
-                                  setStones((prev) =>
-                                    prev.map((s, i) =>
-                                      i === index ? { ...s, stone_carat: e.target.value } : s
-                                    )
-                                  )
-                                }
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <Label className="text-xs">Color</Label>
-                              <Input
-                                placeholder="D"
-                                className="h-9"
-                                value={stone.stone_color}
-                                onChange={(e) =>
-                                  setStones((prev) =>
-                                    prev.map((s, i) =>
-                                      i === index ? { ...s, stone_color: e.target.value } : s
-                                    )
-                                  )
-                                }
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <Label className="text-xs">Clarity</Label>
-                              <Input
-                                placeholder="VVS1"
-                                className="h-9"
-                                value={stone.stone_clarity}
-                                onChange={(e) =>
-                                  setStones((prev) =>
-                                    prev.map((s, i) =>
-                                      i === index ? { ...s, stone_clarity: e.target.value } : s
-                                    )
-                                  )
-                                }
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <Label className="text-xs">Cut</Label>
-                              <Input
-                                placeholder="Excellent"
-                                className="h-9"
-                                value={stone.stone_cut}
-                                onChange={(e) =>
-                                  setStones((prev) =>
-                                    prev.map((s, i) =>
-                                      i === index ? { ...s, stone_cut: e.target.value } : s
-                                    )
-                                  )
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+              <CardContent>
+                <div className="grid gap-6 lg:grid-cols-2">
+                  {/* Left: Metal & Size Fields */}
+                  <div className="space-y-4">
+                    <Label className="text-sm font-medium">Metal & Dimensions</Label>
+                    <div className="grid gap-3 grid-cols-2">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="metal_type" className="text-xs text-muted-foreground">Metal Type</Label>
+                        <Input id="metal_type" placeholder="18K Rose Gold" {...register("metal_type")} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="metal_weight" className="text-xs text-muted-foreground">Metal Weight</Label>
+                        <Input id="metal_weight" placeholder="4.5g" {...register("metal_weight")} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="gross_weight" className="text-xs text-muted-foreground">Gross Weight</Label>
+                        <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="size" className="text-xs text-muted-foreground">Size</Label>
+                        <Input id="size" placeholder='16.5"' {...register("size")} />
+                      </div>
                     </div>
-                  )}
+                  </div>
+
+                  {/* Right: Stones Section */}
+                  <div className="space-y-4 lg:border-l lg:pl-6">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Stones</Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setStones((prev) => [
+                            ...prev,
+                            {
+                              stone_type: "",
+                              stone_carat: "",
+                              stone_color: "",
+                              stone_clarity: "",
+                              stone_cut: "",
+                              display_order: prev.length,
+                            },
+                          ])
+                        }
+                      >
+                        <Plus className="mr-1 h-3.5 w-3.5" />
+                        Add Stone
+                      </Button>
+                    </div>
+
+                    {stones.length === 0 ? (
+                      <p className="text-sm text-muted-foreground italic py-6 text-center border border-dashed rounded">
+                        No stones added yet.
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {stones.map((stone, index) => (
+                          <div key={index} className="border rounded-lg p-3 bg-muted/30">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-medium text-muted-foreground">
+                                Stone {index + 1}
+                              </span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-destructive hover:text-destructive"
+                                onClick={() =>
+                                  setStones((prev) => prev.filter((_, i) => i !== index))
+                                }
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            <div className="grid gap-2 grid-cols-2">
+                              <div className="space-y-1 col-span-2">
+                                <Label className="text-xs">Type *</Label>
+                                <StoneTypeCombobox
+                                  value={stone.stone_type}
+                                  onChange={(newType) =>
+                                    setStones((prev) =>
+                                      prev.map((s, i) =>
+                                        i === index ? { ...s, stone_type: newType } : s
+                                      )
+                                    )
+                                  }
+                                  placeholder="Select..."
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs">Weight</Label>
+                                <Input
+                                  placeholder="7.94 ct"
+                                  value={stone.stone_carat}
+                                  onChange={(e) =>
+                                    setStones((prev) =>
+                                      prev.map((s, i) =>
+                                        i === index ? { ...s, stone_carat: e.target.value } : s
+                                      )
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs">Color</Label>
+                                <Input
+                                  placeholder="D"
+                                  value={stone.stone_color}
+                                  onChange={(e) =>
+                                    setStones((prev) =>
+                                      prev.map((s, i) =>
+                                        i === index ? { ...s, stone_color: e.target.value } : s
+                                      )
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs">Clarity</Label>
+                                <Input
+                                  placeholder="VVS1"
+                                  value={stone.stone_clarity}
+                                  onChange={(e) =>
+                                    setStones((prev) =>
+                                      prev.map((s, i) =>
+                                        i === index ? { ...s, stone_clarity: e.target.value } : s
+                                      )
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs">Cut</Label>
+                                <Input
+                                  placeholder="Excellent"
+                                  value={stone.stone_cut}
+                                  onChange={(e) =>
+                                    setStones((prev) =>
+                                      prev.map((s, i) =>
+                                        i === index ? { ...s, stone_cut: e.target.value } : s
+                                      )
+                                    )
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
