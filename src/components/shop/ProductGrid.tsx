@@ -33,6 +33,7 @@ interface ProductGridProps {
   isLoading?: boolean;
   skeletonCount?: number;
   className?: string;
+  coutureCollectionSlug?: string;
 }
 
 export function ProductGrid({
@@ -40,6 +41,7 @@ export function ProductGrid({
   isLoading,
   skeletonCount = 8,
   className,
+  coutureCollectionSlug,
 }: ProductGridProps) {
   if (isLoading) {
     return (
@@ -85,6 +87,7 @@ export function ProductGrid({
             collectionType={collectionType}
             categorySlug={categorySlug}
             isNew={product.is_new}
+            coutureCollectionSlug={coutureCollectionSlug}
             className="animate-fade-in-up"
             style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
           />
