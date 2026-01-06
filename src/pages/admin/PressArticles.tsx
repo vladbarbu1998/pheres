@@ -77,6 +77,11 @@ export default function AdminPressArticles() {
   const [formIsActive, setFormIsActive] = useState(true);
   const [formDisplayOrder, setFormDisplayOrder] = useState(0);
 
+  // Get outlets that have at least one article
+  const outletsWithArticles = outlets?.filter((outlet) =>
+    articles?.some((article) => article.outlet_id === outlet.id)
+  );
+
   const filteredArticles = articles?.filter((article) => {
     const matchesSearch =
       article.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -221,7 +226,7 @@ export default function AdminPressArticles() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Outlets</SelectItem>
-                {outlets?.map((outlet) => (
+                {outletsWithArticles?.map((outlet) => (
                   <SelectItem key={outlet.id} value={outlet.id}>
                     {outlet.name}
                   </SelectItem>
