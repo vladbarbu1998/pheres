@@ -139,7 +139,7 @@ export function AdminLayout({ children, title, description, backLink }: AdminLay
       {/* Main content */}
       <main className="lg:pl-64">
         <PageTransition key={location.pathname}>
-          <div className="container max-w-7xl py-6 px-4 lg:px-8">
+          <div className="py-6 px-4 lg:px-8 xl:px-12">
             {(title || backLink) && (
               <div className="mb-6">
                 {backLink && (
