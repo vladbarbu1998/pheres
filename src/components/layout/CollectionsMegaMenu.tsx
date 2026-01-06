@@ -105,14 +105,14 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
       {/* Full-width dropdown panel */}
       <div
         className={cn(
-          "fixed left-0 right-0 z-50 bg-background border-b border-border/50",
+          "fixed left-0 right-0 z-40 bg-background border-b border-border/50",
           "transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
           "shadow-[0_15px_40px_rgba(0,0,0,0.05)]",
+          "top-16 lg:top-20", // Match header height: h-16 on mobile, h-20 on desktop
           isOpen
             ? "opacity-100 visible translate-y-0"
             : "opacity-0 invisible -translate-y-4 pointer-events-none"
         )}
-        style={{ top: "calc(var(--header-height, 80px))" }}
       >
         <div className="flex">
           {/* Couture Column */}
