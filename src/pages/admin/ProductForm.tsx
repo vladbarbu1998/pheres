@@ -365,7 +365,7 @@ export default function ProductForm() {
 
         await supabase.from("product_images").delete().eq("product_id", id);
         await supabase.from("product_collections").delete().eq("product_id", id);
-        await supabase.from("product_metals").delete().eq("product_id", id);
+        await (supabase.from as any)("product_metals").delete().eq("product_id", id);
         await supabase.from("product_stones").delete().eq("product_id", id);
       }
 
@@ -395,7 +395,7 @@ export default function ProductForm() {
       // Save metals
       const validMetals = metals.filter((m) => m.metal_type.trim() !== "");
       if (validMetals.length > 0) {
-        const { error: metalError } = await supabase.from("product_metals").insert(
+        const { error: metalError } = await (supabase.from as any)("product_metals").insert(
           validMetals.map((metal, i) => ({
             product_id: productId,
             metal_type: metal.metal_type,
@@ -429,9 +429,13 @@ export default function ProductForm() {
       queryClient.invalidateQueries({ queryKey: ["product-filter-options"] });
       toast.success(isNew ? "Product created" : "Product updated");
       navigate("/admin/products");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to save product");
+      if (error?.code === "23505" && error?.message?.includes("products_slug_key")) {
+        toast.error("A product with this slug already exists. Please use a different slug.");
+      } else {
+        toast.error("Failed to save product");
+      }
     } finally {
       setIsSaving(false);
     }
