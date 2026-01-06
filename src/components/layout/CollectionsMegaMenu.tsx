@@ -84,7 +84,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
         className={cn(
           "font-sans text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1.5 bg-transparent border-none cursor-pointer relative py-6",
           "after:content-[''] after:absolute after:w-full after:h-[2px] after:bottom-5 after:left-0 after:bg-primary after:transition-transform after:duration-300 after:origin-bottom-right",
-          isOpen || isActive ? "text-foreground after:scale-x-100 after:origin-bottom-left" : "text-muted-foreground after:scale-x-0 hover:after:scale-x-100 hover:after:origin-bottom-left"
+          isOpen ? "text-foreground after:scale-x-100 after:origin-bottom-left" : isActive ? "text-foreground after:scale-x-0 hover:after:scale-x-100 hover:after:origin-bottom-left" : "text-muted-foreground after:scale-x-0 hover:after:scale-x-100 hover:after:origin-bottom-left"
         )}
       >
         Collections
