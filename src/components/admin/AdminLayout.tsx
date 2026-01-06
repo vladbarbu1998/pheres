@@ -61,7 +61,7 @@ export function AdminLayout({ children, title, description, backLink }: AdminLay
         <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
           <Menu className="h-5 w-5" />
         </Button>
-        <span className="font-display font-semibold">Pheres Admin</span>
+        <span className="font-semibold">Pheres Admin</span>
       </header>
 
       {/* Mobile sidebar overlay */}
@@ -80,7 +80,7 @@ export function AdminLayout({ children, title, description, backLink }: AdminLay
         )}
       >
         <div className="flex h-14 items-center justify-between border-b px-4">
-          <Link to="/admin" className="font-display text-lg font-semibold">
+          <Link to="/admin" className="text-lg font-semibold">
             Pheres Admin
           </Link>
           <Button
@@ -139,7 +139,7 @@ export function AdminLayout({ children, title, description, backLink }: AdminLay
       {/* Main content */}
       <main className="lg:pl-64">
         <PageTransition key={location.pathname}>
-          <div className="container max-w-6xl py-6 px-4 lg:px-8">
+          <div className="container max-w-7xl py-6 px-4 lg:px-8">
             {(title || backLink) && (
               <div className="mb-6">
                 {backLink && (
@@ -151,7 +151,7 @@ export function AdminLayout({ children, title, description, backLink }: AdminLay
                     Back
                   </Link>
                 )}
-                {title && <h1 className="font-display text-2xl font-semibold">{title}</h1>}
+                {title && <h1 className="text-2xl font-semibold">{title}</h1>}
                 {description && <p className="text-muted-foreground mt-1">{description}</p>}
               </div>
             )}
