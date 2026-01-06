@@ -27,6 +27,13 @@ import { Loader2, Trash2, Image as ImageIcon, Star, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StoneTypeCombobox } from "@/components/admin/StoneTypeCombobox";
 
+interface ProductMetal {
+  id?: string;
+  metal_type: string;
+  metal_weight: string;
+  display_order: number;
+}
+
 interface ProductStone {
   id?: string;
   stone_type: string;
@@ -105,6 +112,7 @@ export default function ProductForm() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [images, setImages] = useState<ProductImage[]>([]);
+  const [metals, setMetals] = useState<ProductMetal[]>([]);
   const [stones, setStones] = useState<ProductStone[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
   const [isDraggingImage, setIsDraggingImage] = useState(false);
@@ -181,6 +189,20 @@ export default function ProductForm() {
       setSelectedCollections(
         product.product_collections?.map((pc: any) => pc.collection_id) || []
       );
+      // Load metals from product_metals
+      const productMetals = (product as any).product_metals;
+      if (productMetals && productMetals.length > 0) {
+        setMetals(
+          productMetals.map((m: any, i: number) => ({
+            id: m.id,
+            metal_type: m.metal_type || "",
+            metal_weight: m.metal_weight || "",
+            display_order: m.display_order ?? i,
+          }))
+        );
+      } else {
+        setMetals([]);
+      }
       // Load stones from product_stones
       const productStones = (product as any).product_stones;
       if (productStones && productStones.length > 0) {
@@ -343,6 +365,7 @@ export default function ProductForm() {
 
         await supabase.from("product_images").delete().eq("product_id", id);
         await supabase.from("product_collections").delete().eq("product_id", id);
+        await supabase.from("product_metals").delete().eq("product_id", id);
         await supabase.from("product_stones").delete().eq("product_id", id);
       }
 
@@ -367,6 +390,20 @@ export default function ProductForm() {
           }))
         );
         if (colError) throw colError;
+      }
+
+      // Save metals
+      const validMetals = metals.filter((m) => m.metal_type.trim() !== "");
+      if (validMetals.length > 0) {
+        const { error: metalError } = await supabase.from("product_metals").insert(
+          validMetals.map((metal, i) => ({
+            product_id: productId,
+            metal_type: metal.metal_type,
+            metal_weight: metal.metal_weight || null,
+            display_order: i,
+          }))
+        );
+        if (metalError) throw metalError;
       }
 
       // Save stones
@@ -787,18 +824,91 @@ export default function ProductForm() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 lg:grid-cols-2">
-              {/* Left: Metal & Size Fields */}
+              {/* Left: Metals & Dimensions */}
               <div className="space-y-4">
-                <Label className="text-sm font-medium">Metal & Dimensions</Label>
-                <div className="grid gap-3 grid-cols-2">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="metal_type" className="text-xs text-muted-foreground">Metal Type</Label>
-                    <Input id="metal_type" placeholder="18K Rose Gold" {...register("metal_type")} />
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Metals</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setMetals((prev) => [
+                        ...prev,
+                        {
+                          metal_type: "",
+                          metal_weight: "",
+                          display_order: prev.length,
+                        },
+                      ])
+                    }
+                  >
+                    <Plus className="mr-1 h-3.5 w-3.5" />
+                    Add Metal
+                  </Button>
+                </div>
+
+                {metals.length === 0 ? (
+                  <p className="text-sm text-muted-foreground italic py-6 text-center border border-dashed rounded">
+                    No metals added yet.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {metals.map((metal, index) => (
+                      <div key={index} className="border rounded-lg p-3 bg-muted/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Metal {index + 1}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-destructive hover:text-destructive"
+                            onClick={() =>
+                              setMetals((prev) => prev.filter((_, i) => i !== index))
+                            }
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        <div className="grid gap-2 grid-cols-2">
+                          <div className="space-y-1">
+                            <Label className="text-xs">Type *</Label>
+                            <Input
+                              placeholder="18K Rose Gold"
+                              value={metal.metal_type}
+                              onChange={(e) =>
+                                setMetals((prev) =>
+                                  prev.map((m, i) =>
+                                    i === index ? { ...m, metal_type: e.target.value } : m
+                                  )
+                                )
+                              }
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">Weight</Label>
+                            <Input
+                              placeholder="4.5g"
+                              value={metal.metal_weight}
+                              onChange={(e) =>
+                                setMetals((prev) =>
+                                  prev.map((m, i) =>
+                                    i === index ? { ...m, metal_weight: e.target.value } : m
+                                  )
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="metal_weight" className="text-xs text-muted-foreground">Metal Weight</Label>
-                    <Input id="metal_weight" placeholder="4.5g" {...register("metal_weight")} />
-                  </div>
+                )}
+
+                {/* Gross Weight & Size - always visible */}
+                <div className="grid gap-3 grid-cols-2 pt-2 border-t">
                   <div className="space-y-1.5">
                     <Label htmlFor="gross_weight" className="text-xs text-muted-foreground">Gross Weight</Label>
                     <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} />

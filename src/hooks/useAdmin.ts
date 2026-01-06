@@ -148,7 +148,8 @@ export function useAdminProduct(id: string | undefined) {
           product_images(id, image_url, alt_text, is_primary, display_order),
           product_variants(id, name, sku, price_adjustment, stock_quantity, is_active),
           product_collections(collection_id, collections(id, name)),
-          product_stones(id, stone_type, stone_carat, stone_color, stone_clarity, stone_cut, display_order)
+          product_stones(id, stone_type, stone_carat, stone_color, stone_clarity, stone_cut, display_order),
+          product_metals(id, metal_type, metal_weight, display_order)
         `)
         .eq("id", id)
         .maybeSingle();
