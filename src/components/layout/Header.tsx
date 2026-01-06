@@ -7,10 +7,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { SearchDialog } from "@/components/search/SearchDialog";
 import { Logo } from "@/components/layout/Logo";
+import { CollectionsMegaMenuDesktop, CollectionsMegaMenuMobile } from "@/components/layout/CollectionsMegaMenu";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Collections", href: "/collections" },
+  { name: "Collections", href: "/collections", hasMegaMenu: true },
   { name: "Our Story", href: "/story" },
   { name: "Celebrities", href: "/celebrities" },
   { name: "Press", href: "/press" },
@@ -70,20 +71,27 @@ export function Header() {
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex lg:items-center lg:gap-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-"font-sans text-sm font-medium transition-colors hover:text-foreground",
-                  location.pathname === item.href 
-                    ? "text-foreground" 
-                    : "text-muted-foreground"
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
+            {navigation.map((item) =>
+              item.hasMegaMenu ? (
+                <CollectionsMegaMenuDesktop
+                  key={item.name}
+                  isActive={location.pathname.startsWith("/collections") || location.pathname.startsWith("/shop/collection")}
+                />
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={cn(
+                    "font-sans text-sm font-medium transition-colors hover:text-foreground",
+                    location.pathname === item.href
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {item.name}
+                </Link>
+              )
+            )}
           </div>
 
           {/* Actions */}
@@ -170,21 +178,28 @@ export function Header() {
           <div className="flex-1 overflow-y-auto px-6 py-6">
             {/* Main navigation */}
             <nav className="space-y-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "font-sans block py-3 text-base font-medium transition-colors hover:text-foreground",
-                    location.pathname === item.href 
-                      ? "text-foreground" 
-                      : "text-muted-foreground"
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item) =>
+                item.hasMegaMenu ? (
+                  <CollectionsMegaMenuMobile
+                    key={item.name}
+                    onNavigate={() => setMobileMenuOpen(false)}
+                  />
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "font-sans block py-3 text-base font-medium transition-colors hover:text-foreground",
+                      location.pathname === item.href
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              )}
             </nav>
 
             {/* Divider */}
