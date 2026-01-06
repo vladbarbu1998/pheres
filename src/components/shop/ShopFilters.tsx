@@ -347,7 +347,9 @@ export function ShopFilters({
           <SelectItem value="alpha-desc">Alphabetically: Z-A</SelectItem>
           <SelectItem value="oldest">Oldest to Newest</SelectItem>
           <SelectItem value="newest">Newest to Oldest</SelectItem>
-          <SelectItem value="bestsellers">Best Selling</SelectItem>
+          {!hidePriceFilters && (
+            <SelectItem value="bestsellers">Best Selling</SelectItem>
+          )}
         </SelectContent>
       </Select>
     </div>
