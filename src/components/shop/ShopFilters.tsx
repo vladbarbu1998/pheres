@@ -51,6 +51,7 @@ interface ShopFiltersProps {
   productCount: number;
   isLoading?: boolean;
   stoneTypes?: string[];
+  hidePriceFilters?: boolean;
 }
 
 const priceRanges = [
@@ -84,7 +85,8 @@ function FilterContent({
   categories,
   collections,
   stoneTypes = [],
-}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes">) {
+  hidePriceFilters = false,
+}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes" | "hidePriceFilters">) {
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
     const newCategoryIds = checked
       ? [...filters.categoryIds, categoryId]
@@ -175,28 +177,30 @@ function FilterContent({
         </FilterSection>
       )}
 
-      {/* Price Range */}
-      <FilterSection title="Price">
-        <div className="space-y-2">
-          {priceRanges.map((range, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <Checkbox
-                id={`price-${index}`}
-                checked={filters.minPrice === range.min && filters.maxPrice === range.max}
-                onCheckedChange={(checked) =>
-                  handlePriceChange(range.min, range.max, checked as boolean)
-                }
-              />
-              <Label
-                htmlFor={`price-${index}`}
-                className="font-label text-sm font-normal text-muted-foreground cursor-pointer"
-              >
-                {range.label}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
+      {/* Price Range - hide for Couture */}
+      {!hidePriceFilters && (
+        <FilterSection title="Price">
+          <div className="space-y-2">
+            {priceRanges.map((range, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Checkbox
+                  id={`price-${index}`}
+                  checked={filters.minPrice === range.min && filters.maxPrice === range.max}
+                  onCheckedChange={(checked) =>
+                    handlePriceChange(range.min, range.max, checked as boolean)
+                  }
+                />
+                <Label
+                  htmlFor={`price-${index}`}
+                  className="font-label text-sm font-normal text-muted-foreground cursor-pointer"
+                >
+                  {range.label}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
       {/* Stone Type */}
       {stoneTypes.length > 0 && (
@@ -236,6 +240,7 @@ export function ShopFilters({
   productCount,
   isLoading,
   stoneTypes = [],
+  hidePriceFilters = false,
 }: ShopFiltersProps) {
   const hasActiveFilters =
     filters.categoryIds.length > 0 ||
@@ -281,6 +286,7 @@ export function ShopFilters({
                 categories={categories}
                 collections={collections}
                 stoneTypes={stoneTypes}
+                hidePriceFilters={hidePriceFilters}
               />
               {hasActiveFilters && (
                 <Button
@@ -331,8 +337,12 @@ export function ShopFilters({
         </SelectTrigger>
         <SelectContent side="bottom" avoidCollisions={false}>
           <SelectItem value="featured">Featured</SelectItem>
-          <SelectItem value="price-asc">Price: Low to High</SelectItem>
-          <SelectItem value="price-desc">Price: High to Low</SelectItem>
+          {!hidePriceFilters && (
+            <>
+              <SelectItem value="price-asc">Price: Low to High</SelectItem>
+              <SelectItem value="price-desc">Price: High to Low</SelectItem>
+            </>
+          )}
           <SelectItem value="alpha-asc">Alphabetically: A-Z</SelectItem>
           <SelectItem value="alpha-desc">Alphabetically: Z-A</SelectItem>
           <SelectItem value="oldest">Oldest to Newest</SelectItem>
@@ -351,7 +361,8 @@ export function ShopFiltersSidebar({
   categories,
   collections,
   stoneTypes = [],
-}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes">) {
+  hidePriceFilters = false,
+}: Pick<ShopFiltersProps, "filters" | "onFiltersChange" | "categories" | "collections" | "stoneTypes" | "hidePriceFilters">) {
   const hasActiveFilters =
     filters.categoryIds.length > 0 ||
     filters.collectionIds.length > 0 ||
@@ -386,6 +397,7 @@ export function ShopFiltersSidebar({
           categories={categories}
           collections={collections}
           stoneTypes={stoneTypes}
+          hidePriceFilters={hidePriceFilters}
         />
       </div>
     </aside>

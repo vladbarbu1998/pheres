@@ -27,6 +27,7 @@ interface ProductCardProps {
   collectionName?: string | null;
   collectionType?: CollectionType | null;
   categorySlug?: string | null;
+  coutureCollectionSlug?: string | null;
   isNew?: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -49,6 +50,7 @@ export function ProductCard({
   collectionName,
   collectionType,
   categorySlug,
+  coutureCollectionSlug,
   isNew,
   className,
   style,
@@ -116,10 +118,12 @@ export function ProductCard({
   const selectedVariant = variants.find(v => v.id === selectedVariantId);
   const variantPrice = price + (selectedVariant?.price_adjustment || 0);
   
-  // Build product URL with category
-  const productUrl = categorySlug 
-    ? `/shop/${categorySlug}/${slug}` 
-    : `/shop/all/${slug}`;
+  // Build product URL - use hierarchical URL for Couture products
+  const productUrl = isCouture && coutureCollectionSlug
+    ? `/couture/${coutureCollectionSlug}/${slug}`
+    : categorySlug 
+      ? `/shop/${categorySlug}/${slug}` 
+      : `/shop/all/${slug}`;
 
   return (
     <>

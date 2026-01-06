@@ -87,13 +87,19 @@ export default function CollectionTypePage() {
           </div>
         ) : collections && collections.length > 0 ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {collections.map((collection, index) => (
-              <Link
-                key={collection.id}
-                to={`/shop/collection/${collection.slug}`}
-                className="group block animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
+            {collections.map((collection, index) => {
+              // Use /couture/:slug for couture collections, /shop/collection/:slug for ready-to-wear
+              const collectionUrl = type === "couture" 
+                ? `/couture/${collection.slug}`
+                : `/shop/collection/${collection.slug}`;
+              
+              return (
+                <Link
+                  key={collection.id}
+                  to={collectionUrl}
+                  className="group block animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
                 {/* Image Container */}
                 <div className="relative aspect-square overflow-hidden rounded-sm bg-muted shadow-md transition-shadow duration-300 group-hover:shadow-xl">
                   {collection.image_url ? (
@@ -135,7 +141,8 @@ export default function CollectionTypePage() {
                   </p>
                 )}
               </Link>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="py-16 text-center">

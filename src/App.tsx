@@ -22,6 +22,8 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Collection from "./pages/Collection";
+import CoutureCollection from "./pages/CoutureCollection";
+import CoutureProduct from "./pages/CoutureProduct";
 import Category from "./pages/Category";
 import Product from "./pages/Product";
 import ProductRedirect from "./pages/ProductRedirect";
@@ -82,6 +84,8 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
               <Route path="/shop/collection/:slug" element={<Collection />} />
+              <Route path="/couture/:collectionSlug" element={<CoutureCollection />} />
+              <Route path="/couture/:collectionSlug/:productSlug" element={<CoutureProduct />} />
               <Route path="/shop/category/:slug" element={<Category />} />
               <Route path="/shop/all/:productSlug" element={<ShopAllRedirect />} />
               <Route path="/shop/all" element={<ShopAllRedirect />} />
