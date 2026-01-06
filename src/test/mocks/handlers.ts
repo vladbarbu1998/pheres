@@ -127,20 +127,6 @@ export const handlers = [
     return HttpResponse.json({ id: 'msg-1', ...body }, { status: 201 });
   }),
 
-  // Story sections
-  http.get(`${SUPABASE_URL}/rest/v1/story_sections`, () => {
-    return HttpResponse.json([
-      {
-        id: 'story-1',
-        title: 'Our Heritage',
-        content: 'Founded with passion for fine jewelry.',
-        image_url: '/placeholder.svg',
-        display_order: 0,
-        is_active: true,
-      },
-    ]);
-  }),
-
   // Press entries
   http.get(`${SUPABASE_URL}/rest/v1/press_entries`, () => {
     return HttpResponse.json([]);
