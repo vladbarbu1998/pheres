@@ -52,11 +52,10 @@ function useCollectionsGrouped() {
   });
 }
 
-// Desktop mega menu dropdown
+// Desktop mega menu dropdown - Full width under header
 export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
   const { data } = useCollectionsGrouped();
 
   const handleMouseEnter = () => {
@@ -65,7 +64,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
   };
 
   const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => setIsOpen(false), 200);
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
   };
 
   useEffect(() => {
@@ -76,14 +75,14 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
   return (
     <div
-      ref={menuRef}
       className="relative"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Trigger Link */}
       <button
         className={cn(
-          "font-sans text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1.5 bg-transparent border-none cursor-pointer",
+          "font-sans text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1.5 bg-transparent border-none cursor-pointer relative py-6",
           isActive ? "text-foreground" : "text-muted-foreground"
         )}
       >
@@ -94,126 +93,120 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
             isOpen && "rotate-180"
           )}
         />
+        {/* Animated underline */}
+        <span
+          className={cn(
+            "absolute bottom-5 left-0 h-[1px] bg-primary transition-all duration-300 ease-out",
+            isOpen ? "w-full" : "w-0"
+          )}
+        />
       </button>
 
-      {/* Dropdown Panel */}
+      {/* Full-width dropdown panel */}
       <div
         className={cn(
-          "absolute left-1/2 top-full z-50",
-          "transition-all duration-[350ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+          "fixed left-0 right-0 z-50 bg-background border-b border-border/50",
+          "transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          "shadow-[0_15px_40px_rgba(0,0,0,0.05)]",
           isOpen
             ? "opacity-100 visible translate-y-0"
-            : "opacity-0 invisible -translate-y-2.5 pointer-events-none"
+            : "opacity-0 invisible -translate-y-4 pointer-events-none"
         )}
-        style={{ transform: `translateX(-50%) ${isOpen ? "translateY(0)" : "translateY(-10px)"}` }}
+        style={{ top: "80px" }} // Match header height (h-20 = 80px)
       >
-        {/* Invisible bridge to prevent gap hover-out */}
-        <div className="h-4" />
-        
-        <div className="bg-background border border-border/60 shadow-2xl w-[900px] max-w-[95vw]">
-          {/* Top decorative line */}
-          <div className="h-[2px] bg-primary/80" />
-          
-          <div className="grid grid-cols-2">
-            {/* Couture Section */}
-            <div className="p-10 border-r border-border/40">
-              <div className="flex gap-8">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-heading text-2xl font-normal italic text-foreground mb-3 tracking-wide">
-                    Couture
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-[280px]">
-                    {data?.couture?.parent.description || "One-of-a-kind pieces. High Jewelry available by inquiry only."}
-                  </p>
+        <div className="flex">
+          {/* Couture Column */}
+          <div className="flex-1 border-r border-border/30 transition-colors duration-400 hover:bg-muted/30">
+            <div className="container max-w-none px-12 lg:px-20 py-12 flex items-center justify-between gap-8">
+              <div className="max-w-[60%]">
+                <h3 className="font-heading text-3xl font-normal text-foreground mb-2 tracking-wide">
+                  Couture
+                </h3>
+                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                  {data?.couture?.parent.description || "One-of-a-kind pieces created for unforgettable moments. By appointment only."}
+                </p>
 
-                  {/* Child collections */}
-                  <nav className="space-y-3 mb-8">
-                    {data?.couture?.children.map((child) => (
-                      <Link
-                        key={child.id}
-                        to={`/shop/collection/${child.slug}`}
-                        className="block text-[15px] text-foreground/90 hover:text-primary transition-colors duration-200"
-                      >
-                        {child.name}
-                      </Link>
-                    ))}
-                    {(!data?.couture?.children || data.couture.children.length === 0) && (
-                      <p className="text-sm text-muted-foreground/60 italic">Coming soon</p>
-                    )}
-                  </nav>
+                {/* Child collection links */}
+                <nav className="space-y-3 mb-8">
+                  {data?.couture?.children.map((child) => (
+                    <Link
+                      key={child.id}
+                      to={`/shop/collection/${child.slug}`}
+                      className="block font-heading text-lg text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
+                    >
+                      {child.name}
+                    </Link>
+                  ))}
+                  {(!data?.couture?.children || data.couture.children.length === 0) && (
+                    <p className="font-heading text-lg text-muted-foreground/60 italic">Coming soon</p>
+                  )}
+                </nav>
 
-                  {/* CTA */}
-                  <Link
-                    to="/collections#couture"
-                    className="group inline-flex items-center text-xs font-medium tracking-widest text-foreground uppercase"
-                  >
-                    <span className="relative">
-                      Discover Couture
-                      <span className="absolute left-0 -bottom-0.5 w-full h-[1px] bg-foreground origin-left transition-transform duration-300 group-hover:scale-x-110" />
-                    </span>
-                  </Link>
-                </div>
-
-                {/* Image */}
-                {data?.couture?.children[0]?.image_url && (
-                  <div className="w-36 h-36 flex-shrink-0 overflow-hidden">
-                    <img
-                      src={data.couture.children[0].image_url}
-                      alt="Couture collection"
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                  </div>
-                )}
+                {/* CTA */}
+                <Link
+                  to="/collections#couture"
+                  className="inline-block text-xs font-bold tracking-[0.15em] text-foreground uppercase border-b border-foreground pb-1 hover:text-primary hover:border-primary transition-colors"
+                >
+                  Discover Couture
+                </Link>
               </div>
+
+              {/* Image - circular */}
+              {data?.couture?.children[0]?.image_url && (
+                <div className="w-44 h-44 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                  <img
+                    src={data.couture.children[0].image_url}
+                    alt="Couture collection"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
+          </div>
 
-            {/* Ready To Wear Section */}
-            <div className="p-10">
-              <div className="flex gap-8">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-heading text-2xl font-normal text-foreground mb-3 tracking-wide">
-                    Ready to Wear
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-[280px]">
-                    {data?.readyToWear?.parent.description || "Elegant pieces available online. Shop our iconic collections."}
-                  </p>
+          {/* Ready To Wear Column */}
+          <div className="flex-1 transition-colors duration-400 hover:bg-muted/30">
+            <div className="container max-w-none px-12 lg:px-20 py-12 flex items-center justify-between gap-8">
+              <div className="max-w-[60%]">
+                <h3 className="font-heading text-3xl font-normal text-foreground mb-2 tracking-wide">
+                  Ready to Wear
+                </h3>
+                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                  {data?.readyToWear?.parent.description || "Accessible refinement. Iconic collections available online."}
+                </p>
 
-                  {/* Child collections */}
-                  <nav className="space-y-3 mb-8">
-                    {data?.readyToWear?.children.map((child) => (
-                      <Link
-                        key={child.id}
-                        to={`/shop/collection/${child.slug}`}
-                        className="block text-[15px] text-foreground/90 hover:text-primary transition-colors duration-200"
-                      >
-                        {child.name}
-                      </Link>
-                    ))}
-                  </nav>
+                {/* Child collection links */}
+                <nav className="space-y-3 mb-8">
+                  {data?.readyToWear?.children.map((child) => (
+                    <Link
+                      key={child.id}
+                      to={`/shop/collection/${child.slug}`}
+                      className="block font-heading text-lg text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
+                    >
+                      {child.name}
+                    </Link>
+                  ))}
+                </nav>
 
-                  {/* CTA */}
-                  <Link
-                    to="/shop"
-                    className="group inline-flex items-center text-xs font-medium tracking-widest text-foreground uppercase"
-                  >
-                    <span className="relative">
-                      Shop Online
-                      <span className="absolute left-0 -bottom-0.5 w-full h-[1px] bg-foreground origin-left transition-transform duration-300 group-hover:scale-x-110" />
-                    </span>
-                  </Link>
-                </div>
-
-                {/* Image */}
-                {data?.readyToWear?.children[0]?.image_url && (
-                  <div className="w-36 h-36 flex-shrink-0 overflow-hidden">
-                    <img
-                      src={data.readyToWear.children[0].image_url}
-                      alt="Ready To Wear collection"
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                  </div>
-                )}
+                {/* CTA */}
+                <Link
+                  to="/shop"
+                  className="inline-block text-xs font-bold tracking-[0.15em] text-foreground uppercase border-b border-foreground pb-1 hover:text-primary hover:border-primary transition-colors"
+                >
+                  Shop Online
+                </Link>
               </div>
+
+              {/* Image - circular */}
+              {data?.readyToWear?.children[0]?.image_url && (
+                <div className="w-44 h-44 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                  <img
+                    src={data.readyToWear.children[0].image_url}
+                    alt="Ready To Wear collection"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -221,7 +214,6 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
     </div>
   );
 }
-
 // Mobile expandable section
 export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
