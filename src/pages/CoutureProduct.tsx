@@ -164,6 +164,7 @@ export default function CoutureProductPage() {
                 collectionSlug={primaryCollection?.slug || collection?.slug || null}
                 collectionType={(primaryCollection as any)?.collection_type || collection?.collection_type || "couture"}
                 productCode={(product as any).sku}
+                modelNumber={(product as any).model_number}
                 metalType={product!.metal_type}
                 metalWeight={product!.metal_weight}
                 grossWeight={(product as any).gross_weight}
