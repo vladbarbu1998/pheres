@@ -420,7 +420,7 @@ export default function ProductForm() {
       title={isNew ? (isCouture ? "New Couture Piece" : "New Product") : (isCouture ? "Edit Couture Piece" : "Edit Product")}
       backLink={`/admin/products?type=${productType}`}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Product Type Badge */}
         <div className="flex items-center gap-2">
           <span className={cn(
@@ -439,7 +439,7 @@ export default function ProductForm() {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Name & Slug */}
-            <div className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">Name *</Label>
                 <Input
@@ -632,133 +632,137 @@ export default function ProductForm() {
               Recommended: 1000×1000px square images. First image will be the main image.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Main Image */}
-            <div className="space-y-2">
-              <Label>Main Image *</Label>
-              {primaryImage ? (
-                <div className="relative w-full max-w-xs aspect-square group">
-                  <img
-                    src={primaryImage.image_url}
-                    alt="Main product"
-                    className="h-full w-full object-cover rounded-lg border"
-                  />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="destructive"
-                      onClick={() => removeImage(images.findIndex((img) => img.is_primary))}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded flex items-center gap-1">
-                    <Star className="h-3 w-3" /> Primary
-                  </div>
-                </div>
-              ) : (
-                <label
-                  onDragOver={handleImageDragOver}
-                  onDragLeave={handleImageDragLeave}
-                  onDrop={handleImageDrop}
-                  className={cn(
-                    "flex flex-col items-center justify-center w-full max-w-xs aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-colors",
-                    isDraggingImage
-                      ? "border-primary bg-primary/5"
-                      : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
-                    isUploadingImages && "cursor-not-allowed opacity-50"
-                  )}
-                >
-                  {isUploadingImages ? (
-                    <>
-                      <Loader2 className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
-                      <span className="text-sm text-muted-foreground">Uploading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
-                      <span className="text-sm text-muted-foreground text-center px-4">
-                        Drag & drop an image here, or click to browse
-                      </span>
-                    </>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                    disabled={isUploadingImages}
-                  />
-                </label>
-              )}
-            </div>
-
-            {/* Gallery Images */}
-            <div className="space-y-2">
-              <Label>Gallery Images</Label>
-              <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
-                {galleryImages.map((img, i) => {
-                  const realIndex = images.findIndex((im) => im === img);
-                  return (
-                    <div key={i} className="relative group aspect-square">
-                      <img
-                        src={img.image_url}
-                        alt="Gallery"
-                        className="h-full w-full object-cover rounded-lg border"
-                      />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => setPrimaryImage(realIndex)}
-                        >
-                          Set Primary
-                        </Button>
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="destructive"
-                          onClick={() => removeImage(realIndex)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+          <CardContent>
+            <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+              {/* Main Image */}
+              <div className="space-y-2">
+                <Label>Main Image *</Label>
+                {primaryImage ? (
+                  <div className="relative aspect-square group">
+                    <img
+                      src={primaryImage.image_url}
+                      alt="Main product"
+                      className="h-full w-full object-cover rounded-lg border"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        onClick={() => removeImage(images.findIndex((img) => img.is_primary))}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                  );
-                })}
-                <label
-                  onDragOver={handleImageDragOver}
-                  onDragLeave={handleImageDragLeave}
-                  onDrop={handleImageDrop}
-                  className={cn(
-                    "aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors",
-                    isDraggingImage
-                      ? "border-primary bg-primary/5"
-                      : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
-                    isUploadingImages && "cursor-not-allowed opacity-50"
-                  )}
-                >
-                  {isUploadingImages ? (
-                    <Loader2 className="h-5 w-5 text-muted-foreground animate-spin" />
-                  ) : (
-                    <>
-                      <ImageIcon className="h-5 w-5 text-muted-foreground mb-1" />
-                      <span className="text-xs text-muted-foreground text-center px-2">
-                        Add more
-                      </span>
-                    </>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={handleImageUpload}
-                    disabled={isUploadingImages}
-                  />
-                </label>
+                    <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded flex items-center gap-1">
+                      <Star className="h-3 w-3" /> Primary
+                    </div>
+                  </div>
+                ) : (
+                  <label
+                    onDragOver={handleImageDragOver}
+                    onDragLeave={handleImageDragLeave}
+                    onDrop={handleImageDrop}
+                    className={cn(
+                      "flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                      isDraggingImage
+                        ? "border-primary bg-primary/5"
+                        : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
+                      isUploadingImages && "cursor-not-allowed opacity-50"
+                    )}
+                  >
+                    {isUploadingImages ? (
+                      <>
+                        <Loader2 className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
+                        <span className="text-sm text-muted-foreground">Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                        <span className="text-sm text-muted-foreground text-center px-4">
+                          Drag & drop an image here, or click to browse
+                        </span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                      disabled={isUploadingImages}
+                    />
+                  </label>
+                )}
+              </div>
+
+              {/* Gallery Images */}
+              <div className="space-y-2">
+                <Label>Gallery Images</Label>
+                <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {galleryImages.map((img, i) => {
+                    const realIndex = images.findIndex((im) => im === img);
+                    return (
+                      <div key={i} className="relative group aspect-square">
+                        <img
+                          src={img.image_url}
+                          alt="Gallery"
+                          className="h-full w-full object-cover rounded-lg border"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            className="text-xs px-2 h-7"
+                            onClick={() => setPrimaryImage(realIndex)}
+                          >
+                            Set Primary
+                          </Button>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="destructive"
+                            className="h-7 w-7"
+                            onClick={() => removeImage(realIndex)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <label
+                    onDragOver={handleImageDragOver}
+                    onDragLeave={handleImageDragLeave}
+                    onDrop={handleImageDrop}
+                    className={cn(
+                      "aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors",
+                      isDraggingImage
+                        ? "border-primary bg-primary/5"
+                        : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
+                      isUploadingImages && "cursor-not-allowed opacity-50"
+                    )}
+                  >
+                    {isUploadingImages ? (
+                      <Loader2 className="h-5 w-5 text-muted-foreground animate-spin" />
+                    ) : (
+                      <>
+                        <ImageIcon className="h-5 w-5 text-muted-foreground mb-1" />
+                        <span className="text-xs text-muted-foreground text-center px-2">
+                          Add more
+                        </span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleImageUpload}
+                      disabled={isUploadingImages}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           </CardContent>
