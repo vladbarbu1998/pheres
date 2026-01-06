@@ -2,6 +2,8 @@ import { ProductCard } from "./ProductCard";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
 import { cn } from "@/lib/utils";
 
+type CollectionType = "couture" | "ready_to_wear";
+
 interface Product {
   id: string;
   name: string;
@@ -21,6 +23,7 @@ interface Product {
   product_collections?: Array<{
     collections: {
       name: string;
+      collection_type?: CollectionType;
     } | null;
   }>;
 }
@@ -66,6 +69,7 @@ export function ProductGrid({
         const imageUrl = primaryImage?.image_url || firstImage?.image_url || null;
         
         const collectionName = product.product_collections?.[0]?.collections?.name || null;
+        const collectionType = product.product_collections?.[0]?.collections?.collection_type || null;
         const categorySlug = product.categories?.slug || null;
 
         return (
@@ -78,6 +82,7 @@ export function ProductGrid({
             compareAtPrice={product.compare_at_price ? Number(product.compare_at_price) : null}
             imageUrl={imageUrl}
             collectionName={collectionName}
+            collectionType={collectionType}
             categorySlug={categorySlug}
             isNew={product.is_new}
             className="animate-fade-in-up"

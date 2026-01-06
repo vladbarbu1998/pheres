@@ -147,6 +147,7 @@ export default function ProductPage() {
                 shortDescription={product!.short_description}
                 collectionName={primaryCollection?.name || null}
                 collectionSlug={primaryCollection?.slug || null}
+                collectionType={(primaryCollection as any)?.collection_type || null}
                 productCode={(product as any).sku}
                 metalType={product!.metal_type}
                 metalWeight={product!.metal_weight}

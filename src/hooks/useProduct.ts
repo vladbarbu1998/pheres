@@ -22,7 +22,8 @@ export function useProduct(slug: string) {
             collections (
               id,
               name,
-              slug
+              slug,
+              collection_type
             )
           ),
           product_variants (

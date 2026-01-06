@@ -25,12 +25,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { useAdminCollections } from "@/hooks/useAdmin";
 import { useStorageCleanup, getEntityImageUrl } from "@/hooks/useStorageCleanup";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+
+type CollectionType = "couture" | "ready_to_wear";
 
 interface CollectionFormData {
   name: string;
@@ -39,6 +49,7 @@ interface CollectionFormData {
   image_url: string;
   is_active: boolean;
   is_featured: boolean;
+  collection_type: CollectionType;
 }
 
 export default function AdminCollections() {
@@ -55,6 +66,7 @@ export default function AdminCollections() {
     image_url: "",
     is_active: true,
     is_featured: false,
+    collection_type: "ready_to_wear",
   });
 
   const resetForm = () => {
@@ -65,6 +77,7 @@ export default function AdminCollections() {
       image_url: "",
       is_active: true,
       is_featured: false,
+      collection_type: "ready_to_wear",
     });
     setEditingId(null);
   };
@@ -82,6 +95,7 @@ export default function AdminCollections() {
       image_url: collection.image_url || "",
       is_active: collection.is_active,
       is_featured: collection.is_featured,
+      collection_type: collection.collection_type || "ready_to_wear",
     });
     setEditingId(collection.id);
     setIsDialogOpen(true);
@@ -204,6 +218,24 @@ export default function AdminCollections() {
                   placeholder="Drag & drop a collection image"
                 />
               </div>
+              <div className="space-y-2">
+                <Label>Collection Type *</Label>
+                <Select
+                  value={formData.collection_type}
+                  onValueChange={(val: CollectionType) => setFormData((prev) => ({ ...prev, collection_type: val }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ready_to_wear">Ready To Wear (Purchasable)</SelectItem>
+                    <SelectItem value="couture">Couture (Inquiry Only)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Couture products cannot be purchased online - customers must inquire.
+                </p>
+              </div>
               <div className="flex gap-6">
                 <div className="flex items-center gap-2">
                   <Switch
@@ -269,7 +301,12 @@ export default function AdminCollections() {
                   </div>
                 )}
               </div>
-                <h3 className="font-medium">{col.name}</h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-medium">{col.name}</h3>
+                  <Badge variant={col.collection_type === "couture" ? "secondary" : "outline"} className="text-xs">
+                    {col.collection_type === "couture" ? "Couture" : "Ready To Wear"}
+                  </Badge>
+                </div>
                 <p className="text-sm text-muted-foreground truncate">{col.description}</p>
                 <div className="flex items-center gap-2 mt-3">
                   <Button size="sm" variant="outline" onClick={() => openEdit(col)}>

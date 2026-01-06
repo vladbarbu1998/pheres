@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, ShoppingBag, Loader2 } from "lucide-react";
+import { Heart, ShoppingBag, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,6 +15,8 @@ import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useFavoriteToggle } from "@/hooks/useFavoriteToggle";
 
+type CollectionType = "couture" | "ready_to_wear";
+
 interface ProductCardProps {
   id: string;
   name: string;
@@ -23,6 +25,7 @@ interface ProductCardProps {
   compareAtPrice?: number | null;
   imageUrl?: string | null;
   collectionName?: string | null;
+  collectionType?: CollectionType | null;
   categorySlug?: string | null;
   isNew?: boolean;
   className?: string;
@@ -44,11 +47,13 @@ export function ProductCard({
   compareAtPrice,
   imageUrl,
   collectionName,
+  collectionType,
   categorySlug,
   isNew,
   className,
   style,
 }: ProductCardProps) {
+  const isCouture = collectionType === "couture";
   const { addItem } = useCart();
   const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(id);
   const [isAdding, setIsAdding] = useState(false);
@@ -139,12 +144,17 @@ export function ProductCard({
 
             {/* Badges */}
             <div className="absolute left-3 top-3 flex flex-col gap-2">
-              {isNew && (
+              {isCouture && (
+                <span className="bg-primary px-2 py-1 font-display text-xs font-medium tracking-wide text-primary-foreground">
+                  COUTURE
+                </span>
+              )}
+              {isNew && !isCouture && (
                 <span className="bg-foreground px-2 py-1 font-display text-xs font-medium tracking-wide text-background">
                   NEW
                 </span>
               )}
-              {hasDiscount && (
+              {hasDiscount && !isCouture && (
                 <span className="bg-primary px-2 py-1 font-display text-xs font-medium tracking-wide text-primary-foreground">
                   -{discountPercent}%
                 </span>
@@ -173,25 +183,39 @@ export function ProductCard({
               </Button>
             </div>
 
-            {/* Quick add button - bottom */}
+            {/* Quick add / Inquire button - bottom */}
             <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
-              <Button
-                variant="secondary"
-                size="sm"
-                className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
-                onClick={handleQuickAdd}
-                data-testid="quick-add-button"
-                disabled={isAdding}
-              >
-                {isAdding ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    Add to Cart
-                  </>
-                )}
-              </Button>
+              {isCouture ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
+                  asChild
+                >
+                  <Link to="/contact?inquiry=couture">
+                    <Mail className="mr-2 h-4 w-4" />
+                    Inquire
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
+                  onClick={handleQuickAdd}
+                  data-testid="quick-add-button"
+                  disabled={isAdding}
+                >
+                  {isAdding ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <ShoppingBag className="mr-2 h-4 w-4" />
+                      Add to Cart
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </Link>
@@ -208,16 +232,22 @@ export function ProductCard({
               {name}
             </h3>
           </Link>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-foreground">
-              ${price.toLocaleString()}
+          {isCouture ? (
+            <span className="text-sm font-medium text-muted-foreground italic">
+              Price Upon Request
             </span>
-            {hasDiscount && (
-              <span className="text-sm text-muted-foreground line-through">
-                ${compareAtPrice.toLocaleString()}
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-foreground">
+                ${price.toLocaleString()}
               </span>
-            )}
-          </div>
+              {hasDiscount && (
+                <span className="text-sm text-muted-foreground line-through">
+                  ${compareAtPrice.toLocaleString()}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </article>
 
