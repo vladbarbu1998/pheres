@@ -156,7 +156,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
               {/* Image - circular */}
               {data?.couture?.children[0]?.image_url && (
-                <div className="w-40 h-40 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
                   <img
                     src={data.couture.children[0].image_url}
                     alt="Couture collection"
@@ -205,7 +205,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
               {/* Image - circular */}
               {data?.readyToWear?.children[0]?.image_url && (
-                <div className="w-40 h-40 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
                   <img
                     src={data.readyToWear.children[0].image_url}
                     alt="Ready To Wear collection"
@@ -297,9 +297,9 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           {/* Ready To Wear Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
-              <h4 className="font-heading text-lg font-normal text-foreground mb-2">
-                Ready to Wear
-              </h4>
+            <h4 className="font-heading text-lg font-normal italic text-foreground mb-2">
+              Ready to Wear
+            </h4>
               <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
                 Elegant pieces available online.
               </p>
