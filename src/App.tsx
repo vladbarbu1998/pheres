@@ -11,6 +11,7 @@ import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Collections from "./pages/Collections";
+import CollectionType from "./pages/CollectionType";
 import Story from "./pages/Story";
 import Celebrities from "./pages/Celebrities";
 import Press from "./pages/Press";
@@ -68,6 +69,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/collections" element={<Collections />} />
+              <Route path="/collections/:type" element={<CollectionType />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/story" element={<Story />} />
               <Route path="/celebrities" element={<Celebrities />} />
