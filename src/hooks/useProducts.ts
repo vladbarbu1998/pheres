@@ -75,7 +75,8 @@ export function useProducts({
             collections (
               id,
               name,
-              slug
+              slug,
+              collection_type
             )
           ),
           product_stones (

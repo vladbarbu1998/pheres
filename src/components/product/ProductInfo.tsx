@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, ShoppingBag, Loader2, Check } from "lucide-react";
+import { Heart, ShoppingBag, Loader2, Check, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QuantityInput } from "@/components/ui/quantity-input";
@@ -34,6 +34,8 @@ interface ProductStone {
   display_order?: number;
 }
 
+type CollectionType = "couture" | "ready_to_wear";
+
 interface ProductInfoProps {
   productId: string;
   name: string;
@@ -42,6 +44,7 @@ interface ProductInfoProps {
   shortDescription?: string | null;
   collectionName?: string | null;
   collectionSlug?: string | null;
+  collectionType?: CollectionType | null;
   productCode?: string | null;
   metalType?: string | null;
   metalWeight?: string | null;
@@ -61,6 +64,7 @@ export function ProductInfo({
   shortDescription,
   collectionName,
   collectionSlug,
+  collectionType,
   productCode,
   metalType,
   metalWeight,
@@ -71,6 +75,7 @@ export function ProductInfo({
   isNew,
   variants = [],
 }: ProductInfoProps) {
+  const isCouture = collectionType === "couture";
   const { addItem } = useCart();
   const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(productId);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
@@ -134,17 +139,25 @@ export function ProductInfo({
         {name}
       </h1>
 
-      {/* Price */}
-      <div className="flex items-baseline gap-3">
-        <span className="font-display text-2xl font-semibold text-foreground">
-          ${finalPrice.toLocaleString()}
-        </span>
-        {hasDiscount && (
-          <span className="text-lg text-muted-foreground line-through">
-            ${compareAtPrice.toLocaleString()}
+      {/* Price - hide for Couture */}
+      {isCouture ? (
+        <div className="flex items-baseline gap-3">
+          <span className="font-display text-xl font-medium text-muted-foreground italic">
+            Price Upon Request
           </span>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex items-baseline gap-3">
+          <span className="font-display text-2xl font-semibold text-foreground">
+            ${finalPrice.toLocaleString()}
+          </span>
+          {hasDiscount && (
+            <span className="text-lg text-muted-foreground line-through">
+              ${compareAtPrice.toLocaleString()}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Short description */}
       {shortDescription && (
@@ -154,8 +167,8 @@ export function ProductInfo({
         />
       )}
 
-      {/* Variant selector */}
-      {hasVariants && (
+      {/* Variant selector - only for purchasable products */}
+      {!isCouture && hasVariants && (
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">
             Select Option
@@ -182,36 +195,57 @@ export function ProductInfo({
 
       {/* Actions */}
       <div className="flex flex-col gap-4 pt-2">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <QuantityInput
-            value={quantity}
-            onChange={setQuantity}
-            disabled={isAdding}
-            className="shrink-0 [&_button]:h-11 [&_input]:h-11"
-          />
-          <Button 
-            className="flex-1 h-11 min-h-11 px-8"
-            onClick={handleAddToCart}
-            disabled={!canAddToCart || isAdding}
-          >
-            {isAdding ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Adding...
-              </>
-            ) : justAdded ? (
-              <>
-                <Check className="mr-2 h-4 w-4" />
-                Added to Cart
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="mr-2 h-4 w-4" />
-                {hasVariants && !selectedVariantId ? "Select an option" : "Add to Cart"}
-              </>
-            )}
-          </Button>
-        </div>
+        {isCouture ? (
+          /* Couture: Get in Touch CTA */
+          <div className="flex flex-col gap-3">
+            <Button 
+              className="w-full h-12 px-8"
+              asChild
+            >
+              <Link to="/contact?inquiry=couture">
+                <Mail className="mr-2 h-4 w-4" />
+                Inquire About This Piece
+              </Link>
+            </Button>
+            <p className="text-sm text-muted-foreground text-center">
+              This is a one-of-a-kind couture piece. Contact us for availability and pricing.
+            </p>
+          </div>
+        ) : (
+          /* Ready To Wear: Standard cart flow */
+          <>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <QuantityInput
+                value={quantity}
+                onChange={setQuantity}
+                disabled={isAdding}
+                className="shrink-0 [&_button]:h-11 [&_input]:h-11"
+              />
+              <Button 
+                className="flex-1 h-11 min-h-11 px-8"
+                onClick={handleAddToCart}
+                disabled={!canAddToCart || isAdding}
+              >
+                {isAdding ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : justAdded ? (
+                  <>
+                    <Check className="mr-2 h-4 w-4" />
+                    Added to Cart
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    {hasVariants && !selectedVariantId ? "Select an option" : "Add to Cart"}
+                  </>
+                )}
+              </Button>
+            </div>
+          </>
+        )}
         <Button 
           variant="outline"
           className="w-full h-11 px-8 sm:w-auto"

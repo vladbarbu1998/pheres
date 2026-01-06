@@ -162,6 +162,7 @@ export type Database = {
       }
       collections: {
         Row: {
+          collection_type: Database["public"]["Enums"]["collection_type"]
           created_at: string
           description: string | null
           display_order: number
@@ -174,6 +175,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          collection_type?: Database["public"]["Enums"]["collection_type"]
           created_at?: string
           description?: string | null
           display_order?: number
@@ -186,6 +188,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          collection_type?: Database["public"]["Enums"]["collection_type"]
           created_at?: string
           description?: string | null
           display_order?: number
@@ -1007,6 +1010,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      collection_type: "couture" | "ready_to_wear"
       order_status:
         | "pending"
         | "paid"
@@ -1143,6 +1147,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      collection_type: ["couture", "ready_to_wear"],
       order_status: [
         "pending",
         "paid",
