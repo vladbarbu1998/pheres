@@ -175,13 +175,5 @@ async function checkFileReferences(client: any, fileUrl: string): Promise<boolea
     .limit(1);
   if (news && news.length > 0) return true;
 
-  // Check story_sections
-  const { data: story } = await client
-    .from("story_sections")
-    .select("id")
-    .eq("image_url", fileUrl)
-    .limit(1);
-  if (story && story.length > 0) return true;
-
   return false;
 }

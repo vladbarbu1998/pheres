@@ -279,22 +279,6 @@ export function useAdminPress() {
   });
 }
 
-// Story sections
-export function useAdminStory() {
-  return useQuery({
-    queryKey: ["admin-story"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("story_sections")
-        .select("*")
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-      return data;
-    },
-  });
-}
-
 // Contact messages
 export function useAdminMessages() {
   return useQuery({
