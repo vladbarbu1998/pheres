@@ -842,6 +842,7 @@ export type Database = {
           metal_weight: string | null
           name: string
           product_number: string | null
+          product_type: Database["public"]["Enums"]["product_type"]
           short_description: string | null
           size: string | null
           sku: string | null
@@ -870,6 +871,7 @@ export type Database = {
           metal_weight?: string | null
           name: string
           product_number?: string | null
+          product_type?: Database["public"]["Enums"]["product_type"]
           short_description?: string | null
           size?: string | null
           sku?: string | null
@@ -898,6 +900,7 @@ export type Database = {
           metal_weight?: string | null
           name?: string
           product_number?: string | null
+          product_type?: Database["public"]["Enums"]["product_type"]
           short_description?: string | null
           size?: string | null
           sku?: string | null
@@ -1030,6 +1033,7 @@ export type Database = {
         | "delivered"
         | "cancelled"
         | "refunded"
+      product_type: "couture" | "ready_to_wear"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1168,6 +1172,7 @@ export const Constants = {
         "cancelled",
         "refunded",
       ],
+      product_type: ["couture", "ready_to_wear"],
     },
   },
 } as const
