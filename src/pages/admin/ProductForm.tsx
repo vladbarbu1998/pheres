@@ -62,12 +62,13 @@ const readyToWearSchema = baseProductSchema.extend({
   compare_at_price: z.coerce.number().optional().nullable(),
 });
 
-// Couture schema - no price required
+// Couture schema - no price required, has optional model_number
 const coutureSchema = baseProductSchema.extend({
   base_price: z.coerce.number().optional().default(0),
+  model_number: z.string().optional(),
 });
 
-type ProductFormData = z.infer<typeof readyToWearSchema>;
+type ProductFormData = z.infer<typeof readyToWearSchema> & { model_number?: string };
 
 interface ProductImage {
   id?: string;
@@ -166,6 +167,7 @@ export default function ProductForm() {
         is_featured: product.is_featured,
         is_new: product.is_new,
         is_bestseller: product.is_bestseller,
+        model_number: (product as any).model_number || "",
       });
       setImages(
         product.product_images?.map((img: any) => ({
@@ -319,6 +321,7 @@ export default function ProductForm() {
         is_new: data.is_new ?? false,
         is_bestseller: data.is_bestseller ?? false,
         product_type: productType,
+        model_number: isCouture ? (data.model_number || null) : null,
       };
 
       if (isNew) {
@@ -462,6 +465,21 @@ export default function ProductForm() {
                 )}
               </div>
             </div>
+
+            {/* Model Number - Only for Couture */}
+            {isCouture && (
+              <div className="space-y-2">
+                <Label htmlFor="model_number">Model Number</Label>
+                <Input
+                  id="model_number"
+                  {...register("model_number")}
+                  placeholder="e.g. CT-2024-001"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional identifier for this Couture piece
+                </p>
+              </div>
+            )}
 
             {/* Product Code & Price - Only for Ready To Wear */}
             {!isCouture && (
