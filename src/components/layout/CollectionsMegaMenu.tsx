@@ -255,7 +255,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           {/* Couture Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
-            <h4 className="font-heading text-lg font-normal text-foreground mb-2">
+            <h4 className="font-sans text-base font-medium tracking-wide text-foreground mb-2">
               Couture
             </h4>
               <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
@@ -303,7 +303,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           {/* Ready To Wear Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
-            <h4 className="font-heading text-lg font-normal text-foreground mb-2">
+            <h4 className="font-sans text-base font-medium tracking-wide text-foreground mb-2">
               Ready to Wear
             </h4>
               <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
