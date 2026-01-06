@@ -226,11 +226,14 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
   const { data } = useCollectionsGrouped();
 
   return (
-    <div>
+    <div className="border-b border-border/30">
       {/* Toggle button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="font-sans flex w-full items-center justify-between py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+        className={cn(
+          "font-sans flex w-full items-center justify-between py-3 text-base font-medium transition-colors hover:text-foreground",
+          isExpanded ? "text-foreground" : "text-muted-foreground"
+        )}
       >
         Collections
         <ChevronRight
@@ -245,10 +248,10 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
       <div
         className={cn(
           "overflow-hidden transition-all duration-300 ease-out",
-          isExpanded ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+          isExpanded ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
-        <div className="pb-6 pl-4 space-y-8">
+        <div className="ml-2 pl-4 border-l-2 border-primary/30 space-y-6 pb-6">
           {/* Couture Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
@@ -293,6 +296,9 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
               </div>
             )}
           </div>
+
+          {/* Divider */}
+          <div className="border-t border-border/40 my-2" />
 
           {/* Ready To Wear Section */}
           <div className="flex items-start gap-4">
