@@ -65,25 +65,27 @@ export default function CollectionsPage() {
   return (
     <Layout>
       {/* Asymmetric Editorial Layout */}
-      <section className="min-h-[calc(100vh-4rem)] bg-background lg:min-h-[calc(100vh-5rem)]">
-        <div className="grid h-full min-h-[calc(100vh-4rem)] grid-cols-1 gap-px bg-border lg:min-h-[calc(100vh-5rem)] lg:grid-cols-[1.4fr_1fr]">
+      <section className="min-h-[calc(100vh-4rem)] bg-background md:min-h-[calc(100vh-5rem)]">
+        <div className="grid h-full min-h-[calc(100vh-4rem)] grid-cols-1 gap-px bg-border md:min-h-[calc(100vh-5rem)] md:grid-cols-2 lg:grid-cols-[1.4fr_1fr]">
           
-          {/* Left: Large Couture Card - 60% */}
-          <UniverseCard
-            overline="By Appointment"
-            title="Couture"
-            subtitle="Exceptional high jewelry, crafted with rare gemstones and unparalleled artistry for the most discerning collectors."
-            cta="Explore Couture"
-            href="/collections/couture"
-            imageUrl="/images/hero-model.webp"
-            imageAlt="Couture high jewelry collection"
-            size="large"
-          />
+          {/* Left: Large Couture Card - 60% on desktop, 50% on tablet */}
+          <div className="relative min-h-[50vh] md:min-h-0">
+            <UniverseCard
+              overline="By Appointment"
+              title="Couture"
+              subtitle="Exceptional high jewelry, crafted with rare gemstones and unparalleled artistry for the most discerning collectors."
+              cta="Explore Couture"
+              href="/collections/couture"
+              imageUrl="/images/hero-model.webp"
+              imageAlt="Couture high jewelry collection"
+              size="large"
+            />
+          </div>
           
           {/* Right: Stacked - Ready to Wear Card + Context */}
           <div className="flex flex-col gap-px bg-border">
             {/* Ready to Wear Card - takes ~60% of right side */}
-            <div className="relative h-[50vh] lg:h-[60%]">
+            <div className="relative h-[50vh] md:h-[55%] lg:h-[60%]">
               <UniverseCard
                 overline="Available Now"
                 title="Ready to Wear"
