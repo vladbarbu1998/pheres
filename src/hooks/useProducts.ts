@@ -204,14 +204,73 @@ export function useCategories() {
   });
 }
 
+// Fetch only child collections (those with parent_id) for public use
 export function useCollections() {
   return useQuery({
     queryKey: ["collections"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("collections")
-        .select("id, name, slug, description, image_url, is_featured")
+        .select("id, name, slug, description, image_url, is_featured, collection_type, parent_id")
         .eq("is_active", true)
+        .not("parent_id", "is", null) // Only child collections
+        .order("display_order");
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
+// Fetch parent (root) collections
+export function useParentCollections() {
+  return useQuery({
+    queryKey: ["parent-collections"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collections")
+        .select("id, name, slug, description, collection_type")
+        .eq("is_active", true)
+        .is("parent_id", null) // Only parent collections
+        .order("display_order");
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
+// Fetch child collections by parent ID
+export function useChildCollections(parentId: string | null) {
+  return useQuery({
+    queryKey: ["child-collections", parentId],
+    queryFn: async () => {
+      if (!parentId) return [];
+      
+      const { data, error } = await supabase
+        .from("collections")
+        .select("id, name, slug, description, image_url, is_featured, collection_type, parent_id")
+        .eq("parent_id", parentId)
+        .eq("is_active", true)
+        .order("display_order");
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!parentId,
+  });
+}
+
+// Fetch child collections by collection type (for admin tabs)
+export function useCollectionsByType(collectionType: "couture" | "ready_to_wear") {
+  return useQuery({
+    queryKey: ["collections-by-type", collectionType],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collections")
+        .select("id, name, slug, description, image_url, is_featured, collection_type, parent_id, is_active, display_order")
+        .eq("collection_type", collectionType)
+        .not("parent_id", "is", null) // Only child collections
         .order("display_order");
 
       if (error) throw error;
