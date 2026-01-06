@@ -149,8 +149,7 @@ export default function ProductPage() {
                 collectionSlug={primaryCollection?.slug || null}
                 collectionType={(primaryCollection as any)?.collection_type || null}
                 productCode={(product as any).sku}
-                metalType={product!.metal_type}
-                metalWeight={product!.metal_weight}
+                metals={(product as any).product_metals || []}
                 grossWeight={(product as any).gross_weight}
                 size={(product as any).size}
                 stones={(product as any).product_stones || []}

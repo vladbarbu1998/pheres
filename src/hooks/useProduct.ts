@@ -41,6 +41,12 @@ export function useProduct(slug: string) {
             stone_cut,
             display_order
           ),
+          product_metals (
+            id,
+            metal_type,
+            metal_weight,
+            display_order
+          ),
           categories (
             id,
             name,
