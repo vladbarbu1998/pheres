@@ -84,7 +84,7 @@ export default function PressPage() {
                 <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue placeholder="Filter by outlet" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent side="bottom" align="end">
                   <SelectItem value="all">All Outlets</SelectItem>
                   {outletsWithArticles.map((outlet) => (
                     <SelectItem key={outlet.id} value={outlet.id}>
