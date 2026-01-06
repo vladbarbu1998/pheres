@@ -5,6 +5,7 @@ import { PressLogoCarousel } from "@/components/press/PressLogoCarousel";
 import { PressArticleCard } from "@/components/press/PressArticleCard";
 import { usePressOutlets } from "@/hooks/usePressOutlets";
 import { usePressArticles } from "@/hooks/usePressArticles";
+import { BrandWord } from "@/components/ui/brand-word";
 import {
   Select,
   SelectContent,
@@ -48,7 +49,7 @@ export default function PressPage() {
       <PageHero
         label="In the Spotlight"
         title="Press"
-        intro="Pheres in the world's most prestigious publications and media. Discover our latest features, interviews, and editorial coverage."
+        intro={<><BrandWord>Pheres</BrandWord> in the world's most prestigious publications and media. Discover our latest features, interviews, and editorial coverage.</>}
       />
 
       {/* Divider */}
