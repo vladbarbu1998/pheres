@@ -112,7 +112,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
             ? "opacity-100 visible translate-y-0"
             : "opacity-0 invisible -translate-y-4 pointer-events-none"
         )}
-        style={{ top: "80px" }} // Match header height (h-20 = 80px)
+        style={{ top: "calc(var(--header-height, 80px))" }}
       >
         <div className="flex">
           {/* Couture Column */}
@@ -252,9 +252,9 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           {/* Couture Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
-              <h4 className="font-heading text-lg font-normal italic text-foreground mb-2">
-                Couture
-              </h4>
+            <h4 className="font-heading text-lg font-normal text-foreground mb-2">
+              Couture
+            </h4>
               <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
                 One-of-a-kind pieces by inquiry only.
               </p>
@@ -297,7 +297,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           {/* Ready To Wear Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
-            <h4 className="font-heading text-lg font-normal italic text-foreground mb-2">
+            <h4 className="font-heading text-lg font-normal text-foreground mb-2">
               Ready to Wear
             </h4>
               <p className="text-xs text-muted-foreground mb-4 leading-relaxed">

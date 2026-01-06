@@ -12,6 +12,9 @@
 
 @layer base {
   :root {
+    /* Layout */
+    --header-height: 80px;
+    
     /* Pheres brand gold/bronze accent */
     --brand: 32 49% 31%; /* #785829 */
     --brand-light: 32 40% 45%;
