@@ -100,8 +100,8 @@ export default function CollectionsPage() {
             
             {/* Context Text Block - takes ~40% of right side */}
             <div className="flex flex-1 flex-col justify-center bg-background px-8 py-12 md:px-10 lg:px-12 lg:py-0">
-              <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.4em] text-muted-foreground">
-                The <BrandWord>Pheres</BrandWord> Universe
+              <p className="brand-word mb-3 text-xs font-medium tracking-[0.4em] text-muted-foreground">
+                The Pheres Universe
               </p>
               <h3 className="font-serif text-2xl font-light tracking-wide text-foreground md:text-3xl">
                 Two Worlds, One Vision
