@@ -76,9 +76,6 @@
 .brand-word {
   font-family: "Times New Roman", "Times", serif;
   text-transform: uppercase;
-  letter-spacing: inherit;
-  margin-left: -0.15em;
-  margin-right: -0.15em;
 }
 
 @layer base {
