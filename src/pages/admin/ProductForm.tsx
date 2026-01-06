@@ -420,9 +420,9 @@ export default function ProductForm() {
       title={isNew ? (isCouture ? "New Couture Piece" : "New Product") : (isCouture ? "Edit Couture Piece" : "Edit Product")}
       backLink={`/admin/products?type=${productType}`}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Product Type Badge */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between">
           <span className={cn(
             "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium",
             isCouture 
@@ -431,556 +431,563 @@ export default function ProductForm() {
           )}>
             {isCouture ? "Couture (Inquiry Only)" : "Ready To Wear (Purchasable)"}
           </span>
+          {/* Actions - visible on mobile */}
+          <div className="flex gap-2 lg:hidden">
+            <Button type="button" variant="outline" size="sm" onClick={() => navigate("/admin/products")}>
+              Cancel
+            </Button>
+            <Button type="submit" size="sm" disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isNew ? "Create" : "Save"}
+            </Button>
+          </div>
         </div>
-        {/* Section 1: Basic Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Basic Info</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Name & Slug */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  {...register("name")}
-                  placeholder="e.g., Diamond Eternity Ring"
-                  className={errors.name ? "border-destructive" : ""}
-                />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="slug">Slug *</Label>
-                <Input
-                  id="slug"
-                  {...register("slug")}
-                  placeholder="diamond-eternity-ring"
-                  className={errors.slug ? "border-destructive" : ""}
-                />
-                {errors.slug && (
-                  <p className="text-sm text-destructive">{errors.slug.message}</p>
-                )}
-              </div>
-            </div>
 
-            {/* Model Number - Only for Couture */}
-            {isCouture && (
-              <div className="space-y-2">
-                <Label htmlFor="model_number">Model Number</Label>
-                <Input
-                  id="model_number"
-                  {...register("model_number")}
-                  placeholder="e.g. CT-2024-001"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Optional identifier for this Couture piece
-                </p>
-              </div>
-            )}
-
-            {/* Product Code & Price - Only for Ready To Wear */}
-            {!isCouture && (
-              <div className="grid gap-4 sm:grid-cols-3">
-                <div className="space-y-2">
-                  <Label htmlFor="sku">Product Code</Label>
-                  <Input
-                    id="sku"
-                    {...register("sku")}
-                    placeholder="e.g. RNG-001"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="base_price">Price *</Label>
-                  <Input
-                    id="base_price"
-                    type="number"
-                    step="0.01"
-                    {...register("base_price")}
-                    placeholder="0.00"
-                    className={errors.base_price ? "border-destructive" : ""}
-                  />
-                  {errors.base_price && (
-                    <p className="text-sm text-destructive">{errors.base_price.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="compare_at_price">Compare at Price</Label>
-                  <Input
-                    id="compare_at_price"
-                    type="number"
-                    step="0.01"
-                    {...register("compare_at_price")}
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Category & Collection */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Controller
-                  control={control}
-                  name="category_id"
-                  render={({ field }) => (
-                    <Select 
-                      value={field.value || "none"} 
-                      onValueChange={(val) => field.onChange(val === "none" ? null : val)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No category</SelectItem>
-                        {categories?.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-              <div className="space-y-3">
-                <Label>Collections {isCouture ? "(Couture only)" : "(Ready To Wear only)"}</Label>
-                {availableCollections && availableCollections.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {availableCollections.map((col) => (
-                      <Button
-                        key={col.id}
-                        type="button"
-                        size="sm"
-                        variant={selectedCollections.includes(col.id) ? "default" : "outline"}
-                        onClick={() =>
-                          setSelectedCollections((prev) =>
-                            prev.includes(col.id)
-                              ? prev.filter((cid) => cid !== col.id)
-                              : [...prev, col.id]
-                          )
-                        }
-                      >
-                        {col.name}
-                      </Button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No {isCouture ? "Couture" : "Ready To Wear"} collections available. Create collections first.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Active toggle + checkboxes */}
-            <div className="flex flex-wrap items-center gap-6 pt-2">
-              <Controller
-                control={control}
-                name="is_active"
-                render={({ field }) => (
-                  <div className="flex items-center gap-2">
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    <Label className="font-normal">Active</Label>
-                  </div>
-                )}
-              />
-              <div className="flex items-center gap-6">
-                <Controller
-                  control={control}
-                  name="is_featured"
-                  render={({ field }) => (
-                    <div className="flex items-center gap-2">
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                      <Label className="font-normal">Featured</Label>
-                    </div>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="is_new"
-                  render={({ field }) => (
-                    <div className="flex items-center gap-2">
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                      <Label className="font-normal">New</Label>
-                    </div>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="is_bestseller"
-                  render={({ field }) => (
-                    <div className="flex items-center gap-2">
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                      <Label className="font-normal">Bestseller</Label>
-                    </div>
-                  )}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Section 2: Images */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Images</CardTitle>
-            <CardDescription>
-              Recommended: 1000×1000px square images. First image will be the main image.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-              {/* Main Image */}
-              <div className="space-y-2">
-                <Label>Main Image *</Label>
-                {primaryImage ? (
-                  <div className="relative aspect-square group">
-                    <img
-                      src={primaryImage.image_url}
-                      alt="Main product"
-                      className="h-full w-full object-cover rounded-lg border"
+        {/* Two-column layout on large screens */}
+        <div className="grid gap-6 xl:grid-cols-[1fr_400px]">
+          {/* Left Column: Info + Content */}
+          <div className="space-y-6">
+            {/* Section 1: Basic Info */}
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Basic Info</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Row 1: Name, Slug, Category */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="name">Name *</Label>
+                    <Input
+                      id="name"
+                      {...register("name")}
+                      placeholder="e.g., Diamond Eternity Ring"
+                      className={errors.name ? "border-destructive" : ""}
                     />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="destructive"
-                        onClick={() => removeImage(images.findIndex((img) => img.is_primary))}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded flex items-center gap-1">
-                      <Star className="h-3 w-3" /> Primary
+                    {errors.name && (
+                      <p className="text-xs text-destructive">{errors.name.message}</p>
+                    )}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="slug">Slug *</Label>
+                    <Input
+                      id="slug"
+                      {...register("slug")}
+                      placeholder="diamond-eternity-ring"
+                      className={errors.slug ? "border-destructive" : ""}
+                    />
+                    {errors.slug && (
+                      <p className="text-xs text-destructive">{errors.slug.message}</p>
+                    )}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Category</Label>
+                    <Controller
+                      control={control}
+                      name="category_id"
+                      render={({ field }) => (
+                        <Select 
+                          value={field.value || "none"} 
+                          onValueChange={(val) => field.onChange(val === "none" ? null : val)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">No category</SelectItem>
+                            {categories?.map((cat) => (
+                              <SelectItem key={cat.id} value={cat.id}>
+                                {cat.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2: Product-type specific fields */}
+                {isCouture ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="model_number">Model Number</Label>
+                      <Input
+                        id="model_number"
+                        {...register("model_number")}
+                        placeholder="e.g. CT-2024-001"
+                      />
                     </div>
                   </div>
                 ) : (
-                  <label
-                    onDragOver={handleImageDragOver}
-                    onDragLeave={handleImageDragLeave}
-                    onDrop={handleImageDrop}
-                    className={cn(
-                      "flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-colors",
-                      isDraggingImage
-                        ? "border-primary bg-primary/5"
-                        : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
-                      isUploadingImages && "cursor-not-allowed opacity-50"
-                    )}
-                  >
-                    {isUploadingImages ? (
-                      <>
-                        <Loader2 className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
-                        <span className="text-sm text-muted-foreground">Uploading...</span>
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
-                        <span className="text-sm text-muted-foreground text-center px-4">
-                          Drag & drop an image here, or click to browse
-                        </span>
-                      </>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageUpload}
-                      disabled={isUploadingImages}
-                    />
-                  </label>
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="sku">Product Code</Label>
+                      <Input
+                        id="sku"
+                        {...register("sku")}
+                        placeholder="e.g. RNG-001"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="base_price">Price *</Label>
+                      <Input
+                        id="base_price"
+                        type="number"
+                        step="0.01"
+                        {...register("base_price")}
+                        placeholder="0.00"
+                        className={errors.base_price ? "border-destructive" : ""}
+                      />
+                      {errors.base_price && (
+                        <p className="text-xs text-destructive">{errors.base_price.message}</p>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="compare_at_price">Compare at Price</Label>
+                      <Input
+                        id="compare_at_price"
+                        type="number"
+                        step="0.01"
+                        {...register("compare_at_price")}
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
                 )}
-              </div>
 
-              {/* Gallery Images */}
-              <div className="space-y-2">
-                <Label>Gallery Images</Label>
-                <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                  {galleryImages.map((img, i) => {
-                    const realIndex = images.findIndex((im) => im === img);
-                    return (
-                      <div key={i} className="relative group aspect-square">
-                        <img
-                          src={img.image_url}
-                          alt="Gallery"
-                          className="h-full w-full object-cover rounded-lg border"
-                        />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-1">
+                {/* Row 3: Collections + Status toggles */}
+                <div className="flex flex-col lg:flex-row gap-4 lg:items-start lg:justify-between">
+                  <div className="space-y-1.5 flex-1">
+                    <Label>Collections</Label>
+                    {availableCollections && availableCollections.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {availableCollections.map((col) => (
                           <Button
+                            key={col.id}
                             type="button"
                             size="sm"
-                            variant="secondary"
-                            className="text-xs px-2 h-7"
-                            onClick={() => setPrimaryImage(realIndex)}
+                            variant={selectedCollections.includes(col.id) ? "default" : "outline"}
+                            className="h-7 text-xs"
+                            onClick={() =>
+                              setSelectedCollections((prev) =>
+                                prev.includes(col.id)
+                                  ? prev.filter((cid) => cid !== col.id)
+                                  : [...prev, col.id]
+                              )
+                            }
                           >
-                            Set Primary
+                            {col.name}
                           </Button>
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="destructive"
-                            className="h-7 w-7"
-                            onClick={() => removeImage(realIndex)}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
+                        ))}
                       </div>
-                    );
-                  })}
-                  <label
-                    onDragOver={handleImageDragOver}
-                    onDragLeave={handleImageDragLeave}
-                    onDrop={handleImageDrop}
-                    className={cn(
-                      "aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors",
-                      isDraggingImage
-                        ? "border-primary bg-primary/5"
-                        : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
-                      isUploadingImages && "cursor-not-allowed opacity-50"
-                    )}
-                  >
-                    {isUploadingImages ? (
-                      <Loader2 className="h-5 w-5 text-muted-foreground animate-spin" />
                     ) : (
-                      <>
-                        <ImageIcon className="h-5 w-5 text-muted-foreground mb-1" />
-                        <span className="text-xs text-muted-foreground text-center px-2">
-                          Add more
-                        </span>
-                      </>
+                      <p className="text-sm text-muted-foreground">
+                        No collections available.
+                      </p>
                     )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      onChange={handleImageUpload}
-                      disabled={isUploadingImages}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4 lg:gap-5">
+                    <Controller
+                      control={control}
+                      name="is_active"
+                      render={({ field }) => (
+                        <div className="flex items-center gap-1.5">
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          <Label className="font-normal text-sm">Active</Label>
+                        </div>
+                      )}
                     />
-                  </label>
+                    <Controller
+                      control={control}
+                      name="is_featured"
+                      render={({ field }) => (
+                        <div className="flex items-center gap-1.5">
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                          <Label className="font-normal text-sm">Featured</Label>
+                        </div>
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="is_new"
+                      render={({ field }) => (
+                        <div className="flex items-center gap-1.5">
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                          <Label className="font-normal text-sm">New</Label>
+                        </div>
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="is_bestseller"
+                      render={({ field }) => (
+                        <div className="flex items-center gap-1.5">
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                          <Label className="font-normal text-sm">Bestseller</Label>
+                        </div>
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Section 3: Content & Specifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Content & Specifications</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Short Description */}
-            <div className="space-y-2">
-              <Label htmlFor="short_description">Short Description</Label>
-              <Controller
-                control={control}
-                name="short_description"
-                render={({ field }) => (
-                  <RichTextEditor
-                    content={field.value || ""}
-                    onChange={field.onChange}
-                    placeholder="A brief tagline shown near the top of the product page"
-                  />
-                )}
-              />
-            </div>
+            {/* Section 2: Descriptions */}
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Description</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="short_description">Short Description</Label>
+                    <Controller
+                      control={control}
+                      name="short_description"
+                      render={({ field }) => (
+                        <RichTextEditor
+                          content={field.value || ""}
+                          onChange={field.onChange}
+                          placeholder="A brief tagline"
+                        />
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="description">Full Description</Label>
+                    <Controller
+                      control={control}
+                      name="description"
+                      render={({ field }) => (
+                        <RichTextEditor
+                          content={field.value || ""}
+                          onChange={field.onChange}
+                          placeholder="Detailed description (optional)"
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* Full Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Full Description</Label>
-              <Controller
-                control={control}
-                name="description"
-                render={({ field }) => (
-                  <RichTextEditor
-                    content={field.value || ""}
-                    onChange={field.onChange}
-                    placeholder="Detailed description of the product (optional)"
-                  />
-                )}
-              />
-            </div>
+            {/* Section 3: Specifications */}
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Specifications</CardTitle>
+                <CardDescription>Only filled specs will be shown on the storefront.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+                  <div className="space-y-1">
+                    <Label htmlFor="metal_type" className="text-xs">Metal Type</Label>
+                    <Input id="metal_type" placeholder="18K Rose Gold" {...register("metal_type")} className="h-9" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="metal_weight" className="text-xs">Metal Weight</Label>
+                    <Input id="metal_weight" placeholder="4.5g" {...register("metal_weight")} className="h-9" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="gross_weight" className="text-xs">Gross Weight</Label>
+                    <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} className="h-9" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="size" className="text-xs">Size</Label>
+                    <Input id="size" placeholder='16.5"' {...register("size")} className="h-9" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="certification" className="text-xs">Certification</Label>
+                    <Input id="certification" placeholder="GIA" {...register("certification")} className="h-9" />
+                  </div>
+                </div>
 
-            {/* Specifications Grid */}
-            <div className="space-y-3">
-              <Label className="text-base">Specifications</Label>
-              <p className="text-sm text-muted-foreground">
-                Only filled specifications will be shown on the storefront.
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                <div className="space-y-2">
-                  <Label htmlFor="metal_type" className="text-sm font-normal">Metal Type</Label>
-                  <Input id="metal_type" placeholder="18K Rose Gold" {...register("metal_type")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="metal_weight" className="text-sm font-normal">Metal Weight</Label>
-                  <Input id="metal_weight" placeholder="4.5g" {...register("metal_weight")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="gross_weight" className="text-sm font-normal">Gross Weight</Label>
-                  <Input id="gross_weight" placeholder="5.2g" {...register("gross_weight")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="size" className="text-sm font-normal">Size</Label>
-                  <Input id="size" placeholder='16.5"' {...register("size")} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="certification" className="text-sm font-normal">Certification</Label>
-                  <Input id="certification" placeholder="GIA" {...register("certification")} />
-                </div>
-              </div>
-            </div>
+                {/* Stones Section - Compact */}
+                <div className="pt-2 border-t">
+                  <div className="flex items-center justify-between mb-3">
+                    <Label className="text-sm">Stones</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() =>
+                        setStones((prev) => [
+                          ...prev,
+                          {
+                            stone_type: "",
+                            stone_carat: "",
+                            stone_color: "",
+                            stone_clarity: "",
+                            stone_cut: "",
+                            display_order: prev.length,
+                          },
+                        ])
+                      }
+                    >
+                      <Plus className="mr-1 h-3 w-3" />
+                      Add Stone
+                    </Button>
+                  </div>
 
-            {/* Stones Section */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-base">Stones</Label>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Add one or more stones (e.g., Diamond, White Sapphire).
-                  </p>
+                  {stones.length === 0 ? (
+                    <p className="text-xs text-muted-foreground italic py-3 text-center border border-dashed rounded">
+                      No stones added yet.
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {stones.map((stone, index) => (
+                        <div key={index} className="border rounded-lg p-3 bg-muted/30">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-medium text-muted-foreground">
+                              Stone {index + 1}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-destructive hover:text-destructive"
+                              onClick={() =>
+                                setStones((prev) => prev.filter((_, i) => i !== index))
+                              }
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+                            <div className="space-y-1">
+                              <Label className="text-xs">Type *</Label>
+                              <StoneTypeCombobox
+                                value={stone.stone_type}
+                                onChange={(newType) =>
+                                  setStones((prev) =>
+                                    prev.map((s, i) =>
+                                      i === index ? { ...s, stone_type: newType } : s
+                                    )
+                                  )
+                                }
+                                placeholder="Select..."
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Weight</Label>
+                              <Input
+                                placeholder="7.94 ct"
+                                className="h-9"
+                                value={stone.stone_carat}
+                                onChange={(e) =>
+                                  setStones((prev) =>
+                                    prev.map((s, i) =>
+                                      i === index ? { ...s, stone_carat: e.target.value } : s
+                                    )
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Color</Label>
+                              <Input
+                                placeholder="D"
+                                className="h-9"
+                                value={stone.stone_color}
+                                onChange={(e) =>
+                                  setStones((prev) =>
+                                    prev.map((s, i) =>
+                                      i === index ? { ...s, stone_color: e.target.value } : s
+                                    )
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Clarity</Label>
+                              <Input
+                                placeholder="VVS1"
+                                className="h-9"
+                                value={stone.stone_clarity}
+                                onChange={(e) =>
+                                  setStones((prev) =>
+                                    prev.map((s, i) =>
+                                      i === index ? { ...s, stone_clarity: e.target.value } : s
+                                    )
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Cut</Label>
+                              <Input
+                                placeholder="Excellent"
+                                className="h-9"
+                                value={stone.stone_cut}
+                                onChange={(e) =>
+                                  setStones((prev) =>
+                                    prev.map((s, i) =>
+                                      i === index ? { ...s, stone_cut: e.target.value } : s
+                                    )
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setStones((prev) => [
-                      ...prev,
-                      {
-                        stone_type: "",
-                        stone_carat: "",
-                        stone_color: "",
-                        stone_clarity: "",
-                        stone_cut: "",
-                        display_order: prev.length,
-                      },
-                    ])
-                  }
-                >
-                  <Plus className="mr-1 h-4 w-4" />
-                  Add Stone
-                </Button>
-              </div>
+              </CardContent>
+            </Card>
+          </div>
 
-              {stones.length === 0 ? (
-                <p className="text-sm text-muted-foreground italic py-4 text-center border border-dashed rounded-lg">
-                  No stones added yet. Click "Add Stone" to add one.
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  {stones.map((stone, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-4 relative">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-muted-foreground">
-                          Stone {index + 1}
-                        </span>
+          {/* Right Column: Images (sticky on desktop) */}
+          <div className="xl:sticky xl:top-6 xl:self-start space-y-6">
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Images</CardTitle>
+                <CardDescription>Square images recommended (1000×1000px)</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Main Image */}
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Main Image *</Label>
+                  {primaryImage ? (
+                    <div className="relative aspect-square group">
+                      <img
+                        src={primaryImage.image_url}
+                        alt="Main product"
+                        className="h-full w-full object-cover rounded-lg border"
+                      />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                         <Button
                           type="button"
-                          variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive"
-                          onClick={() =>
-                            setStones((prev) => prev.filter((_, i) => i !== index))
-                          }
+                          variant="destructive"
+                          onClick={() => removeImage(images.findIndex((img) => img.is_primary))}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                        <div className="space-y-2">
-                          <Label className="text-sm font-normal">Stone Type *</Label>
-                          <StoneTypeCombobox
-                            value={stone.stone_type}
-                            onChange={(newType) =>
-                              setStones((prev) =>
-                                prev.map((s, i) =>
-                                  i === index ? { ...s, stone_type: newType } : s
-                                )
-                              )
-                            }
-                            placeholder="Select or create..."
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-normal">Weight / Carat</Label>
-                          <Input
-                            placeholder="7.94 ct"
-                            value={stone.stone_carat}
-                            onChange={(e) =>
-                              setStones((prev) =>
-                                prev.map((s, i) =>
-                                  i === index ? { ...s, stone_carat: e.target.value } : s
-                                )
-                              )
-                            }
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-normal">Color</Label>
-                          <Input
-                            placeholder="D"
-                            value={stone.stone_color}
-                            onChange={(e) =>
-                              setStones((prev) =>
-                                prev.map((s, i) =>
-                                  i === index ? { ...s, stone_color: e.target.value } : s
-                                )
-                              )
-                            }
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-normal">Clarity</Label>
-                          <Input
-                            placeholder="VVS1"
-                            value={stone.stone_clarity}
-                            onChange={(e) =>
-                              setStones((prev) =>
-                                prev.map((s, i) =>
-                                  i === index ? { ...s, stone_clarity: e.target.value } : s
-                                )
-                              )
-                            }
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-normal">Cut</Label>
-                          <Input
-                            placeholder="Excellent"
-                            value={stone.stone_cut}
-                            onChange={(e) =>
-                              setStones((prev) =>
-                                prev.map((s, i) =>
-                                  i === index ? { ...s, stone_cut: e.target.value } : s
-                                )
-                              )
-                            }
-                          />
-                        </div>
+                      <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded flex items-center gap-1">
+                        <Star className="h-3 w-3" /> Primary
                       </div>
                     </div>
-                  ))}
+                  ) : (
+                    <label
+                      onDragOver={handleImageDragOver}
+                      onDragLeave={handleImageDragLeave}
+                      onDrop={handleImageDrop}
+                      className={cn(
+                        "flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                        isDraggingImage
+                          ? "border-primary bg-primary/5"
+                          : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
+                        isUploadingImages && "cursor-not-allowed opacity-50"
+                      )}
+                    >
+                      {isUploadingImages ? (
+                        <>
+                          <Loader2 className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
+                          <span className="text-sm text-muted-foreground">Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                          <span className="text-sm text-muted-foreground text-center px-4">
+                            Drag & drop or click to browse
+                          </span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={isUploadingImages}
+                      />
+                    </label>
+                  )}
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate("/admin/products")}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSaving}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isNew ? "Create Product" : "Save Changes"}
-          </Button>
+                {/* Gallery Images */}
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Gallery</Label>
+                  <div className="grid gap-2 grid-cols-3">
+                    {galleryImages.map((img, i) => {
+                      const realIndex = images.findIndex((im) => im === img);
+                      return (
+                        <div key={i} className="relative group aspect-square">
+                          <img
+                            src={img.image_url}
+                            alt="Gallery"
+                            className="h-full w-full object-cover rounded-lg border"
+                          />
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col items-center justify-center gap-1 p-1">
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              className="text-[10px] h-6 px-2 w-full"
+                              onClick={() => setPrimaryImage(realIndex)}
+                            >
+                              Set Primary
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="destructive"
+                              className="h-6 w-full"
+                              onClick={() => removeImage(realIndex)}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <label
+                      onDragOver={handleImageDragOver}
+                      onDragLeave={handleImageDragLeave}
+                      onDrop={handleImageDrop}
+                      className={cn(
+                        "aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors",
+                        isDraggingImage
+                          ? "border-primary bg-primary/5"
+                          : "border-muted-foreground/25 hover:border-primary hover:bg-muted/50",
+                        isUploadingImages && "cursor-not-allowed opacity-50"
+                      )}
+                    >
+                      {isUploadingImages ? (
+                        <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
+                      ) : (
+                        <>
+                          <ImageIcon className="h-4 w-4 text-muted-foreground mb-0.5" />
+                          <span className="text-[10px] text-muted-foreground">Add</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={isUploadingImages}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Actions - visible on desktop */}
+            <div className="hidden lg:flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => navigate("/admin/products")}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isNew ? "Create Product" : "Save Changes"}
+              </Button>
+            </div>
+          </div>
         </div>
       </form>
     </AdminLayout>
