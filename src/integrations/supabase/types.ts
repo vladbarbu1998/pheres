@@ -171,6 +171,7 @@ export type Database = {
           is_active: boolean
           is_featured: boolean
           name: string
+          parent_id: string | null
           slug: string
           updated_at: string
         }
@@ -184,6 +185,7 @@ export type Database = {
           is_active?: boolean
           is_featured?: boolean
           name: string
+          parent_id?: string | null
           slug: string
           updated_at?: string
         }
@@ -197,10 +199,19 @@ export type Database = {
           is_active?: boolean
           is_featured?: boolean
           name?: string
+          parent_id?: string | null
           slug?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "collections_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contact_messages: {
         Row: {

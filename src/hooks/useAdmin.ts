@@ -160,7 +160,7 @@ export function useAdminProduct(id: string | undefined) {
   });
 }
 
-// Collections
+// All collections (for admin, includes parent_id)
 export function useAdminCollections() {
   return useQuery({
     queryKey: ["admin-collections"],
@@ -169,6 +169,79 @@ export function useAdminCollections() {
         .from("collections")
         .select("*")
         .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Parent (root) collections only
+export function useAdminParentCollections() {
+  return useQuery({
+    queryKey: ["admin-parent-collections"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collections")
+        .select("*")
+        .is("parent_id", null)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Child collections by parent ID (for admin tabs)
+export function useAdminChildCollections(parentId: string | null) {
+  return useQuery({
+    queryKey: ["admin-child-collections", parentId],
+    queryFn: async () => {
+      if (!parentId) return [];
+      
+      const { data, error } = await supabase
+        .from("collections")
+        .select("*")
+        .eq("parent_id", parentId)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!parentId,
+  });
+}
+
+// Child collections by type (for admin tabs: "Couture" / "Ready To Wear")
+export function useAdminCollectionsByType(collectionType: "couture" | "ready_to_wear") {
+  return useQuery({
+    queryKey: ["admin-collections-by-type", collectionType],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collections")
+        .select("*")
+        .eq("collection_type", collectionType)
+        .not("parent_id", "is", null) // Only child collections
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+// Get parent collection ID by type (helper for creating child collections)
+export function useParentCollectionByType(collectionType: "couture" | "ready_to_wear") {
+  return useQuery({
+    queryKey: ["parent-collection-by-type", collectionType],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collections")
+        .select("id, name, slug, collection_type")
+        .eq("collection_type", collectionType)
+        .is("parent_id", null)
+        .maybeSingle();
 
       if (error) throw error;
       return data;
