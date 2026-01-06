@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -37,12 +37,10 @@ interface ProductStone {
   display_order: number;
 }
 
-const productSchema = z.object({
+// Base schema for shared fields
+const baseProductSchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1, "Slug is required"),
-  sku: z.string().optional(),
-  base_price: z.coerce.number().min(0, "Price must be positive"),
-  compare_at_price: z.coerce.number().optional().nullable(),
   short_description: z.string().optional(),
   description: z.string().optional(),
   metal_type: z.string().optional(),
@@ -57,7 +55,19 @@ const productSchema = z.object({
   is_bestseller: z.boolean(),
 });
 
-type ProductFormData = z.infer<typeof productSchema>;
+// Ready To Wear schema - requires price
+const readyToWearSchema = baseProductSchema.extend({
+  sku: z.string().optional(),
+  base_price: z.coerce.number().min(0.01, "Price must be greater than 0"),
+  compare_at_price: z.coerce.number().optional().nullable(),
+});
+
+// Couture schema - no price required
+const coutureSchema = baseProductSchema.extend({
+  base_price: z.coerce.number().optional().default(0),
+});
+
+type ProductFormData = z.infer<typeof readyToWearSchema>;
 
 interface ProductImage {
   id?: string;
@@ -70,20 +80,27 @@ interface ProductImage {
 
 export default function ProductForm() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isNew = !id;
 
+  // Determine product type from URL or existing product
+  const urlProductType = searchParams.get("type") as "couture" | "ready_to_wear" | null;
+  
   const { data: product, isLoading: productLoading } = useAdminProduct(isNew ? undefined : id);
   const { data: categories } = useAdminCategories();
   const { data: coutureCollections } = useAdminCollectionsByType("couture");
   const { data: readyToWearCollections } = useAdminCollectionsByType("ready_to_wear");
   
-  // Combine child collections for selection (only child collections, not parents)
-  const childCollections = [
-    ...(readyToWearCollections || []),
-    ...(coutureCollections || []),
-  ];
+  // Determine product type: from existing product, URL param, or default to ready_to_wear
+  const productType: "couture" | "ready_to_wear" = 
+    (product as any)?.product_type || urlProductType || "ready_to_wear";
+  
+  const isCouture = productType === "couture";
+
+  // Select the appropriate collections based on product type
+  const availableCollections = isCouture ? coutureCollections : readyToWearCollections;
 
   const [isSaving, setIsSaving] = useState(false);
   const [images, setImages] = useState<ProductImage[]>([]);
@@ -91,6 +108,9 @@ export default function ProductForm() {
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
   const [isDraggingImage, setIsDraggingImage] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
+
+  // Use the appropriate schema based on product type
+  const schema = isCouture ? coutureSchema : readyToWearSchema;
 
   const {
     register,
@@ -101,13 +121,14 @@ export default function ProductForm() {
     setValue,
     formState: { errors },
   } = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       is_active: true,
       is_featured: false,
       is_new: false,
       is_bestseller: false,
       short_description: "",
+      base_price: isCouture ? 0 : undefined,
     },
   });
 
@@ -282,8 +303,8 @@ export default function ProductForm() {
       const productData = {
         name: data.name,
         slug: data.slug,
-        sku: data.sku || null,
-        base_price: data.base_price,
+        sku: isCouture ? null : (data.sku || null),
+        base_price: isCouture ? 0 : data.base_price,
         short_description: data.short_description || null,
         description: data.description || null,
         metal_type: data.metal_type || null,
@@ -291,12 +312,13 @@ export default function ProductForm() {
         gross_weight: data.gross_weight || null,
         size: data.size || null,
         certification: data.certification || null,
-        compare_at_price: data.compare_at_price || null,
+        compare_at_price: isCouture ? null : (data.compare_at_price || null),
         category_id: data.category_id || null,
         is_active: data.is_active ?? true,
         is_featured: data.is_featured ?? false,
         is_new: data.is_new ?? false,
         is_bestseller: data.is_bestseller ?? false,
+        product_type: productType,
       };
 
       if (isNew) {
@@ -392,10 +414,21 @@ export default function ProductForm() {
 
   return (
     <AdminLayout
-      title={isNew ? "New Product" : "Edit Product"}
-      backLink="/admin/products"
+      title={isNew ? (isCouture ? "New Couture Piece" : "New Product") : (isCouture ? "Edit Couture Piece" : "Edit Product")}
+      backLink={`/admin/products?type=${productType}`}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
+        {/* Product Type Badge */}
+        <div className="flex items-center gap-2">
+          <span className={cn(
+            "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium",
+            isCouture 
+              ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" 
+              : "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+          )}>
+            {isCouture ? "Couture (Inquiry Only)" : "Ready To Wear (Purchasable)"}
+          </span>
+        </div>
         {/* Section 1: Basic Info */}
         <Card>
           <CardHeader>
@@ -430,41 +463,43 @@ export default function ProductForm() {
               </div>
             </div>
 
-            {/* Product Code & Price */}
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="space-y-2">
-                <Label htmlFor="sku">Product Code</Label>
-                <Input
-                  id="sku"
-                  {...register("sku")}
-                  placeholder="e.g. RNG-001"
-                />
+            {/* Product Code & Price - Only for Ready To Wear */}
+            {!isCouture && (
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="sku">Product Code</Label>
+                  <Input
+                    id="sku"
+                    {...register("sku")}
+                    placeholder="e.g. RNG-001"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="base_price">Price *</Label>
+                  <Input
+                    id="base_price"
+                    type="number"
+                    step="0.01"
+                    {...register("base_price")}
+                    placeholder="0.00"
+                    className={errors.base_price ? "border-destructive" : ""}
+                  />
+                  {errors.base_price && (
+                    <p className="text-sm text-destructive">{errors.base_price.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="compare_at_price">Compare at Price</Label>
+                  <Input
+                    id="compare_at_price"
+                    type="number"
+                    step="0.01"
+                    {...register("compare_at_price")}
+                    placeholder="0.00"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="base_price">Price *</Label>
-                <Input
-                  id="base_price"
-                  type="number"
-                  step="0.01"
-                  {...register("base_price")}
-                  placeholder="0.00"
-                  className={errors.base_price ? "border-destructive" : ""}
-                />
-                {errors.base_price && (
-                  <p className="text-sm text-destructive">{errors.base_price.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="compare_at_price">Compare at Price</Label>
-                <Input
-                  id="compare_at_price"
-                  type="number"
-                  step="0.01"
-                  {...register("compare_at_price")}
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
+            )}
 
             {/* Category & Collection */}
             <div className="grid gap-4 sm:grid-cols-2">
@@ -494,59 +529,31 @@ export default function ProductForm() {
                 />
               </div>
               <div className="space-y-3">
-                <Label>Collections</Label>
-                {/* Ready To Wear Collections */}
-                {readyToWearCollections && readyToWearCollections.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground font-medium">Ready To Wear (Purchasable)</p>
-                    <div className="flex flex-wrap gap-2">
-                      {readyToWearCollections.map((col) => (
-                        <Button
-                          key={col.id}
-                          type="button"
-                          size="sm"
-                          variant={selectedCollections.includes(col.id) ? "default" : "outline"}
-                          onClick={() =>
-                            setSelectedCollections((prev) =>
-                              prev.includes(col.id)
-                                ? prev.filter((cid) => cid !== col.id)
-                                : [...prev, col.id]
-                            )
-                          }
-                        >
-                          {col.name}
-                        </Button>
-                      ))}
-                    </div>
+                <Label>Collections {isCouture ? "(Couture only)" : "(Ready To Wear only)"}</Label>
+                {availableCollections && availableCollections.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {availableCollections.map((col) => (
+                      <Button
+                        key={col.id}
+                        type="button"
+                        size="sm"
+                        variant={selectedCollections.includes(col.id) ? "default" : "outline"}
+                        onClick={() =>
+                          setSelectedCollections((prev) =>
+                            prev.includes(col.id)
+                              ? prev.filter((cid) => cid !== col.id)
+                              : [...prev, col.id]
+                          )
+                        }
+                      >
+                        {col.name}
+                      </Button>
+                    ))}
                   </div>
-                )}
-                {/* Couture Collections */}
-                {coutureCollections && coutureCollections.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground font-medium">Couture (Inquiry Only)</p>
-                    <div className="flex flex-wrap gap-2">
-                      {coutureCollections.map((col) => (
-                        <Button
-                          key={col.id}
-                          type="button"
-                          size="sm"
-                          variant={selectedCollections.includes(col.id) ? "secondary" : "outline"}
-                          onClick={() =>
-                            setSelectedCollections((prev) =>
-                              prev.includes(col.id)
-                                ? prev.filter((cid) => cid !== col.id)
-                                : [...prev, col.id]
-                            )
-                          }
-                        >
-                          {col.name}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {(!childCollections || childCollections.length === 0) && (
-                  <p className="text-sm text-muted-foreground">No collections available. Create collections first.</p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No {isCouture ? "Couture" : "Ready To Wear"} collections available. Create collections first.
+                  </p>
                 )}
               </div>
             </div>

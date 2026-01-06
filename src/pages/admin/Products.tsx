@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -46,8 +47,12 @@ export default function AdminProducts() {
   const categoryId = searchParams.get("category") || "";
   const collectionId = searchParams.get("collection") || "";
   const initialSearch = searchParams.get("q") || "";
+  const initialTab = searchParams.get("type") || "ready_to_wear";
 
   const [search, setSearch] = useState(initialSearch);
+  const [activeTab, setActiveTab] = useState<"couture" | "ready_to_wear">(
+    initialTab === "couture" ? "couture" : "ready_to_wear"
+  );
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const queryClient = useQueryClient();
@@ -62,6 +67,10 @@ export default function AdminProducts() {
   const { data: categories } = useAdminCategories();
   const { data: collections } = useAdminCollections();
 
+  // Filter products by type
+  const coutureProducts = products?.filter((p: any) => p.product_type === "couture") || [];
+  const readyToWearProducts = products?.filter((p: any) => p.product_type !== "couture") || [];
+
   // Update URL when filters change
   const updateFilters = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -71,6 +80,12 @@ export default function AdminProducts() {
       newParams.delete(key);
     }
     setSearchParams(newParams, { replace: true });
+  };
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as "couture" | "ready_to_wear");
+    updateFilters("type", value);
   };
 
   // Sync search to URL with debounce
@@ -87,29 +102,34 @@ export default function AdminProducts() {
     return () => clearTimeout(timeout);
   }, [search]);
 
-  const filteredProducts = products?.filter(
-    (product) =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.slug.toLowerCase().includes(search.toLowerCase()) ||
-      (product.product_number?.toLowerCase().includes(search.toLowerCase()) ?? false)
-  );
+  const filterBySearch = (productList: any[]) =>
+    productList.filter(
+      (product) =>
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.slug.toLowerCase().includes(search.toLowerCase()) ||
+        (product.product_number?.toLowerCase().includes(search.toLowerCase()) ?? false)
+    );
+
+  const filteredCouture = filterBySearch(coutureProducts);
+  const filteredReadyToWear = filterBySearch(readyToWearProducts);
 
   const handleExport = () => {
-    if (!filteredProducts?.length) {
+    const currentProducts = activeTab === "couture" ? filteredCouture : filteredReadyToWear;
+    if (!currentProducts?.length) {
       toast.error("No products to export");
       return;
     }
 
     setIsExporting(true);
     try {
-      const exportData = filteredProducts.map((product) => ({
+      const exportData = currentProducts.map((product) => ({
         product_id: product.product_number || product.id,
         sku: product.sku || "",
         name: product.name,
         category_names: (product as any).category?.name || "",
         collection_names: getCollectionNames(product) || "",
-        price: Number(product.base_price).toFixed(2),
-        currency: "USD",
+        price: activeTab === "couture" ? "Inquiry Only" : Number(product.base_price).toFixed(2),
+        currency: activeTab === "couture" ? "" : "USD",
         stock_quantity: (product as any).product_variants?.reduce(
           (sum: number, v: any) => sum + (v.stock_quantity || 0),
           0
@@ -133,7 +153,7 @@ export default function AdminProducts() {
         { key: "updated_at" as const, header: "Updated At" },
       ];
 
-      const filename = `pheres-products-${format(new Date(), "yyyy-MM-dd")}.csv`;
+      const filename = `pheres-${activeTab}-products-${format(new Date(), "yyyy-MM-dd")}.csv`;
       exportToCsv(exportData, columns, filename);
       toast.success(`Exported ${exportData.length} products`);
     } catch (err) {
@@ -190,10 +210,146 @@ export default function AdminProducts() {
       .join(", ");
   };
 
+  const renderProductTable = (productList: any[], isCouture: boolean) => {
+    if (productList.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            {search || categoryId || collectionId
+              ? "No products match your filters."
+              : `No ${isCouture ? "Couture" : "Ready To Wear"} products yet.`}
+          </p>
+          {!search && !categoryId && !collectionId && (
+            <Button asChild className="mt-4">
+              <Link to={`/admin/products/new?type=${isCouture ? "couture" : "ready_to_wear"}`}>
+                Add your first {isCouture ? "Couture" : "Ready To Wear"} product
+              </Link>
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-16">ID</TableHead>
+              <TableHead className="w-16">Image</TableHead>
+              <TableHead>Name</TableHead>
+              {!isCouture && <TableHead className="hidden md:table-cell">Price</TableHead>}
+              <TableHead className="hidden md:table-cell">Category</TableHead>
+              <TableHead className="hidden lg:table-cell">Collection</TableHead>
+              <TableHead className="hidden sm:table-cell">Status</TableHead>
+              <TableHead className="w-24">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {productList.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {product.product_number || "—"}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
+                    {getPrimaryImage(product) ? (
+                      <img
+                        src={getPrimaryImage(product)}
+                        alt={product.name}
+                        className="h-full w-full object-cover object-center"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
+                        —
+                      </div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div>
+                    <p className="font-medium">{product.name}</p>
+                    <p className="text-xs text-muted-foreground">{product.slug}</p>
+                  </div>
+                </TableCell>
+                {!isCouture && (
+                  <TableCell className="hidden md:table-cell">
+                    ${Number(product.base_price).toFixed(2)}
+                  </TableCell>
+                )}
+                <TableCell className="hidden md:table-cell">
+                  <span className="text-sm text-muted-foreground">
+                    {(product as any).category?.name || "—"}
+                  </span>
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  <span className="text-sm text-muted-foreground">
+                    {getCollectionNames(product) || "—"}
+                  </span>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge variant={product.is_active ? "default" : "secondary"}>
+                    {product.is_active ? "Active" : "Draft"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link to={`/admin/products/${product.id}`}>
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setDeleteId(product.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  };
+
   return (
     <AdminLayout title="Products" description="Manage your product catalog">
-      {/* Filters row */}
-      <div className="flex flex-col gap-4 mb-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <TabsList>
+            <TabsTrigger value="ready_to_wear">
+              Ready To Wear ({readyToWearProducts.length})
+            </TabsTrigger>
+            <TabsTrigger value="couture">
+              Couture ({coutureProducts.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleExport} disabled={isExporting || isLoading}>
+              {isExporting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              Export CSV
+            </Button>
+            <Button asChild>
+              <Link to={`/admin/products/new?type=${activeTab}`}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add {activeTab === "couture" ? "Couture" : "Product"}
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* Filters row */}
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Category filter */}
           <Select
@@ -223,11 +379,17 @@ export default function AdminProducts() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All collections</SelectItem>
-              {collections?.map((col) => (
-                <SelectItem key={col.id} value={col.id}>
-                  {col.name}
-                </SelectItem>
-              ))}
+              {collections
+                ?.filter((col) => 
+                  activeTab === "couture" 
+                    ? col.collection_type === "couture" 
+                    : col.collection_type === "ready_to_wear"
+                )
+                .map((col) => (
+                  <SelectItem key={col.id} value={col.id}>
+                    {col.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
 
@@ -241,135 +403,32 @@ export default function AdminProducts() {
               className="pl-9"
             />
           </div>
+        </div>
 
-          {/* Actions */}
-          <Button variant="outline" onClick={handleExport} disabled={isExporting || isLoading}>
-            {isExporting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-2 h-4 w-4" />
-            )}
-            Export CSV
-          </Button>
-          <Button asChild>
-            <Link to="/admin/products/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-16" />
-          ))}
-        </div>
-      ) : isError ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Failed to load products.</p>
-          <Button onClick={() => refetch()} variant="outline" className="mt-4">
-            Try Again
-          </Button>
-        </div>
-      ) : filteredProducts?.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
-            {search || categoryId || collectionId
-              ? "No products match your filters."
-              : "No products yet."}
-          </p>
-          {!search && !categoryId && !collectionId && (
-            <Button asChild className="mt-4">
-              <Link to="/admin/products/new">Add your first product</Link>
+        {isLoading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-16" />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Failed to load products.</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4">
+              Try Again
             </Button>
-          )}
-        </div>
-      ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-16">ID</TableHead>
-                <TableHead className="w-16">Image</TableHead>
-                <TableHead>Name</TableHead>
-              <TableHead className="hidden md:table-cell">Price</TableHead>
-                <TableHead className="hidden md:table-cell">Category</TableHead>
-                <TableHead className="hidden lg:table-cell">Collection</TableHead>
-                <TableHead className="hidden sm:table-cell">Status</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProducts?.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <span className="text-xs font-mono text-muted-foreground">
-                      {product.product_number || "—"}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
-                      {getPrimaryImage(product) ? (
-                        <img
-                          src={getPrimaryImage(product)}
-                          alt={product.name}
-                          className="h-full w-full object-cover object-center"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
-                          —
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">{product.slug}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    ${Number(product.base_price).toFixed(2)}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <span className="text-sm text-muted-foreground">
-                      {(product as any).category?.name || "—"}
-                    </span>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <span className="text-sm text-muted-foreground">
-                      {getCollectionNames(product) || "—"}
-                    </span>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge variant={product.is_active ? "default" : "secondary"}>
-                      {product.is_active ? "Active" : "Draft"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link to={`/admin/products/${product.id}`}>
-                          <Pencil className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setDeleteId(product.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+          </div>
+        ) : (
+          <>
+            <TabsContent value="ready_to_wear" className="mt-0">
+              {renderProductTable(filteredReadyToWear, false)}
+            </TabsContent>
+            <TabsContent value="couture" className="mt-0">
+              {renderProductTable(filteredCouture, true)}
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
