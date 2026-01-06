@@ -10,13 +10,16 @@ interface UniverseCardProps {
   href: string;
   imageUrl: string;
   imageAlt: string;
+  size?: "large" | "small";
 }
 
-function UniverseCard({ title, overline, subtitle, cta, href, imageUrl, imageAlt }: UniverseCardProps) {
+function UniverseCard({ title, overline, subtitle, cta, href, imageUrl, imageAlt, size = "large" }: UniverseCardProps) {
+  const isLarge = size === "large";
+  
   return (
     <Link
       to={href}
-      className="group relative block aspect-[4/5] overflow-hidden bg-muted md:aspect-[3/4] lg:aspect-[4/5]"
+      className="group relative block h-full overflow-hidden bg-muted"
     >
       {/* Image */}
       <img
@@ -29,24 +32,24 @@ function UniverseCard({ title, overline, subtitle, cta, href, imageUrl, imageAlt
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity duration-500 group-hover:from-black/70" />
       
       {/* Content overlay */}
-      <div className="relative flex h-full flex-col justify-end p-6 md:p-8 lg:p-10">
+      <div className={`relative flex h-full flex-col justify-end ${isLarge ? "p-8 md:p-12 lg:p-16" : "p-6 md:p-8"}`}>
         {/* Overline */}
-        <p className="mb-2 font-label text-xs font-medium uppercase tracking-[0.3em] text-white/70">
+        <p className={`mb-2 font-label font-medium uppercase tracking-[0.3em] text-white/70 ${isLarge ? "text-xs md:text-sm" : "text-xs"}`}>
           {overline}
         </p>
         
         {/* Title */}
-        <h2 className="font-serif text-3xl font-light tracking-wide text-white md:text-4xl lg:text-5xl">
+        <h2 className={`font-serif font-light tracking-wide text-white ${isLarge ? "text-4xl md:text-5xl lg:text-6xl" : "text-2xl md:text-3xl"}`}>
           {title}
         </h2>
         
         {/* Subtitle */}
-        <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70 md:text-base">
+        <p className={`mt-3 leading-relaxed text-white/70 ${isLarge ? "max-w-md text-sm md:text-base lg:text-lg" : "max-w-xs text-sm"}`}>
           {subtitle}
         </p>
         
         {/* CTA */}
-        <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:gap-3">
+        <span className={`mt-6 inline-flex items-center gap-2 font-medium tracking-wide text-white transition-all duration-300 group-hover:gap-3 ${isLarge ? "text-sm md:text-base" : "text-sm"}`}>
           <span className="relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-white after:transition-all after:duration-300 group-hover:after:w-full">
             {cta}
           </span>
@@ -60,37 +63,11 @@ function UniverseCard({ title, overline, subtitle, cta, href, imageUrl, imageAlt
 export default function CollectionsPage() {
   return (
     <Layout>
-      {/* Hero Section - inspired by CollectionType page */}
-      <section className="relative flex min-h-[50vh] items-center justify-center overflow-hidden bg-muted/30 py-20 md:min-h-[60vh] md:py-24 lg:py-32">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
-        
-        <div className="container relative z-10">
-          <div className="mx-auto max-w-3xl text-center">
-            {/* Overline */}
-            <p className="mb-4 font-label text-xs font-medium uppercase tracking-[0.4em] text-muted-foreground md:text-sm">
-              The Pheres Universe
-            </p>
-            
-            {/* Main Title */}
-            <h1 className="font-serif text-4xl font-light tracking-wide text-foreground md:text-5xl lg:text-6xl xl:text-7xl">
-              Two Worlds, One Vision
-            </h1>
-            
-            {/* Description */}
-            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              From exceptional high jewelry crafted by appointment to refined pieces 
-              available for immediate discovery—each creation embodies the same 
-              dedication to artistry and timeless elegance.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Universe Cards Grid */}
-      <section className="bg-background">
-        <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2">
-          {/* Couture Universe */}
+      {/* Asymmetric Editorial Layout */}
+      <section className="min-h-[calc(100vh-4rem)] bg-background lg:min-h-[calc(100vh-5rem)]">
+        <div className="grid h-full min-h-[calc(100vh-4rem)] grid-cols-1 gap-px bg-border lg:min-h-[calc(100vh-5rem)] lg:grid-cols-[1.4fr_1fr]">
+          
+          {/* Left: Large Couture Card - 60% */}
           <UniverseCard
             overline="By Appointment"
             title="Couture"
@@ -99,32 +76,45 @@ export default function CollectionsPage() {
             href="/collections/couture"
             imageUrl="/images/hero-model.webp"
             imageAlt="Couture high jewelry collection"
+            size="large"
           />
           
-          {/* Ready to Wear Universe */}
-          <UniverseCard
-            overline="Available Now"
-            title="Ready to Wear"
-            subtitle="Refined luxury jewelry, designed for everyday elegance and available for immediate discovery."
-            cta="Explore Collection"
-            href="/collections/ready-to-wear"
-            imageUrl="/images/story-hero.webp"
-            imageAlt="Ready to Wear jewelry collection"
-          />
-        </div>
-      </section>
-      
-      {/* Optional: CTA Section */}
-      <section className="border-t border-border bg-background py-16 md:py-20">
-        <div className="container">
-          <div className="mx-auto max-w-xl text-center">
-            <Link
-              to="/story"
-              className="inline-flex items-center gap-2 text-sm font-medium tracking-wide text-primary transition-colors hover:text-primary/80"
-            >
-              Discover Our Story
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+          {/* Right: Stacked - Ready to Wear Card + Context */}
+          <div className="flex flex-col gap-px bg-border">
+            {/* Ready to Wear Card - takes ~60% of right side */}
+            <div className="relative h-[50vh] lg:h-[60%]">
+              <UniverseCard
+                overline="Available Now"
+                title="Ready to Wear"
+                subtitle="Refined luxury jewelry, designed for everyday elegance."
+                cta="Explore Collection"
+                href="/collections/ready-to-wear"
+                imageUrl="/images/story-hero.webp"
+                imageAlt="Ready to Wear jewelry collection"
+                size="small"
+              />
+            </div>
+            
+            {/* Context Text Block - takes ~40% of right side */}
+            <div className="flex flex-1 flex-col justify-center bg-background px-8 py-12 md:px-10 lg:px-12 lg:py-0">
+              <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.4em] text-muted-foreground">
+                The Pheres Universe
+              </p>
+              <h3 className="font-serif text-2xl font-light tracking-wide text-foreground md:text-3xl">
+                Two Worlds, One Vision
+              </h3>
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground md:text-base">
+                From bespoke haute joaillerie to refined everyday pieces, 
+                each creation embodies the same dedication to artistry and timeless elegance.
+              </p>
+              <Link
+                to="/story"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-primary transition-colors hover:text-primary/80"
+              >
+                Discover Our Story
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
