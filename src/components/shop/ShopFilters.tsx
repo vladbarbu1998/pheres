@@ -329,7 +329,7 @@ export function ShopFilters({
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent side="bottom" avoidCollisions={false}>
           <SelectItem value="featured">Featured</SelectItem>
           <SelectItem value="price-asc">Price: Low to High</SelectItem>
           <SelectItem value="price-desc">Price: High to Low</SelectItem>
