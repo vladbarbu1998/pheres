@@ -205,7 +205,7 @@ export default function Celebrities() {
       <PageHero
         label="Worn by Icons"
         title="Celebrities & Red Carpet Moments"
-        intro="Pheres jewelry has adorned some of the world's most celebrated figures on the most prestigious stages."
+        intro={<><span className="brand-word">Pheres</span> jewelry has adorned some of the world's most celebrated figures on the most prestigious stages.</>}
       />
 
       {/* Divider */}
