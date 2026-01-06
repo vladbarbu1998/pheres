@@ -79,10 +79,11 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Trigger Link */}
-      <button
+      {/* Trigger Link - clickable to go to /collections */}
+      <Link
+        to="/collections"
         className={cn(
-          "font-sans text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1.5 bg-transparent border-none cursor-pointer py-6",
+          "font-sans text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1.5 py-6",
           isOpen || isActive ? "text-foreground" : "text-muted-foreground"
         )}
       >
@@ -93,7 +94,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
             isOpen && "rotate-180"
           )}
         />
-      </button>
+      </Link>
 
       {/* Full-width dropdown panel */}
       <div
@@ -140,7 +141,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
                 {/* CTA - always at bottom */}
                 <Link
-                  to="/collections#couture"
+                  to="/collections/couture"
                   className="inline-block text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
                 >
                   Discover Couture
@@ -189,10 +190,10 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
                 {/* CTA - always at bottom */}
                 <Link
-                  to="/shop"
+                  to="/collections/ready-to-wear"
                   className="inline-block text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
                 >
-                  Shop Online
+                  Discover Ready to Wear
                 </Link>
               </div>
 
@@ -249,7 +250,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           <div className="flex items-start gap-4">
             <div className="flex-1">
               <Link
-                to="/collections#couture"
+                to="/collections/couture"
                 onClick={onNavigate}
                 className="font-sans text-base font-medium tracking-wide text-foreground hover:text-primary transition-colors mb-2 inline-block"
               >
@@ -274,7 +275,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
                 )}
               </nav>
               <Link
-                to="/collections#couture"
+                to="/collections/couture"
                 onClick={onNavigate}
                 className="inline-flex items-center text-sm font-medium tracking-wide text-primary"
               >
@@ -301,7 +302,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           <div className="flex items-start gap-4">
             <div className="flex-1">
               <Link
-                to="/collections#ready-to-wear"
+                to="/collections/ready-to-wear"
                 onClick={onNavigate}
                 className="font-sans text-base font-medium tracking-wide text-foreground hover:text-primary transition-colors mb-2 inline-block"
               >
@@ -323,11 +324,11 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
                 ))}
               </nav>
               <Link
-                to="/shop"
+                to="/collections/ready-to-wear"
                 onClick={onNavigate}
                 className="inline-flex items-center text-sm font-medium tracking-wide text-primary"
               >
-                Shop Online
+                Discover Ready to Wear
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             </div>
