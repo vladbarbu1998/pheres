@@ -118,34 +118,34 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
           {/* Couture Column */}
           <div className="flex-1 border-r border-border/30 transition-colors duration-400 hover:bg-muted/30">
             <div className="container max-w-none px-12 lg:px-20 py-12 flex items-center justify-between gap-8">
-              <div className="max-w-[60%]">
-                <h3 className="font-heading text-3xl font-normal text-foreground mb-2 tracking-wide">
+              <div className="flex flex-col min-h-[280px]">
+                <h3 className="font-label text-2xl font-light text-foreground mb-2 tracking-wide">
                   Couture
                 </h3>
-                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-[280px]">
                   {data?.couture?.parent.description || "One-of-a-kind pieces created for unforgettable moments. By appointment only."}
                 </p>
 
                 {/* Child collection links */}
-                <nav className="space-y-3 mb-8">
+                <nav className="space-y-2.5 mb-auto">
                   {data?.couture?.children.map((child) => (
                     <Link
                       key={child.id}
                       to={`/shop/collection/${child.slug}`}
-                      className="block font-heading text-lg text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
+                      className="block font-label text-base font-normal text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
                     >
                       {child.name}
                     </Link>
                   ))}
                   {(!data?.couture?.children || data.couture.children.length === 0) && (
-                    <p className="font-heading text-lg text-muted-foreground/60 italic">Coming soon</p>
+                    <p className="font-label text-base text-muted-foreground/60 italic">Coming soon</p>
                   )}
                 </nav>
 
-                {/* CTA */}
+                {/* CTA - aligned at bottom */}
                 <Link
                   to="/collections#couture"
-                  className="inline-block text-xs font-bold tracking-[0.15em] text-foreground uppercase border-b border-foreground pb-1 hover:text-primary hover:border-primary transition-colors"
+                  className="inline-block mt-6 text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
                 >
                   Discover Couture
                 </Link>
@@ -153,7 +153,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
               {/* Image - circular */}
               {data?.couture?.children[0]?.image_url && (
-                <div className="w-44 h-44 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                <div className="w-40 h-40 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
                   <img
                     src={data.couture.children[0].image_url}
                     alt="Couture collection"
@@ -167,31 +167,31 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
           {/* Ready To Wear Column */}
           <div className="flex-1 transition-colors duration-400 hover:bg-muted/30">
             <div className="container max-w-none px-12 lg:px-20 py-12 flex items-center justify-between gap-8">
-              <div className="max-w-[60%]">
-                <h3 className="font-heading text-3xl font-normal text-foreground mb-2 tracking-wide">
+              <div className="flex flex-col min-h-[280px]">
+                <h3 className="font-label text-2xl font-light text-foreground mb-2 tracking-wide">
                   Ready to Wear
                 </h3>
-                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-[280px]">
                   {data?.readyToWear?.parent.description || "Accessible refinement. Iconic collections available online."}
                 </p>
 
                 {/* Child collection links */}
-                <nav className="space-y-3 mb-8">
+                <nav className="space-y-2.5 mb-auto">
                   {data?.readyToWear?.children.map((child) => (
                     <Link
                       key={child.id}
                       to={`/shop/collection/${child.slug}`}
-                      className="block font-heading text-lg text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
+                      className="block font-label text-base font-normal text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
                     >
                       {child.name}
                     </Link>
                   ))}
                 </nav>
 
-                {/* CTA */}
+                {/* CTA - aligned at bottom */}
                 <Link
                   to="/shop"
-                  className="inline-block text-xs font-bold tracking-[0.15em] text-foreground uppercase border-b border-foreground pb-1 hover:text-primary hover:border-primary transition-colors"
+                  className="inline-block mt-6 text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
                 >
                   Shop Online
                 </Link>
@@ -199,7 +199,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
               {/* Image - circular */}
               {data?.readyToWear?.children[0]?.image_url && (
-                <div className="w-44 h-44 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                <div className="w-40 h-40 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
                   <img
                     src={data.readyToWear.children[0].image_url}
                     alt="Ready To Wear collection"
