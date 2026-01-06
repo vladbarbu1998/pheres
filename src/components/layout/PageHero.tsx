@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 interface PageHeroProps {
   label?: React.ReactNode;
   title: React.ReactNode;
-  intro: string;
+  intro: React.ReactNode;
   className?: string;
 }
 
