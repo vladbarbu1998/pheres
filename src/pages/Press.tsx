@@ -57,11 +57,7 @@ export default function PressPage() {
       {/* Logo Carousel Section - Full width */}
       {!outletsLoading && outlets && outlets.length > 0 && (
         <section className="border-b border-border">
-          <PressLogoCarousel
-            outlets={outlets}
-            onOutletClick={handleOutletSelect}
-            selectedOutletId={selectedOutletId}
-          />
+          <PressLogoCarousel outlets={outlets} />
         </section>
       )}
 
