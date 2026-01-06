@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { BrandWord } from "@/components/ui/brand-word";
 
 interface UniverseCardProps {
   title: string;
@@ -98,7 +99,7 @@ export default function CollectionsPage() {
             {/* Context Text Block - takes ~40% of right side */}
             <div className="flex flex-1 flex-col justify-center bg-background px-8 py-12 md:px-10 lg:px-12 lg:py-0">
               <p className="mb-3 font-label text-xs font-medium uppercase tracking-[0.4em] text-muted-foreground">
-                The Pheres Universe
+                The <BrandWord>Pheres</BrandWord> Universe
               </p>
               <h3 className="font-serif text-2xl font-light tracking-wide text-foreground md:text-3xl">
                 Two Worlds, One Vision
