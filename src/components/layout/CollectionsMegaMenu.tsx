@@ -255,10 +255,14 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           {/* Couture Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
-            <h4 className="font-sans text-base font-medium tracking-wide text-foreground mb-2">
-              Couture
-            </h4>
-              <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+              <Link
+                to="/collections#couture"
+                onClick={onNavigate}
+                className="font-sans text-base font-medium tracking-wide text-foreground hover:text-primary transition-colors mb-2 inline-block"
+              >
+                Couture
+              </Link>
+              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                 One-of-a-kind pieces by inquiry only.
               </p>
               <nav className="space-y-2.5 mb-4">
@@ -303,10 +307,14 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
           {/* Ready To Wear Section */}
           <div className="flex items-start gap-4">
             <div className="flex-1">
-            <h4 className="font-sans text-base font-medium tracking-wide text-foreground mb-2">
-              Ready to Wear
-            </h4>
-              <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+              <Link
+                to="/collections#ready-to-wear"
+                onClick={onNavigate}
+                className="font-sans text-base font-medium tracking-wide text-foreground hover:text-primary transition-colors mb-2 inline-block"
+              >
+                Ready to Wear
+              </Link>
+              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                 Elegant pieces available online.
               </p>
               <nav className="space-y-2.5 mb-4">
