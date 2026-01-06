@@ -34,7 +34,7 @@ export function Footer() {
 
           {/* Shop */}
           <div>
-            <h3 className="font-display text-sm font-semibold tracking-wide text-foreground">
+            <h3 className="font-display text-base font-semibold tracking-wide text-foreground">
               Shop
             </h3>
             <ul className="mt-4 space-y-3">
@@ -53,7 +53,7 @@ export function Footer() {
 
           {/* About */}
           <div>
-            <h3 className="font-display text-sm font-semibold tracking-wide text-foreground">
+            <h3 className="font-display text-base font-semibold tracking-wide text-foreground">
               About
             </h3>
             <ul className="mt-4 space-y-3">
@@ -72,7 +72,7 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="font-display text-sm font-semibold tracking-wide text-foreground">
+            <h3 className="font-display text-base font-semibold tracking-wide text-foreground">
               Legal
             </h3>
             <ul className="mt-4 space-y-3">

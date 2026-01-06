@@ -55,7 +55,7 @@ export function AdminLayout({ children, title, description, backLink }: AdminLay
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-muted/30 font-body">
       {/* Mobile header */}
       <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-background px-4 lg:hidden">
         <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
