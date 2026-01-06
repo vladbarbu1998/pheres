@@ -42,28 +42,28 @@ function useParallax(speed: number = 0.3) {
 }
 
 function UniverseCard({ title, overline, subtitle, cta, href, imageUrl, imageAlt }: UniverseCardProps) {
-  const { ref, offset } = useParallax(0.15);
+  const { ref, offset } = useParallax(0.08);
 
   return (
     <Link
       to={href}
-      className="group relative block w-full overflow-hidden bg-muted"
+      className="group relative block h-full w-full overflow-hidden bg-muted"
     >
       {/* Image with parallax */}
-      <div ref={ref} className="absolute inset-0">
+      <div ref={ref} className="absolute inset-[-10%]">
         <img
           src={imageUrl}
           alt={imageAlt}
-          className="h-[120%] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
           style={{ 
-            transform: `translateY(${offset}px) scale(${1 + (offset > 0 ? 0 : 0)})`,
+            transform: `translateY(${offset}px)`,
             willChange: "transform"
           }}
         />
       </div>
       
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 transition-opacity duration-500 group-hover:from-black/60 group-hover:via-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 group-hover:from-black/60" />
       
       {/* Content overlay */}
       <div className="relative flex h-full flex-col justify-end p-8 md:p-10 lg:p-12">
@@ -123,34 +123,30 @@ function ContextBand() {
 export default function CollectionsPage() {
   return (
     <Layout>
-      {/* Band 1: Universe Portal */}
-      <section className="min-h-[85vh] md:min-h-[90vh]">
-        <div className="grid h-full min-h-[85vh] grid-cols-1 gap-1 md:min-h-[90vh] md:grid-cols-2">
+      {/* Band 1: Universe Portal - full viewport height minus header */}
+      <section className="h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)]">
+        <div className="grid h-full grid-cols-1 gap-px bg-border md:grid-cols-2">
           {/* Couture Universe */}
-          <div className="relative h-[50vh] md:h-auto md:min-h-[85vh]">
-            <UniverseCard
-              overline="By Appointment"
-              title="Couture"
-              subtitle="Exceptional high jewelry, crafted with rare gemstones and unparalleled artistry for the most discerning collectors."
-              cta="Explore Couture"
-              href="/collections/couture"
-              imageUrl="/images/hero-model.webp"
-              imageAlt="Couture high jewelry collection"
-            />
-          </div>
+          <UniverseCard
+            overline="By Appointment"
+            title="Couture"
+            subtitle="Exceptional high jewelry, crafted with rare gemstones and unparalleled artistry for the most discerning collectors."
+            cta="Explore Couture"
+            href="/collections/couture"
+            imageUrl="/images/hero-model.webp"
+            imageAlt="Couture high jewelry collection"
+          />
           
           {/* Ready to Wear Universe */}
-          <div className="relative h-[50vh] md:h-auto md:min-h-[85vh]">
-            <UniverseCard
-              overline="Available Now"
-              title="Ready to Wear"
-              subtitle="Refined luxury jewelry, designed for everyday elegance and available for immediate discovery."
-              cta="Explore Collection"
-              href="/collections/ready-to-wear"
-              imageUrl="/images/story-hero.webp"
-              imageAlt="Ready to Wear jewelry collection"
-            />
-          </div>
+          <UniverseCard
+            overline="Available Now"
+            title="Ready to Wear"
+            subtitle="Refined luxury jewelry, designed for everyday elegance and available for immediate discovery."
+            cta="Explore Collection"
+            href="/collections/ready-to-wear"
+            imageUrl="/images/story-hero.webp"
+            imageAlt="Ready to Wear jewelry collection"
+          />
         </div>
       </section>
       
