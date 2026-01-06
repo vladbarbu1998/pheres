@@ -24,6 +24,13 @@ interface Variant {
   is_active: boolean;
 }
 
+interface ProductMetal {
+  id?: string;
+  metal_type: string;
+  metal_weight?: string | null;
+  display_order?: number;
+}
+
 interface ProductStone {
   id?: string;
   stone_type: string;
@@ -47,8 +54,7 @@ interface ProductInfoProps {
   collectionType?: CollectionType | null;
   productCode?: string | null;
   modelNumber?: string | null;
-  metalType?: string | null;
-  metalWeight?: string | null;
+  metals?: ProductMetal[];
   grossWeight?: string | null;
   size?: string | null;
   stones?: ProductStone[];
@@ -68,8 +74,7 @@ export function ProductInfo({
   collectionType,
   productCode,
   modelNumber,
-  metalType,
-  metalWeight,
+  metals = [],
   grossWeight,
   size,
   stones = [],
@@ -264,8 +269,7 @@ export function ProductInfo({
         <ProductSpecs
           productCode={productCode}
           modelNumber={modelNumber}
-          metalType={metalType}
-          metalWeight={metalWeight}
+          metals={metals}
           grossWeight={grossWeight}
           size={size}
           stones={stones}

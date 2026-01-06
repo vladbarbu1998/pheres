@@ -1,3 +1,10 @@
+interface ProductMetal {
+  id?: string;
+  metal_type: string;
+  metal_weight?: string | null;
+  display_order?: number;
+}
+
 interface ProductStone {
   id?: string;
   stone_type: string;
@@ -11,8 +18,7 @@ interface ProductStone {
 interface ProductSpecsProps {
   productCode?: string | null;
   modelNumber?: string | null;
-  metalType?: string | null;
-  metalWeight?: string | null;
+  metals?: ProductMetal[];
   grossWeight?: string | null;
   size?: string | null;
   stones?: ProductStone[];
@@ -37,8 +43,7 @@ function SpecItem({ label, value }: SpecItemProps) {
 export function ProductSpecs({
   productCode,
   modelNumber,
-  metalType,
-  metalWeight,
+  metals = [],
   grossWeight,
   size,
   stones = [],
@@ -48,8 +53,29 @@ export function ProductSpecs({
   const baseSpecs = [
     { label: "Model Number", value: modelNumber },
     { label: "Product Code", value: productCode },
-    { label: "Metal", value: metalType },
-    { label: "Metal Weight", value: metalWeight },
+  ].filter((spec) => spec.value);
+
+  // Build metal specs - each metal gets its own line
+  const metalSpecs: { label: string; value: string }[] = [];
+  
+  metals.forEach((metal, index) => {
+    if (metal.metal_type) {
+      const metalLabel = metals.length > 1 ? `Metal ${index + 1}` : "Metal";
+      metalSpecs.push({
+        label: metalLabel,
+        value: metal.metal_type,
+      });
+      if (metal.metal_weight) {
+        metalSpecs.push({
+          label: metals.length > 1 ? `Metal ${index + 1} Weight` : "Metal Weight",
+          value: metal.metal_weight,
+        });
+      }
+    }
+  });
+
+  // Gross weight and certification
+  const additionalSpecs = [
     { label: "Gross Weight", value: grossWeight },
     { label: "Certification", value: certification },
   ].filter((spec) => spec.value);
@@ -101,7 +127,7 @@ export function ProductSpecs({
   // Collection always last
   const collectionSpec = collectionName ? [{ label: "Collection", value: collectionName }] : [];
 
-  const allSpecs = [...baseSpecs, ...stoneSpecs, ...sizeSpec, ...collectionSpec];
+  const allSpecs = [...baseSpecs, ...metalSpecs, ...additionalSpecs, ...stoneSpecs, ...sizeSpec, ...collectionSpec];
 
   if (allSpecs.length === 0) {
     return null;
