@@ -283,10 +283,10 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
               <Link
                 to="/collections#couture"
                 onClick={onNavigate}
-                className="inline-flex items-center text-xs font-medium tracking-wide text-primary"
+                className="inline-flex items-center text-sm font-medium tracking-wide text-primary"
               >
                 Discover Couture
-                <ChevronRight className="h-3 w-3 ml-1" />
+                <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             </div>
             {/* Image */}
@@ -332,10 +332,10 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
               <Link
                 to="/shop"
                 onClick={onNavigate}
-                className="inline-flex items-center text-xs font-medium tracking-wide text-primary"
+                className="inline-flex items-center text-sm font-medium tracking-wide text-primary"
               >
                 Shop Online
-                <ChevronRight className="h-3 w-3 ml-1" />
+                <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             </div>
             {/* Image */}
