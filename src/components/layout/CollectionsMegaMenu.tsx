@@ -117,17 +117,20 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
         <div className="flex">
           {/* Couture Column */}
           <div className="flex-1 border-r border-border/30 transition-colors duration-400 hover:bg-muted/30">
-            <div className="container max-w-none px-12 lg:px-20 py-12 flex items-center justify-between gap-8">
-              <div className="flex flex-col min-h-[280px]">
+            <div className="container max-w-none px-12 lg:px-20 py-12 flex items-start justify-between gap-8">
+              <div className="flex flex-col h-[300px]">
+                {/* Title */}
                 <h3 className="font-label text-2xl font-light text-foreground mb-2 tracking-wide">
                   Couture
                 </h3>
+                
+                {/* Description */}
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-[280px]">
                   {data?.couture?.parent.description || "One-of-a-kind pieces created for unforgettable moments. By appointment only."}
                 </p>
 
-                {/* Child collection links */}
-                <nav className="space-y-2.5 mb-auto">
+                {/* Child collection links - grows to fill space */}
+                <nav className="space-y-2.5 flex-1">
                   {data?.couture?.children.map((child) => (
                     <Link
                       key={child.id}
@@ -142,10 +145,10 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
                   )}
                 </nav>
 
-                {/* CTA - aligned at bottom */}
+                {/* CTA - always at bottom */}
                 <Link
                   to="/collections#couture"
-                  className="inline-block mt-6 text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
+                  className="inline-block text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
                 >
                   Discover Couture
                 </Link>
@@ -166,17 +169,20 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
 
           {/* Ready To Wear Column */}
           <div className="flex-1 transition-colors duration-400 hover:bg-muted/30">
-            <div className="container max-w-none px-12 lg:px-20 py-12 flex items-center justify-between gap-8">
-              <div className="flex flex-col min-h-[280px]">
+            <div className="container max-w-none px-12 lg:px-20 py-12 flex items-start justify-between gap-8">
+              <div className="flex flex-col h-[300px]">
+                {/* Title */}
                 <h3 className="font-label text-2xl font-light text-foreground mb-2 tracking-wide">
                   Ready to Wear
                 </h3>
+                
+                {/* Description */}
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed max-w-[280px]">
                   {data?.readyToWear?.parent.description || "Accessible refinement. Iconic collections available online."}
                 </p>
 
-                {/* Child collection links */}
-                <nav className="space-y-2.5 mb-auto">
+                {/* Child collection links - grows to fill space */}
+                <nav className="space-y-2.5 flex-1">
                   {data?.readyToWear?.children.map((child) => (
                     <Link
                       key={child.id}
@@ -188,10 +194,10 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
                   ))}
                 </nav>
 
-                {/* CTA - aligned at bottom */}
+                {/* CTA - always at bottom */}
                 <Link
                   to="/shop"
-                  className="inline-block mt-6 text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
+                  className="inline-block text-xs font-bold tracking-[0.12em] text-foreground uppercase border-b border-foreground pb-0.5 hover:text-primary hover:border-primary transition-colors self-start"
                 >
                   Shop Online
                 </Link>
