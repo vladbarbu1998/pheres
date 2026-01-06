@@ -840,6 +840,7 @@ export type Database = {
           is_new: boolean
           metal_type: string | null
           metal_weight: string | null
+          model_number: string | null
           name: string
           product_number: string | null
           product_type: Database["public"]["Enums"]["product_type"]
@@ -869,6 +870,7 @@ export type Database = {
           is_new?: boolean
           metal_type?: string | null
           metal_weight?: string | null
+          model_number?: string | null
           name: string
           product_number?: string | null
           product_type?: Database["public"]["Enums"]["product_type"]
@@ -898,6 +900,7 @@ export type Database = {
           is_new?: boolean
           metal_type?: string | null
           metal_weight?: string | null
+          model_number?: string | null
           name?: string
           product_number?: string | null
           product_type?: Database["public"]["Enums"]["product_type"]
