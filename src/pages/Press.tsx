@@ -54,12 +54,10 @@ export default function PressPage() {
       {/* Divider */}
       <div className="border-t border-border" />
 
-      {/* Logo Carousel Section - Full width */}
-      {!outletsLoading && outlets && outlets.length > 0 && (
-        <section className="border-b border-border">
-          <PressLogoCarousel outlets={outlets} />
-        </section>
-      )}
+      {/* Logo Carousel Section - Full width, static logos */}
+      <section className="border-b border-border">
+        <PressLogoCarousel />
+      </section>
 
       {/* Articles Section */}
       <section className="py-16 md:py-24">
