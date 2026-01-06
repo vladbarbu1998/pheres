@@ -95,120 +95,106 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
         />
       </button>
 
-      {/* Compact dropdown panel */}
+      {/* Asymmetric dropdown panel */}
       <div
         className={cn(
-          "absolute left-1/2 -translate-x-1/2 z-50 bg-background border border-border/50 rounded-lg",
+          "absolute left-1/2 -translate-x-1/2 z-50 bg-background border border-border/50 rounded-lg overflow-hidden",
           "transition-all duration-300 ease-out",
           "shadow-lg",
           "top-full mt-2",
-          "w-[580px]",
+          "w-[700px]",
           isOpen
             ? "opacity-100 visible translate-y-0"
             : "opacity-0 invisible -translate-y-2 pointer-events-none"
         )}
       >
-        <div className="flex divide-x divide-border/30">
-          {/* Couture Column */}
-          <div className="flex-1 p-6 transition-colors duration-300 hover:bg-muted/20 rounded-l-lg">
-            <div className="flex items-start gap-4">
-              {/* Image - small circular */}
-              {data?.couture?.children[0]?.image_url && (
-                <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                  <img
-                    src={data.couture.children[0].image_url}
-                    alt="Couture collection"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+        <div className="flex">
+          {/* Large Image Side - 55% */}
+          <div className="w-[55%] relative h-[320px] overflow-hidden">
+            {/* Background image with gradient overlay */}
+            <div className="absolute inset-0">
+              {(data?.couture?.children[0]?.image_url || data?.readyToWear?.children[0]?.image_url) && (
+                <img
+                  src={data?.couture?.children[0]?.image_url || data?.readyToWear?.children[0]?.image_url}
+                  alt="Collection"
+                  className="w-full h-full object-cover"
+                />
               )}
-              
-              <div className="flex-1">
-                {/* Title */}
-                <h3 className="font-heading text-lg font-normal text-foreground mb-1 tracking-wide">
-                  Couture
-                </h3>
-                
-                {/* Description */}
-                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                  One-of-a-kind pieces by inquiry only.
-                </p>
-
-                {/* Child collection links */}
-                <nav className="space-y-1.5 mb-3">
-                  {data?.couture?.children.map((child) => (
-                    <Link
-                      key={child.id}
-                      to={`/shop/collection/${child.slug}`}
-                      className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {child.name}
-                    </Link>
-                  ))}
-                  {(!data?.couture?.children || data.couture.children.length === 0) && (
-                    <p className="text-xs text-muted-foreground/60 italic">Coming soon</p>
-                  )}
-                </nav>
-
-                {/* CTA */}
-                <Link
-                  to="/collections#couture"
-                  className="inline-flex items-center text-xs font-medium tracking-wide text-primary hover:text-primary/80 transition-colors"
-                >
-                  Discover Couture
-                  <ChevronDown className="h-3 w-3 ml-1 -rotate-90" />
-                </Link>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-background" />
+            </div>
+            
+            {/* Featured collection info overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background/90 to-transparent">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Featured</p>
+              <h3 className="font-heading text-xl text-foreground">Discover Our Collections</h3>
             </div>
           </div>
 
-          {/* Ready To Wear Column */}
-          <div className="flex-1 p-6 transition-colors duration-300 hover:bg-muted/20 rounded-r-lg">
-            <div className="flex items-start gap-4">
-              {/* Image - small circular */}
-              {data?.readyToWear?.children[0]?.image_url && (
-                <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                  <img
-                    src={data.readyToWear.children[0].image_url}
-                    alt="Ready To Wear collection"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              
-              <div className="flex-1">
-                {/* Title */}
-                <h3 className="font-heading text-lg font-normal text-foreground mb-1 tracking-wide">
-                  Ready to Wear
-                </h3>
-                
-                {/* Description */}
-                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                  Elegant pieces available online.
-                </p>
+          {/* Content Side - 45% */}
+          <div className="w-[45%] p-6 flex flex-col">
+            {/* Couture Section */}
+            <div className="mb-5">
+              <Link
+                to="/collections#couture"
+                className="font-heading text-base font-normal text-foreground hover:text-primary transition-colors tracking-wide"
+              >
+                Couture
+              </Link>
+              <p className="text-xs text-muted-foreground mt-1 mb-2">
+                One-of-a-kind pieces by inquiry only.
+              </p>
+              <nav className="space-y-1">
+                {data?.couture?.children.map((child) => (
+                  <Link
+                    key={child.id}
+                    to={`/shop/collection/${child.slug}`}
+                    className="block text-sm text-muted-foreground hover:text-foreground hover:pl-1 transition-all"
+                  >
+                    {child.name}
+                  </Link>
+                ))}
+                {(!data?.couture?.children || data.couture.children.length === 0) && (
+                  <p className="text-xs text-muted-foreground/60 italic">Coming soon</p>
+                )}
+              </nav>
+            </div>
 
-                {/* Child collection links */}
-                <nav className="space-y-1.5 mb-3">
-                  {data?.readyToWear?.children.map((child) => (
-                    <Link
-                      key={child.id}
-                      to={`/shop/collection/${child.slug}`}
-                      className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {child.name}
-                    </Link>
-                  ))}
-                </nav>
+            {/* Divider */}
+            <div className="border-t border-border/40 my-2" />
 
-                {/* CTA */}
-                <Link
-                  to="/shop"
-                  className="inline-flex items-center text-xs font-medium tracking-wide text-primary hover:text-primary/80 transition-colors"
-                >
-                  Shop Online
-                  <ChevronDown className="h-3 w-3 ml-1 -rotate-90" />
-                </Link>
-              </div>
+            {/* Ready to Wear Section */}
+            <div className="mb-4">
+              <Link
+                to="/collections#ready-to-wear"
+                className="font-heading text-base font-normal text-foreground hover:text-primary transition-colors tracking-wide"
+              >
+                Ready to Wear
+              </Link>
+              <p className="text-xs text-muted-foreground mt-1 mb-2">
+                Elegant pieces available online.
+              </p>
+              <nav className="space-y-1">
+                {data?.readyToWear?.children.map((child) => (
+                  <Link
+                    key={child.id}
+                    to={`/shop/collection/${child.slug}`}
+                    className="block text-sm text-muted-foreground hover:text-foreground hover:pl-1 transition-all"
+                  >
+                    {child.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* Bottom CTA */}
+            <div className="mt-auto pt-4 border-t border-border/30">
+              <Link
+                to="/shop"
+                className="inline-flex items-center text-xs font-medium tracking-wide text-primary hover:text-primary/80 transition-colors"
+              >
+                View All Collections
+                <ChevronDown className="h-3 w-3 ml-1 -rotate-90" />
+              </Link>
             </div>
           </div>
         </div>
