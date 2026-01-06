@@ -83,7 +83,8 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
       <button
         className={cn(
           "font-sans text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1.5 bg-transparent border-none cursor-pointer relative py-6",
-          isActive ? "text-foreground" : "text-muted-foreground"
+          "after:content-[''] after:absolute after:w-full after:h-[2px] after:bottom-5 after:left-0 after:bg-primary after:transition-transform after:duration-300 after:origin-bottom-right",
+          isOpen || isActive ? "text-foreground after:scale-x-100 after:origin-bottom-left" : "text-muted-foreground after:scale-x-0 hover:after:scale-x-100 hover:after:origin-bottom-left"
         )}
       >
         Collections
@@ -91,13 +92,6 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
           className={cn(
             "h-3 w-3 transition-transform duration-300 ease-out",
             isOpen && "rotate-180"
-          )}
-        />
-        {/* Animated underline */}
-        <span
-          className={cn(
-            "absolute bottom-5 left-0 h-[1px] bg-primary transition-all duration-300 ease-out",
-            isOpen ? "w-full" : "w-0"
           )}
         />
       </button>
@@ -226,7 +220,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
   const { data } = useCollectionsGrouped();
 
   return (
-    <div className="border-b border-border/30">
+    <div>
       {/* Toggle button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
