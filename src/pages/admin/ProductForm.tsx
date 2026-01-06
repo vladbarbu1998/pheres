@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAdminProduct, useAdminCategories, useAdminCollections } from "@/hooks/useAdmin";
+import { useAdminProduct, useAdminCategories, useAdminCollectionsByType } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -76,7 +76,14 @@ export default function ProductForm() {
 
   const { data: product, isLoading: productLoading } = useAdminProduct(isNew ? undefined : id);
   const { data: categories } = useAdminCategories();
-  const { data: collections } = useAdminCollections();
+  const { data: coutureCollections } = useAdminCollectionsByType("couture");
+  const { data: readyToWearCollections } = useAdminCollectionsByType("ready_to_wear");
+  
+  // Combine child collections for selection (only child collections, not parents)
+  const childCollections = [
+    ...(readyToWearCollections || []),
+    ...(coutureCollections || []),
+  ];
 
   const [isSaving, setIsSaving] = useState(false);
   const [images, setImages] = useState<ProductImage[]>([]);
@@ -486,30 +493,61 @@ export default function ProductForm() {
                   )}
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Collection</Label>
-                <div className="flex flex-wrap gap-2">
-                  {collections?.map((col) => (
-                    <Button
-                      key={col.id}
-                      type="button"
-                      size="sm"
-                      variant={selectedCollections.includes(col.id) ? "default" : "outline"}
-                      onClick={() =>
-                        setSelectedCollections((prev) =>
-                          prev.includes(col.id)
-                            ? prev.filter((cid) => cid !== col.id)
-                            : [...prev, col.id]
-                        )
-                      }
-                    >
-                      {col.name}
-                    </Button>
-                  ))}
-                  {(!collections || collections.length === 0) && (
-                    <p className="text-sm text-muted-foreground">No collections available</p>
-                  )}
-                </div>
+              <div className="space-y-3">
+                <Label>Collections</Label>
+                {/* Ready To Wear Collections */}
+                {readyToWearCollections && readyToWearCollections.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground font-medium">Ready To Wear (Purchasable)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {readyToWearCollections.map((col) => (
+                        <Button
+                          key={col.id}
+                          type="button"
+                          size="sm"
+                          variant={selectedCollections.includes(col.id) ? "default" : "outline"}
+                          onClick={() =>
+                            setSelectedCollections((prev) =>
+                              prev.includes(col.id)
+                                ? prev.filter((cid) => cid !== col.id)
+                                : [...prev, col.id]
+                            )
+                          }
+                        >
+                          {col.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {/* Couture Collections */}
+                {coutureCollections && coutureCollections.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground font-medium">Couture (Inquiry Only)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {coutureCollections.map((col) => (
+                        <Button
+                          key={col.id}
+                          type="button"
+                          size="sm"
+                          variant={selectedCollections.includes(col.id) ? "secondary" : "outline"}
+                          onClick={() =>
+                            setSelectedCollections((prev) =>
+                              prev.includes(col.id)
+                                ? prev.filter((cid) => cid !== col.id)
+                                : [...prev, col.id]
+                            )
+                          }
+                        >
+                          {col.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {(!childCollections || childCollections.length === 0) && (
+                  <p className="text-sm text-muted-foreground">No collections available. Create collections first.</p>
+                )}
               </div>
             </div>
 
