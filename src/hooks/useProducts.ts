@@ -142,7 +142,9 @@ export function useProducts({
         }
       }
 
-      // Apply sorting
+      // Apply sorting - always put archived products last
+      query = query.order("archived", { ascending: true });
+      
       switch (sortBy) {
         case "featured":
           query = query.order("is_featured", { ascending: false }).order("is_bestseller", { ascending: false }).order("created_at", { ascending: false });
