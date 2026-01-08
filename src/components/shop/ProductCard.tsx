@@ -221,7 +221,7 @@ export function ProductCard({
 
         {/* Details */}
         <div className="mt-4 space-y-1">
-          {collectionName && !isCouture && (
+          {collectionName && (
             <p className="font-label text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {collectionName}
             </p>
