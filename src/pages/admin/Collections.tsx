@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { sanitizeText } from "@/lib/sanitize";
 import {
   Dialog,
   DialogContent,
@@ -288,7 +289,7 @@ export default function AdminCollections() {
                   <Badge variant="outline" className="text-xs">Featured</Badge>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground truncate">{col.description}</p>
+              <p className="text-sm text-muted-foreground truncate">{col.description ? sanitizeText(col.description) : ""}</p>
               <div className="flex items-center gap-2 mt-3">
                 <Button size="sm" variant="outline" onClick={() => openEdit(col)}>
                   <Pencil className="h-3 w-3 mr-1" />
