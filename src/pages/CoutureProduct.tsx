@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { CoutureGallery, CoutureGallerySkeleton } from "@/components/couture/CoutureGallery";
@@ -6,16 +6,19 @@ import { CoutureInfoPanel, CoutureInfoPanelSkeleton } from "@/components/couture
 import { CoutureStorySection } from "@/components/couture/CoutureStorySection";
 import { CoutureProvenance } from "@/components/couture/CoutureProvenance";
 import { CoutureRelatedPieces } from "@/components/couture/CoutureRelatedPieces";
+import { CoutureRecentlyViewed } from "@/components/couture/CoutureRecentlyViewed";
 import { CoutureInquiryDialog } from "@/components/couture/CoutureInquiryDialog";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
 import { useProduct, useRelatedProducts } from "@/hooks/useProduct";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
 export default function CoutureProductPage() {
   const { collectionSlug, productSlug } = useParams<{ collectionSlug: string; productSlug: string }>();
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const { addProduct } = useRecentlyViewed();
 
   // Fetch collection info for breadcrumb and context
   const { data: collection } = useQuery({
@@ -39,6 +42,17 @@ export default function CoutureProductPage() {
     isError: productError,
     refetch,
   } = useProduct(productSlug || "");
+
+  // Track recently viewed
+  useEffect(() => {
+    if (product) {
+      addProduct({
+        id: product.id,
+        slug: product.slug,
+        productType: "couture",
+      });
+    }
+  }, [product, addProduct]);
 
   // Get collection IDs for related products query
   const collectionIds =
@@ -153,6 +167,9 @@ export default function CoutureProductPage() {
           products={relatedProducts || []}
           isLoading={relatedLoading}
         />
+
+        {/* Recently Viewed Couture */}
+        <CoutureRecentlyViewed currentProductId={product?.id} />
       </div>
 
       {/* Inquiry Dialog */}

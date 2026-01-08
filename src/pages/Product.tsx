@@ -5,6 +5,7 @@ import { ProductGallery, ProductGallerySkeleton } from "@/components/product/Pro
 import { ProductInfo, ProductInfoSkeleton } from "@/components/product/ProductInfo";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
+import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
 import {
@@ -17,10 +18,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProduct, useRelatedProducts } from "@/hooks/useProduct";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 export default function ProductPage() {
   const { categorySlug, productSlug } = useParams<{ categorySlug: string; productSlug: string }>();
   const navigate = useNavigate();
+  const { addProduct } = useRecentlyViewed();
 
   const {
     data: product,
@@ -28,6 +31,17 @@ export default function ProductPage() {
     isError: productError,
     refetch,
   } = useProduct(productSlug || "");
+
+  // Track recently viewed (only for RTW products)
+  useEffect(() => {
+    if (product && product.product_type !== "couture") {
+      addProduct({
+        id: product.id,
+        slug: product.slug,
+        productType: "ready_to_wear",
+      });
+    }
+  }, [product, addProduct]);
 
   // Redirect couture products to the correct /couture/ URL
   useEffect(() => {
@@ -193,6 +207,9 @@ export default function ProductPage() {
             isLoading={relatedLoading}
           />
         </div>
+
+        {/* Recently viewed */}
+        <RecentlyViewed currentProductId={product?.id} />
       </div>
     </Layout>
   );
