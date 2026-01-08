@@ -25,7 +25,7 @@ export function RecentlyViewed({ currentProductId }: RecentlyViewedProps) {
         <p className="font-label text-sm font-medium uppercase tracking-[0.25em] text-primary mb-2">
           Your History
         </p>
-        <h2 className="font-display text-xl font-semibold text-foreground">
+        <h2 className="font-display text-3xl font-semibold text-foreground">
           Recently Viewed
         </h2>
       </div>

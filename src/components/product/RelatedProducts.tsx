@@ -44,7 +44,7 @@ export function RelatedProducts({
         <p className="font-label text-sm font-medium uppercase tracking-[0.25em] text-primary mb-2">
           Curated For You
         </p>
-        <h2 className="font-display text-xl font-semibold text-foreground">
+        <h2 className="font-display text-3xl font-semibold text-foreground">
           {title}
         </h2>
       </div>
