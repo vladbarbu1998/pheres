@@ -369,6 +369,22 @@ export function useAdminMessages() {
   });
 }
 
+// Couture inquiries
+export function useAdminCoutureInquiries() {
+  return useQuery({
+    queryKey: ["admin-couture-inquiries"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("couture_inquiries")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 // Get all distinct stone types from product_stones table (for admin combobox)
 export function useAllStoneTypes() {
   return useQuery({

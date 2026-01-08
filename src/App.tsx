@@ -54,6 +54,7 @@ import AdminCelebrities from "./pages/admin/Celebrities";
 import AdminPressOutlets from "./pages/admin/PressOutlets";
 import AdminPressArticles from "./pages/admin/PressArticles";
 import AdminInbox from "./pages/admin/Inbox";
+import AdminCoutureInquiries from "./pages/admin/CoutureInquiries";
 import NotFound from "./pages/NotFound";
 import RoutesDebug from "./pages/RoutesDebug";
 
@@ -125,6 +126,7 @@ const App = () => (
             <Route path="/admin/press-outlets" element={<AdminProtectedRoute><AdminPressOutlets /></AdminProtectedRoute>} />
             <Route path="/admin/press-articles" element={<AdminProtectedRoute><AdminPressArticles /></AdminProtectedRoute>} />
             <Route path="/admin/inbox" element={<AdminProtectedRoute><AdminInbox /></AdminProtectedRoute>} />
+            <Route path="/admin/couture-inquiries" element={<AdminProtectedRoute><AdminCoutureInquiries /></AdminProtectedRoute>} />
             {/* Debug route - not linked in navigation */}
             <Route path="/_routes" element={<RoutesDebug />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
