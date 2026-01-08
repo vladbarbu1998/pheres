@@ -41,7 +41,7 @@ export function RelatedProducts({
   return (
     <section className="border-t border-border pt-12">
       <div className="mb-8 text-center">
-        <p className="font-label text-xs font-medium uppercase tracking-[0.25em] text-primary mb-2">
+        <p className="font-label text-sm font-medium uppercase tracking-[0.25em] text-primary mb-2">
           Curated For You
         </p>
         <h2 className="font-display text-xl font-semibold text-foreground">
