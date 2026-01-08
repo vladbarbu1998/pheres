@@ -105,7 +105,7 @@ export function useAdminProducts(filters?: { categoryId?: string; collectionId?:
           *,
           category:categories(id, name),
           product_images(id, image_url, is_primary, display_order),
-          product_collections(collection_id, collections(id, name))
+          product_collections(collection_id, collections(id, name, archived))
         `)
         .order("created_at", { ascending: false });
 
