@@ -53,7 +53,7 @@ export default function Index() {
         </div>
 
         {/* Split Screen Container */}
-        <div className="flex flex-col md:flex-row min-h-[70vh] md:min-h-[85vh]">
+        <div className="flex flex-col md:flex-row min-h-[60vh] md:min-h-[60vh] lg:min-h-[80vh]">
           {/* Couture - Left */}
           <Link 
             to="/collections/couture" 
