@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { ProductGallery, ProductGallerySkeleton } from "@/components/product/ProductGallery";
 import { ProductInfo, ProductInfoSkeleton } from "@/components/product/ProductInfo";
@@ -79,6 +79,15 @@ export default function ProductPage() {
         return a.display_order - b.display_order;
       })
     : [];
+
+  // Compute effective archived status
+  const effectiveArchived = useMemo(() => {
+    if (!product) return false;
+    if ((product as any).archived) return true;
+    return product.product_collections?.some(
+      (pc: any) => pc.collections?.archived === true
+    ) ?? false;
+  }, [product]);
 
   // Error state
   if (productError) {
@@ -184,6 +193,7 @@ export default function ProductPage() {
                 stones={(product as any).product_stones || []}
                 certification={product!.certification}
                 isNew={product!.is_new}
+                isArchived={effectiveArchived}
                 variants={(product as any).product_variants || []}
               />
             )}

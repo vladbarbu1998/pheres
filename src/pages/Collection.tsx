@@ -162,6 +162,11 @@ export default function CollectionPage() {
                   dangerouslySetInnerHTML={{ __html: sanitizeHtml(collection.description) }}
                 />
               )}
+              {collection?.archived && (
+                <p className="mt-4 text-sm text-muted-foreground italic">
+                  This collection is part of the PHERES archive and is no longer available for purchase.
+                </p>
+              )}
             </div>
           )}
         </div>

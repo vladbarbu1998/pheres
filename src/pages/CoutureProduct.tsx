@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { CoutureGallery, CoutureGallerySkeleton } from "@/components/couture/CoutureGallery";
@@ -75,6 +75,15 @@ export default function CoutureProductPage() {
       })
     : [];
 
+  // Compute effective archived status
+  const effectiveArchived = useMemo(() => {
+    if (!product) return false;
+    if ((product as any).archived) return true;
+    return product.product_collections?.some(
+      (pc: any) => pc.collections?.archived === true
+    ) ?? false;
+  }, [product]);
+
   // Error state
   if (productError) {
     return (
@@ -143,6 +152,7 @@ export default function CoutureProductPage() {
                   productCode={product!.sku}
                   modelNumber={(product as any).model_number}
                   productImageUrl={sortedImages[0]?.image_url || null}
+                  isArchived={effectiveArchived}
                   onInquire={() => setInquiryOpen(true)}
                 />
               )}

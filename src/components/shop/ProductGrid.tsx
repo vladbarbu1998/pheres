@@ -11,6 +11,7 @@ interface Product {
   base_price: number;
   compare_at_price?: number | null;
   is_new?: boolean;
+  archived?: boolean;
   categories?: {
     id: string;
     name: string;
@@ -25,6 +26,7 @@ interface Product {
       name: string;
       slug?: string;
       collection_type?: CollectionType;
+      archived?: boolean;
     } | null;
   }>;
 }
@@ -81,6 +83,10 @@ export function ProductGrid({
         const categorySlug = product.categories?.slug || null;
         const extractedCoutureSlug = coutureCollection?.slug || null;
 
+        // Compute effective archived status
+        const isEffectivelyArchived = product.archived || 
+          product.product_collections?.some(pc => pc.collections?.archived === true) || false;
+
         return (
           <ProductCard
             key={product.id}
@@ -94,6 +100,7 @@ export function ProductGrid({
             collectionType={collectionType}
             categorySlug={categorySlug}
             isNew={product.is_new}
+            isArchived={isEffectivelyArchived}
             coutureCollectionSlug={extractedCoutureSlug || coutureCollectionSlug}
             className="animate-fade-in-up"
             style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}

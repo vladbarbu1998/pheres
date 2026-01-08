@@ -46,6 +46,7 @@ interface CoutureInfoPanelProps {
   productCode?: string | null;
   modelNumber?: string | null;
   productImageUrl?: string | null;
+  isArchived?: boolean;
   onInquire: () => void;
 }
 
@@ -87,6 +88,7 @@ export function CoutureInfoPanel({
   productCode,
   modelNumber,
   productImageUrl,
+  isArchived,
   onInquire,
 }: CoutureInfoPanelProps) {
   const specs = formatSpecs(metals, stones, grossWeight);
@@ -179,13 +181,20 @@ export function CoutureInfoPanel({
         {productName}
       </h1>
 
-      {/* One of a Kind Label */}
-      <p 
-        className="font-label text-xs uppercase tracking-[0.25em] text-muted-foreground mb-8 animate-fade-in"
+      {/* One of a Kind Label + Archive badge */}
+      <div 
+        className="flex flex-wrap items-center gap-3 mb-8 animate-fade-in"
         style={{ animationDelay: "100ms", animationFillMode: "both" }}
       >
-        One of a Kind
-      </p>
+        <p className="font-label text-xs uppercase tracking-[0.25em] text-muted-foreground">
+          One of a Kind
+        </p>
+        {isArchived && (
+          <span className="bg-muted px-2 py-0.5 font-label text-xs font-medium tracking-wide text-muted-foreground">
+            ARCHIVE PIECE
+          </span>
+        )}
+      </div>
 
       {/* Short Description */}
       {shortDescription && (
@@ -218,14 +227,36 @@ export function CoutureInfoPanel({
       )}
 
       {/* Primary CTA */}
-      <Button
-        onClick={onInquire}
-        size="lg"
-        className="w-full h-14 text-base font-medium tracking-wide mb-4 animate-fade-in"
-        style={{ animationDelay: "350ms", animationFillMode: "both" }}
-      >
-        Request Information
-      </Button>
+      {isArchived ? (
+        <div 
+          className="mb-4 animate-fade-in"
+          style={{ animationDelay: "350ms", animationFillMode: "both" }}
+        >
+          <p className="text-muted-foreground text-center mb-4">
+            This PHERES creation is part of a past collection and is no longer available for purchase.
+          </p>
+          <Button
+            onClick={onInquire}
+            size="lg"
+            variant="outline"
+            className="w-full h-14 text-base font-medium tracking-wide"
+          >
+            Inquire About Archive Piece
+          </Button>
+          <p className="text-xs text-muted-foreground text-center mt-2 italic">
+            Inquiries are for historical reference only.
+          </p>
+        </div>
+      ) : (
+        <Button
+          onClick={onInquire}
+          size="lg"
+          className="w-full h-14 text-base font-medium tracking-wide mb-4 animate-fade-in"
+          style={{ animationDelay: "350ms", animationFillMode: "both" }}
+        >
+          Request Information
+        </Button>
+      )}
 
       {/* Add to Favorites */}
       <Button

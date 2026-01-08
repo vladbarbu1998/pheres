@@ -29,6 +29,7 @@ interface ProductCardProps {
   categorySlug?: string | null;
   coutureCollectionSlug?: string | null;
   isNew?: boolean;
+  isArchived?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -52,6 +53,7 @@ export function ProductCard({
   categorySlug,
   coutureCollectionSlug,
   isNew,
+  isArchived,
   className,
   style,
 }: ProductCardProps) {
@@ -148,12 +150,17 @@ export function ProductCard({
 
             {/* Badges */}
             <div className="absolute left-3 top-3 flex flex-col gap-2">
-              {isNew && !isCouture && (
+              {isArchived && (
+                <span className="bg-muted/90 px-2 py-1 font-display text-xs font-medium tracking-wide text-muted-foreground">
+                  ARCHIVE
+                </span>
+              )}
+              {isNew && !isCouture && !isArchived && (
                 <span className="bg-foreground px-2 py-1 font-display text-xs font-medium tracking-wide text-background">
                   NEW
                 </span>
               )}
-              {hasDiscount && !isCouture && (
+              {hasDiscount && !isCouture && !isArchived && (
                 <span className="bg-primary px-2 py-1 font-display text-xs font-medium tracking-wide text-primary-foreground">
                   -{discountPercent}%
                 </span>
@@ -182,8 +189,8 @@ export function ProductCard({
               </Button>
             </div>
 
-            {/* Quick add button - bottom (only for ready-to-wear) */}
-            {!isCouture && (
+            {/* Quick add button - bottom (only for ready-to-wear, not archived) */}
+            {!isCouture && !isArchived && (
               <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
                 <Button
                   variant="secondary"
@@ -219,7 +226,7 @@ export function ProductCard({
               {name}
             </h3>
           </Link>
-          {!isCouture && (
+          {!isCouture && !isArchived && (
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-foreground">
                 ${price.toLocaleString()}
