@@ -118,7 +118,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
       </div>
 
       {/* Trust badges */}
-      <div className="mt-8 border-y border-border py-6">
+      <div className="mt-12 border-y border-border py-6">
         <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
           <div>
             <p className="font-label text-sm font-semibold text-foreground">Certified</p>
