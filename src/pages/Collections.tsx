@@ -71,7 +71,7 @@ export default function CollectionsPage() {
           {/* Left: Large Couture Card - 60% on desktop, 50% on tablet */}
           <div className="relative min-h-[50vh] md:min-h-0">
             <UniverseCard
-              overline="By Appointment"
+              overline="On Request Only"
               title="Couture"
               subtitle="Exceptional high jewelry, crafted with rare gemstones and unparalleled artistry for the most discerning collectors."
               cta="Explore Couture"
