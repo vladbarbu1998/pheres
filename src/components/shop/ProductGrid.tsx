@@ -83,9 +83,8 @@ export function ProductGrid({
         const categorySlug = product.categories?.slug || null;
         const extractedCoutureSlug = coutureCollection?.slug || null;
 
-        // Compute effective archived status
-        const isEffectivelyArchived = product.archived || 
-          product.product_collections?.some(pc => pc.collections?.archived === true) || false;
+        // Only product's own archived flag matters (collection archive cascades via trigger)
+        const isEffectivelyArchived = product.archived === true;
 
         return (
           <ProductCard
