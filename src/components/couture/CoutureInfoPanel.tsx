@@ -1,16 +1,9 @@
 import { Link } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
-import { CoutureKeyDetails } from "./CoutureKeyDetails";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowLeft } from "lucide-react";
 
 interface Metal {
   id: string;
@@ -40,6 +33,33 @@ interface CoutureInfoPanelProps {
   onInquire: () => void;
 }
 
+function formatSpecs(metals: Metal[], stones: Stone[], grossWeight?: string | null): string[] {
+  const specs: string[] = [];
+  
+  // Add primary metal
+  if (metals.length > 0) {
+    const primaryMetal = metals[0];
+    specs.push(primaryMetal.metal_type);
+  }
+  
+  // Add primary stone with carat
+  if (stones.length > 0) {
+    const primaryStone = stones[0];
+    if (primaryStone.stone_carat) {
+      specs.push(`${primaryStone.stone_type} (${primaryStone.stone_carat})`);
+    } else {
+      specs.push(primaryStone.stone_type);
+    }
+  }
+  
+  // Add gross weight if available
+  if (grossWeight) {
+    specs.push(grossWeight);
+  }
+  
+  return specs;
+}
+
 export function CoutureInfoPanel({
   productName,
   shortDescription,
@@ -48,56 +68,31 @@ export function CoutureInfoPanel({
   metals = [],
   stones = [],
   grossWeight,
-  size,
-  certification,
   onInquire,
 }: CoutureInfoPanelProps) {
+  const specs = formatSpecs(metals, stones, grossWeight);
+
   return (
     <div className="flex flex-col h-full lg:sticky lg:top-24">
-      {/* Breadcrumb */}
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="/">Home</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="/collections/couture">Couture</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          {collectionName && collectionSlug && (
-            <>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to={`/couture/${collectionSlug}`}>{collectionName}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </>
-          )}
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{productName}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      {/* Collection Link */}
+      {collectionName && collectionSlug && (
+        <Link 
+          to={`/couture/${collectionSlug}`}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8 group"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+          {collectionName}
+        </Link>
+      )}
 
-      {/* Label */}
-      <p className="text-xs uppercase tracking-[0.25em] text-primary mb-4">
-        Couture · One of a Kind
-      </p>
-
-      {/* Title */}
-      <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold tracking-wide text-foreground mb-4">
+      {/* Product Name */}
+      <h1 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] font-semibold tracking-wide text-foreground leading-tight mb-3">
         {productName}
       </h1>
 
-      {/* Price */}
-      <p className="text-lg italic text-muted-foreground mb-6">
-        Price upon request
+      {/* One of a Kind Label */}
+      <p className="font-label text-xs uppercase tracking-[0.25em] text-muted-foreground mb-8">
+        One of a Kind
       </p>
 
       {/* Short Description */}
@@ -108,41 +103,34 @@ export function CoutureInfoPanel({
         />
       )}
 
+      <Separator className="mb-8" />
+
+      {/* Compact Specs */}
+      {specs.length > 0 && (
+        <>
+          <p className="text-sm text-foreground/80 tracking-wide mb-8">
+            {specs.join("  ·  ")}
+          </p>
+          <Separator className="mb-8" />
+        </>
+      )}
+
       {/* Primary CTA */}
       <Button
         onClick={onInquire}
         size="lg"
         className="w-full h-14 text-base font-medium tracking-wide mb-4"
       >
-        Inquire About This Piece
+        Request Information
       </Button>
 
       {/* Secondary CTA */}
       <Link
         to="/contact"
-        className="text-sm text-center text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
+        className="text-sm text-center text-muted-foreground hover:text-primary transition-colors"
       >
         Contact a PHERES Advisor
       </Link>
-
-      {/* Availability Note */}
-      <div className="mt-8 p-4 bg-secondary/30 rounded-sm border border-border/30">
-        <p className="text-xs text-muted-foreground text-center leading-relaxed">
-          This one-of-a-kind couture creation is not available for online purchase.
-          <br />
-          Availability and pricing upon request.
-        </p>
-      </div>
-
-      {/* Key Details */}
-      <CoutureKeyDetails
-        metals={metals}
-        stones={stones}
-        grossWeight={grossWeight}
-        size={size}
-        collectionName={collectionName}
-        certification={certification}
-      />
     </div>
   );
 }
@@ -150,13 +138,15 @@ export function CoutureInfoPanel({
 export function CoutureInfoPanelSkeleton() {
   return (
     <div className="flex flex-col">
-      <Skeleton className="h-4 w-48 mb-6" />
-      <Skeleton className="h-4 w-32 mb-4" />
-      <Skeleton className="h-12 w-full mb-4" />
-      <Skeleton className="h-6 w-40 mb-6" />
+      <Skeleton className="h-4 w-32 mb-8" />
+      <Skeleton className="h-12 w-full mb-3" />
+      <Skeleton className="h-4 w-24 mb-8" />
       <Skeleton className="h-20 w-full mb-8" />
+      <Skeleton className="h-px w-full mb-8" />
+      <Skeleton className="h-4 w-48 mb-8" />
+      <Skeleton className="h-px w-full mb-8" />
       <Skeleton className="h-14 w-full mb-4" />
-      <Skeleton className="h-4 w-48 mx-auto" />
+      <Skeleton className="h-4 w-40 mx-auto" />
     </div>
   );
 }

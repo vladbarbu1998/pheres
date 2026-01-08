@@ -123,8 +123,6 @@ export default function CoutureProductPage() {
                   metals={(product as any).product_metals || []}
                   stones={(product as any).product_stones || []}
                   grossWeight={(product as any).gross_weight}
-                  size={(product as any).size}
-                  certification={product!.certification}
                   onInquire={() => setInquiryOpen(true)}
                 />
               )}
