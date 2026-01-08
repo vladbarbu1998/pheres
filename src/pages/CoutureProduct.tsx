@@ -61,9 +61,6 @@ export default function CoutureProductPage() {
       })
     : [];
 
-  // Get second image for editorial section (if available)
-  const editorialImage = sortedImages.length > 1 ? sortedImages[1]?.image_url : null;
-
   // Error state
   if (productError) {
     return (
@@ -113,8 +110,8 @@ export default function CoutureProductPage() {
               )}
             </div>
 
-            {/* Right: Info Panel (40%) */}
-            <div className="min-w-0">
+            {/* Right: Info Panel (40%) - Sticky on desktop */}
+            <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
               {productLoading ? (
                 <CoutureInfoPanelSkeleton />
               ) : (
@@ -135,13 +132,9 @@ export default function CoutureProductPage() {
           </div>
         </section>
 
-        {/* Mid-page - Story & Craftsmanship */}
+        {/* Mid-page - Craftsmanship */}
         {!productLoading && product && (
-          <CoutureStorySection
-            description={product.description}
-            editorialImageUrl={editorialImage}
-            productName={product.name}
-          />
+          <CoutureStorySection />
         )}
 
         {/* Lower page - Provenance (placeholder for future data) */}
