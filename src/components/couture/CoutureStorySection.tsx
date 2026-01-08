@@ -1,11 +1,4 @@
 import { Gem, Hand, Shield, Lock } from "lucide-react";
-import { sanitizeHtml } from "@/lib/sanitize";
-
-interface CoutureStorySectionProps {
-  description?: string | null;
-  editorialImageUrl?: string | null;
-  productName: string;
-}
 
 const craftsmanshipItems = [
   {
@@ -30,61 +23,13 @@ const craftsmanshipItems = [
   },
 ];
 
-export function CoutureStorySection({
-  description,
-  editorialImageUrl,
-  productName,
-}: CoutureStorySectionProps) {
+export function CoutureStorySection() {
   return (
     <section className="bg-secondary/20 py-16 md:py-24">
       <div className="container max-w-7xl mx-auto px-4">
-        {/* About This Piece */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 mb-16 md:mb-24">
-          {/* Text */}
-          <div className="flex flex-col justify-center">
-            <h2 className="text-xs uppercase tracking-[0.25em] text-primary mb-4">
-              About This Piece
-            </h2>
-            <h3 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-6">
-              The Story Behind the Creation
-            </h3>
-            {description ? (
-              <div
-                className="prose prose-stone max-w-none text-muted-foreground leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-              />
-            ) : (
-              <p className="text-muted-foreground leading-relaxed">
-                Each PHERES couture piece is a singular expression of artistry and craftsmanship. 
-                Born from the imagination of our master designers, this creation represents countless 
-                hours of meticulous handwork, rare materials sourced from around the world, and an 
-                unwavering commitment to perfection. Like all PHERES couture pieces, it exists as 
-                a unique work of art — never to be replicated.
-              </p>
-            )}
-          </div>
-
-          {/* Editorial Image */}
-          <div className="relative">
-            {editorialImageUrl ? (
-              <div className="aspect-[4/5] overflow-hidden rounded-sm bg-stone-100">
-                <img
-                  src={editorialImageUrl}
-                  alt={`${productName} - Editorial`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="aspect-[4/5] bg-gradient-to-br from-stone-100 to-stone-200 rounded-sm flex items-center justify-center">
-                <p className="text-muted-foreground text-sm">Editorial image</p>
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Craftsmanship & Materials */}
         <div>
-          <h2 className="text-xs uppercase tracking-[0.25em] text-primary mb-4 text-center">
+          <h2 className="font-label text-sm font-medium uppercase tracking-[0.2em] text-primary mb-4 text-center">
             Craftsmanship & Materials
           </h2>
           <h3 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-12 text-center">
