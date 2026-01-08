@@ -19,10 +19,12 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
         {/* Craftsmanship & Materials */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="craftsmanship" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
+          <AccordionItem value="craftsmanship" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
               <span className="flex items-center gap-3">
-                <Gem className="h-5 w-5 text-primary" />
+                <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Gem className="h-4 w-4 text-primary" />
+                </span>
                 Craftsmanship & Materials
               </span>
             </AccordionTrigger>
@@ -50,10 +52,12 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
 
         {/* Shipping & Delivery */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="shipping" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
+          <AccordionItem value="shipping" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
               <span className="flex items-center gap-3">
-                <Truck className="h-5 w-5 text-primary" />
+                <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Truck className="h-4 w-4 text-primary" />
+                </span>
                 Shipping & Delivery
               </span>
             </AccordionTrigger>
@@ -70,10 +74,12 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
 
         {/* Returns & Warranty */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="returns" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
+          <AccordionItem value="returns" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
               <span className="flex items-center gap-3">
-                <Shield className="h-5 w-5 text-primary" />
+                <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Shield className="h-4 w-4 text-primary" />
+                </span>
                 Returns & Warranty
               </span>
             </AccordionTrigger>
@@ -90,10 +96,12 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
 
         {/* Care Instructions */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="care" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
+          <AccordionItem value="care" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
               <span className="flex items-center gap-3">
-                <Award className="h-5 w-5 text-primary" />
+                <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Award className="h-4 w-4 text-primary" />
+                </span>
                 Care Instructions
               </span>
             </AccordionTrigger>
