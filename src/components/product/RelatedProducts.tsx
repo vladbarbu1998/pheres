@@ -40,9 +40,14 @@ export function RelatedProducts({
 
   return (
     <section className="border-t border-border pt-12">
-      <h2 className="font-display text-xl font-semibold text-foreground mb-8 text-center">
-        {title}
-      </h2>
+      <div className="mb-8 text-center">
+        <p className="font-label text-xs font-medium uppercase tracking-[0.25em] text-primary mb-2">
+          Curated For You
+        </p>
+        <h2 className="font-display text-xl font-semibold text-foreground">
+          {title}
+        </h2>
+      </div>
 
       {isLoading ? (
         <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
