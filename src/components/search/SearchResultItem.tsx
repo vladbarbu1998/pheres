@@ -10,6 +10,7 @@ interface SearchResultItemProps {
   categorySlug?: string | null;
   productType?: string | null;
   coutureCollectionSlug?: string | null;
+  isArchived?: boolean;
   onClick?: () => void;
 }
 
@@ -22,6 +23,7 @@ export function SearchResultItem({
   categorySlug,
   productType,
   coutureCollectionSlug,
+  isArchived,
   onClick,
 }: SearchResultItemProps) {
   // Build URL - couture products go to /couture/
@@ -62,12 +64,14 @@ export function SearchResultItem({
         )}
       </div>
 
-      {/* Price */}
-      <div className="shrink-0 text-right">
-        <p className="font-medium text-foreground">
-          ${price.toLocaleString()}
-        </p>
-      </div>
+      {/* Price - hide for archived products */}
+      {!isArchived && (
+        <div className="shrink-0 text-right">
+          <p className="font-medium text-foreground">
+            ${price.toLocaleString()}
+          </p>
+        </div>
+      )}
     </Link>
   );
 }
