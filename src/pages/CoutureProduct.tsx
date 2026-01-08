@@ -1,28 +1,23 @@
-import { useParams, Link } from "react-router-dom";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { ProductGallery, ProductGallerySkeleton } from "@/components/product/ProductGallery";
-import { ProductInfo, ProductInfoSkeleton } from "@/components/product/ProductInfo";
-import { ProductDetails } from "@/components/product/ProductDetails";
-import { RelatedProducts } from "@/components/product/RelatedProducts";
+import { CoutureGallery, CoutureGallerySkeleton } from "@/components/couture/CoutureGallery";
+import { CoutureInfoPanel, CoutureInfoPanelSkeleton } from "@/components/couture/CoutureInfoPanel";
+import { CoutureStorySection } from "@/components/couture/CoutureStorySection";
+import { CoutureProvenance } from "@/components/couture/CoutureProvenance";
+import { CoutureRelatedPieces } from "@/components/couture/CoutureRelatedPieces";
+import { CoutureInquiryDialog } from "@/components/couture/CoutureInquiryDialog";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useProduct, useRelatedProducts } from "@/hooks/useProduct";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
 export default function CoutureProductPage() {
   const { collectionSlug, productSlug } = useParams<{ collectionSlug: string; productSlug: string }>();
+  const [inquiryOpen, setInquiryOpen] = useState(false);
 
-  // Fetch collection info for breadcrumb
+  // Fetch collection info for breadcrumb and context
   const { data: collection } = useQuery({
     queryKey: ["collection", collectionSlug],
     queryFn: async () => {
@@ -66,14 +61,17 @@ export default function CoutureProductPage() {
       })
     : [];
 
+  // Get second image for editorial section (if available)
+  const editorialImage = sortedImages.length > 1 ? sortedImages[1]?.image_url : null;
+
   // Error state
   if (productError) {
     return (
       <Layout>
         <section className="container py-16">
           <ErrorState
-            title="Couldn't load product"
-            message="We had trouble loading this product. Please try again."
+            title="Couldn't load this piece"
+            message="We had trouble loading this couture creation. Please try again."
             onRetry={() => refetch()}
           />
         </section>
@@ -87,8 +85,8 @@ export default function CoutureProductPage() {
       <Layout>
         <section className="container py-16">
           <EmptyState
-            title="Product not found"
-            description="The piece you're looking for doesn't exist or may have been removed from our collection."
+            title="Piece not found"
+            description="This couture creation doesn't exist or may no longer be available."
             actionLabel="Browse Couture"
             actionHref="/collections/couture"
           />
@@ -99,102 +97,76 @@ export default function CoutureProductPage() {
 
   return (
     <Layout>
-      <div className="container py-8 lg:py-12 overflow-x-hidden">
-        {/* Breadcrumb */}
-        {productLoading ? (
-          <Skeleton className="mb-6 h-5 w-64" />
-        ) : (
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to="/">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to="/collections/couture">Couture</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {collection && (
-                <>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink asChild>
-                      <Link to={`/couture/${collection.slug}`}>{collection.name}</Link>
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                </>
+      <div className="bg-secondary/10 min-h-screen">
+        {/* Above the fold - 60/40 layout */}
+        <section className="container max-w-7xl mx-auto px-4 py-8 lg:py-12">
+          <div className="grid lg:grid-cols-[1.5fr_1fr] gap-8 lg:gap-12">
+            {/* Left: Gallery (60%) */}
+            <div className="min-w-0">
+              {productLoading ? (
+                <CoutureGallerySkeleton />
+              ) : (
+                <CoutureGallery
+                  images={sortedImages}
+                  productName={product?.name || ""}
+                />
               )}
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{product?.name}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        )}
+            </div>
 
-        {/* Main product section */}
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Gallery */}
-          <div className="min-w-0">
-            {productLoading ? (
-              <ProductGallerySkeleton />
-            ) : (
-              <ProductGallery
-                images={sortedImages}
-                productName={product?.name || ""}
-              />
-            )}
+            {/* Right: Info Panel (40%) */}
+            <div className="min-w-0">
+              {productLoading ? (
+                <CoutureInfoPanelSkeleton />
+              ) : (
+                <CoutureInfoPanel
+                  productName={product!.name}
+                  shortDescription={product!.short_description}
+                  collectionName={primaryCollection?.name || collection?.name || null}
+                  collectionSlug={primaryCollection?.slug || collection?.slug || null}
+                  metals={(product as any).product_metals || []}
+                  stones={(product as any).product_stones || []}
+                  grossWeight={(product as any).gross_weight}
+                  size={(product as any).size}
+                  certification={product!.certification}
+                  onInquire={() => setInquiryOpen(true)}
+                />
+              )}
+            </div>
           </div>
+        </section>
 
-          {/* Info */}
-          <div className="min-w-0">
-            {productLoading ? (
-              <ProductInfoSkeleton />
-            ) : (
-              <ProductInfo
-                productId={product!.id}
-                name={product!.name}
-                price={Number(product!.base_price)}
-                compareAtPrice={product!.compare_at_price ? Number(product!.compare_at_price) : null}
-                shortDescription={product!.short_description}
-                collectionName={primaryCollection?.name || collection?.name || null}
-                collectionSlug={primaryCollection?.slug || collection?.slug || null}
-                collectionType={(primaryCollection as any)?.collection_type || collection?.collection_type || "couture"}
-                productCode={(product as any).sku}
-                modelNumber={(product as any).model_number}
-                metals={(product as any).product_metals || []}
-                grossWeight={(product as any).gross_weight}
-                size={(product as any).size}
-                stones={(product as any).product_stones || []}
-                certification={product!.certification}
-                isNew={product!.is_new}
-                variants={(product as any).product_variants || []}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Details section */}
+        {/* Mid-page - Story & Craftsmanship */}
         {!productLoading && product && (
-          <div className="mt-12 lg:mt-16">
-            <ProductDetails
-              description={product.description}
-              certification={product.certification}
-            />
-          </div>
+          <CoutureStorySection
+            description={product.description}
+            editorialImageUrl={editorialImage}
+            productName={product.name}
+          />
         )}
 
-        {/* Related products */}
-        <div className="mt-12">
-          <RelatedProducts
-            products={relatedProducts || []}
-            isLoading={relatedLoading}
-          />
-        </div>
+        {/* Lower page - Provenance (placeholder for future data) */}
+        <CoutureProvenance
+          imageUrl={null}
+          eventText={null}
+          pressLink={null}
+        />
+
+        {/* Related Couture Pieces */}
+        <CoutureRelatedPieces
+          products={relatedProducts || []}
+          isLoading={relatedLoading}
+        />
       </div>
+
+      {/* Inquiry Dialog */}
+      {product && (
+        <CoutureInquiryDialog
+          open={inquiryOpen}
+          onOpenChange={setInquiryOpen}
+          productId={product.id}
+          productName={product.name}
+        />
+      )}
     </Layout>
   );
 }

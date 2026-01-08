@@ -1,0 +1,136 @@
+import { Link } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface RelatedProduct {
+  id: string;
+  name: string;
+  slug: string;
+  product_images: {
+    id?: string;
+    image_url: string;
+    alt_text?: string | null;
+    is_primary: boolean;
+    display_order?: number;
+  }[];
+  product_collections: {
+    collection_id: string;
+    collections: {
+      id?: string;
+      name: string;
+      slug?: string;
+      collection_type?: string;
+    } | null;
+  }[];
+}
+
+interface CoutureRelatedPiecesProps {
+  products: RelatedProduct[];
+  isLoading?: boolean;
+}
+
+export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiecesProps) {
+  // Filter to only couture products
+  const coutureProducts = products.filter((product) =>
+    product.product_collections?.some(
+      (pc) => pc.collections?.collection_type === "couture"
+    )
+  );
+
+  if (isLoading) {
+    return (
+      <section className="py-16 md:py-20">
+        <div className="container max-w-7xl mx-auto px-4">
+          <Skeleton className="h-4 w-32 mx-auto mb-4" />
+          <Skeleton className="h-8 w-48 mx-auto mb-12" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="aspect-[3/4] rounded-sm" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-full" />
+                <Skeleton className="h-3 w-28" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (coutureProducts.length === 0) {
+    return null;
+  }
+
+  // Limit to 4 products
+  const displayProducts = coutureProducts.slice(0, 4);
+
+  return (
+    <section className="py-16 md:py-20 border-t border-border/30">
+      <div className="container max-w-7xl mx-auto px-4">
+        <h2 className="text-xs uppercase tracking-[0.25em] text-primary mb-4 text-center">
+          Discover More
+        </h2>
+        <h3 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-12 text-center">
+          You May Also Love
+        </h3>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {displayProducts.map((product) => {
+            // Get primary image or first image
+            const primaryImage = product.product_images?.find((img) => img.is_primary) ||
+              product.product_images?.[0];
+            
+            // Get first couture collection
+            const collection = product.product_collections?.find(
+              (pc) => pc.collections?.collection_type === "couture"
+            )?.collections;
+
+            const productUrl = collection
+              ? `/couture/${collection.slug}/${product.slug}`
+              : `/couture/collection/${product.slug}`;
+
+            return (
+              <Link
+                key={product.id}
+                to={productUrl}
+                className="group block"
+              >
+                {/* Image */}
+                <div className="aspect-[3/4] overflow-hidden bg-stone-100 rounded-sm mb-4">
+                  {primaryImage ? (
+                    <img
+                      src={primaryImage.image_url}
+                      alt={primaryImage.alt_text || product.name}
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center">
+                      <span className="text-muted-foreground text-sm">No image</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Collection Name */}
+                {collection && (
+                  <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-1">
+                    {collection.name}
+                  </p>
+                )}
+
+                {/* Product Name */}
+                <h4 className="font-display text-base font-medium text-foreground group-hover:text-primary transition-colors mb-2">
+                  {product.name}
+                </h4>
+
+                {/* Tag */}
+                <p className="text-xs italic text-muted-foreground">
+                  Price Upon Request
+                </p>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
