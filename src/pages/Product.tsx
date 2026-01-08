@@ -1,4 +1,5 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { ProductGallery, ProductGallerySkeleton } from "@/components/product/ProductGallery";
 import { ProductInfo, ProductInfoSkeleton } from "@/components/product/ProductInfo";
@@ -19,6 +20,7 @@ import { useProduct, useRelatedProducts } from "@/hooks/useProduct";
 
 export default function ProductPage() {
   const { categorySlug, productSlug } = useParams<{ categorySlug: string; productSlug: string }>();
+  const navigate = useNavigate();
 
   const {
     data: product,
@@ -26,6 +28,19 @@ export default function ProductPage() {
     isError: productError,
     refetch,
   } = useProduct(productSlug || "");
+
+  // Redirect couture products to the correct /couture/ URL
+  useEffect(() => {
+    if (product?.product_type === "couture") {
+      const coutureCollection = product.product_collections?.find(
+        (pc: any) => pc.collections?.collection_type === "couture"
+      )?.collections;
+
+      if (coutureCollection) {
+        navigate(`/couture/${coutureCollection.slug}/${product.slug}`, { replace: true });
+      }
+    }
+  }, [product, navigate]);
 
   // Get collection IDs for related products query
   const collectionIds =
