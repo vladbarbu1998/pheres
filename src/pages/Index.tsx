@@ -40,76 +40,76 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Two Universes Section */}
-      <section className="bg-background">
-        <div className="container py-20 md:py-32">
-          <div className="mb-16 text-center">
-            <p className="mb-3 font-label text-sm font-medium uppercase tracking-[0.3em] text-primary">
-              Two Universes
-            </p>
-            <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl">
-              The Worlds of <span className="brand-word">Pheres</span>
-            </h2>
-          </div>
+      {/* Two Universes Section - Split Screen Cinematic */}
+      <section className="relative">
+        {/* Section Header */}
+        <div className="bg-background py-12 md:py-16 text-center">
+          <p className="text-xs tracking-[0.3em] text-primary uppercase mb-3">
+            Two Universes
+          </p>
+          <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
+            The Worlds of <span className="brand-word">Pheres</span>
+          </h2>
+        </div>
 
-          <div className="grid gap-8 md:grid-cols-2 md:gap-12 lg:gap-16">
-            {/* Couture Universe */}
-            <Link
-              to="/collections/couture"
-              className="group block animate-fade-in"
-            >
-              <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                <img 
-                  src={universeCouture} 
-                  alt="Pheres Couture Collection" 
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent transition-opacity duration-500 group-hover:from-black/50" />
-              </div>
-              
-              <div className="pt-8 text-center">
-                <h3 className="mb-3 font-display text-3xl font-semibold tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary md:text-4xl">
-                  Couture
-                </h3>
-                <p className="mx-auto mb-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-                  Extraordinary one-of-a-kind pieces, handcrafted for the most discerning collectors
-                </p>
-                <span className="inline-flex items-center gap-2 text-sm font-medium tracking-wide text-primary transition-all duration-300 group-hover:gap-3">
-                  Enter Universe
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </Link>
+        {/* Split Screen Container */}
+        <div className="flex flex-col md:flex-row min-h-[70vh] md:min-h-[85vh]">
+          {/* Couture - Left */}
+          <Link 
+            to="/collections/couture" 
+            className="group relative flex-1 overflow-hidden min-h-[50vh] md:min-h-0"
+          >
+            <img 
+              src={universeCouture} 
+              alt="Pheres Couture Collection" 
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 group-hover:from-black/80" />
+            
+            {/* Text Overlay */}
+            <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 text-center text-white px-6">
+              <h3 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold tracking-wide">
+                Couture
+              </h3>
+              <p className="mt-4 max-w-xs text-sm md:text-base text-white/80 leading-relaxed">
+                One-of-a-kind masterpieces crafted for those who seek the extraordinary
+              </p>
+              <span className="mt-6 flex items-center gap-2 text-sm tracking-widest uppercase opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                Enter Universe
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+            </div>
+          </Link>
 
-            {/* Ready to Wear Universe */}
-            <Link
-              to="/collections/ready-to-wear"
-              className="group block animate-fade-in"
-              style={{ animationDelay: "150ms" }}
-            >
-              <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                <img 
-                  src={universeRtw} 
-                  alt="Pheres Ready to Wear Collection" 
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent transition-opacity duration-500 group-hover:from-black/50" />
-              </div>
-              
-              <div className="pt-8 text-center">
-                <h3 className="mb-3 font-display text-3xl font-semibold tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary md:text-4xl">
-                  Ready to Wear
-                </h3>
-                <p className="mx-auto mb-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-                  Timeless elegance for every moment, designed for modern luxury living
-                </p>
-                <span className="inline-flex items-center gap-2 text-sm font-medium tracking-wide text-primary transition-all duration-300 group-hover:gap-3">
-                  Enter Universe
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </Link>
-          </div>
+          {/* Divider Line - desktop only */}
+          <div className="hidden md:block w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
+
+          {/* Ready to Wear - Right */}
+          <Link 
+            to="/collections/ready-to-wear" 
+            className="group relative flex-1 overflow-hidden min-h-[50vh] md:min-h-0"
+          >
+            <img 
+              src={universeRtw} 
+              alt="Pheres Ready to Wear Collection" 
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 group-hover:from-black/80" />
+            
+            {/* Text Overlay */}
+            <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 text-center text-white px-6">
+              <h3 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold tracking-wide">
+                Ready to Wear
+              </h3>
+              <p className="mt-4 max-w-xs text-sm md:text-base text-white/80 leading-relaxed">
+                Timeless elegance designed for everyday moments of luxury
+              </p>
+              <span className="mt-6 flex items-center gap-2 text-sm tracking-widest uppercase opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                Enter Universe
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+            </div>
+          </Link>
         </div>
       </section>
 
