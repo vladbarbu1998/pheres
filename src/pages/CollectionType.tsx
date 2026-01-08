@@ -3,6 +3,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { useCollectionsByType } from "@/hooks/useProducts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 type CollectionTypeParam = "couture" | "ready-to-wear";
 
@@ -136,9 +137,10 @@ export default function CollectionTypePage() {
                 
                 {/* Description below image */}
                 {collection.description && (
-                  <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                    {collection.description}
-                  </p>
+                  <div 
+                    className="mt-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground prose prose-sm prose-neutral dark:prose-invert max-w-none [&>p]:m-0"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(collection.description) }}
+                  />
                 )}
               </Link>
               );
