@@ -108,6 +108,11 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                     const imageUrl = primaryImage?.image_url || firstImage?.image_url || null;
                     const collectionName = product.product_collections?.[0]?.collections?.name || null;
                     const categorySlug = product.categories?.slug || null;
+                    
+                    // Check if couture product
+                    const coutureCollection = product.product_collections?.find(
+                      pc => pc.collections?.collection_type === "couture"
+                    )?.collections;
 
                     return (
                       <SearchResultItem
@@ -119,6 +124,8 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                         imageUrl={imageUrl}
                         collectionName={collectionName}
                         categorySlug={categorySlug}
+                        productType={product.product_type}
+                        coutureCollectionSlug={coutureCollection?.slug}
                         onClick={handleResultClick}
                       />
                     );

@@ -1,6 +1,8 @@
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSkeleton } from "@/components/shop/ProductCardSkeleton";
 
+type CollectionType = "couture" | "ready_to_wear";
+
 interface Product {
   id: string;
   name: string;
@@ -15,6 +17,8 @@ interface Product {
   product_collections?: Array<{
     collections: {
       name: string;
+      slug?: string;
+      collection_type?: CollectionType;
     } | null;
   }>;
 }
@@ -53,6 +57,12 @@ export function RelatedProducts({
             const firstImage = product.product_images?.[0];
             const imageUrl = primaryImage?.image_url || firstImage?.image_url || null;
             const collectionName = product.product_collections?.[0]?.collections?.name || null;
+            
+            // Check if couture product
+            const coutureCollection = product.product_collections?.find(
+              pc => pc.collections?.collection_type === "couture"
+            )?.collections;
+            const collectionType: CollectionType | null = coutureCollection ? "couture" : null;
 
             return (
               <ProductCard
@@ -64,6 +74,8 @@ export function RelatedProducts({
                 compareAtPrice={product.compare_at_price ? Number(product.compare_at_price) : null}
                 imageUrl={imageUrl}
                 collectionName={collectionName}
+                collectionType={collectionType}
+                coutureCollectionSlug={coutureCollection?.slug}
                 isNew={product.is_new}
                 className="animate-fade-in-up"
                 style={{ animationDelay: `${index * 50}ms` }}

@@ -15,6 +15,8 @@ export interface CartItem {
     base_price: number;
     image_url: string | null;
     category_slug: string | null;
+    product_type: string | null;
+    couture_collection_slug: string | null;
   };
   variant?: {
     id: string;
@@ -82,12 +84,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
             name,
             slug,
             base_price,
+            product_type,
             categories (
               slug
             ),
             product_images (
               image_url,
               is_primary
+            ),
+            product_collections (
+              collections (
+                slug,
+                collection_type
+              )
             )
           ),
           product_variants (
@@ -107,6 +116,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
           const primaryImage = item.products?.product_images?.find((img: any) => img.is_primary);
           const firstImage = item.products?.product_images?.[0];
           
+          // Find couture collection if exists
+          const coutureCollection = item.products?.product_collections?.find(
+            (pc: any) => pc.collections?.collection_type === "couture"
+          )?.collections;
+          
           return {
             id: item.id,
             productId: item.product_id,
@@ -119,6 +133,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
               base_price: item.products?.base_price,
               image_url: primaryImage?.image_url || firstImage?.image_url || null,
               category_slug: item.products?.categories?.slug || null,
+              product_type: item.products?.product_type || null,
+              couture_collection_slug: coutureCollection?.slug || null,
             },
             variant: item.product_variants ? {
               id: item.product_variants.id,
@@ -147,12 +163,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
             name,
             slug,
             base_price,
+            product_type,
             categories (
               slug
             ),
             product_images (
               image_url,
               is_primary
+            ),
+            product_collections (
+              collections (
+                slug,
+                collection_type
+              )
             )
           `)
           .in("id", productIds)
@@ -170,9 +193,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
             const product = products?.find(p => p.id === guestItem.productId);
             if (!product) return null;
 
-            const primaryImage = product.product_images?.find((img: any) => img.is_primary);
-            const firstImage = product.product_images?.[0];
+            const primaryImage = (product as any).product_images?.find((img: any) => img.is_primary);
+            const firstImage = (product as any).product_images?.[0];
             const variant = variants?.find(v => v.id === guestItem.variantId);
+            
+            // Find couture collection if exists
+            const coutureCollection = (product as any).product_collections?.find(
+              (pc: any) => pc.collections?.collection_type === "couture"
+            )?.collections;
 
             return {
               id: `guest-${index}`,
@@ -186,6 +214,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 base_price: product.base_price,
                 image_url: primaryImage?.image_url || firstImage?.image_url || null,
                 category_slug: (product as any).categories?.slug || null,
+                product_type: (product as any).product_type || null,
+                couture_collection_slug: coutureCollection?.slug || null,
               },
               variant: variant ? {
                 id: variant.id,

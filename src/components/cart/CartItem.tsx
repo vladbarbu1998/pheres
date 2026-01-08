@@ -15,10 +15,12 @@ export function CartItem({ item }: CartItemProps) {
   const lineTotal = price * item.quantity;
   const isUpdating = updatingItems.has(item.id);
   
-  // Build product URL with category
-  const productUrl = item.product.category_slug 
-    ? `/shop/${item.product.category_slug}/${item.product.slug}` 
-    : `/shop/all/${item.product.slug}`;
+  // Build product URL - couture products go to /couture/
+  const productUrl = item.product.product_type === "couture" && item.product.couture_collection_slug
+    ? `/couture/${item.product.couture_collection_slug}/${item.product.slug}`
+    : item.product.category_slug 
+      ? `/shop/${item.product.category_slug}/${item.product.slug}` 
+      : `/shop/all/${item.product.slug}`;
 
   return (
     <div 

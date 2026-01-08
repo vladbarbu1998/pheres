@@ -128,9 +128,16 @@ export default function FavoritesPage() {
             const firstImage = product.product_images?.[0];
             const imageUrl = primaryImage?.image_url || firstImage?.image_url;
             const categorySlug = product.categories?.slug;
-            const productUrl = categorySlug 
-              ? `/shop/${categorySlug}/${product.slug}` 
-              : `/shop/all/${product.slug}`;
+            
+            // Check if couture product
+            const coutureCollection = product.product_collections?.find(
+              (pc: any) => pc.collections?.collection_type === "couture"
+            )?.collections;
+            const productUrl = coutureCollection
+              ? `/couture/${coutureCollection.slug}/${product.slug}`
+              : categorySlug 
+                ? `/shop/${categorySlug}/${product.slug}` 
+                : `/shop/all/${product.slug}`;
 
             return (
               <div key={favorite.id} className="group relative">

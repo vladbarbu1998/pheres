@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 
+type CollectionType = "couture" | "ready_to_wear";
+
 interface SearchProduct {
   id: string;
   name: string;
@@ -9,6 +11,7 @@ interface SearchProduct {
   base_price: number;
   compare_at_price?: number | null;
   is_new?: boolean;
+  product_type?: string | null;
   product_images?: Array<{
     image_url: string;
     is_primary: boolean;
@@ -17,6 +20,8 @@ interface SearchProduct {
   product_collections?: Array<{
     collections: {
       name: string;
+      slug?: string;
+      collection_type?: CollectionType;
     } | null;
   }>;
   categories?: {
@@ -44,6 +49,7 @@ async function searchProducts(query: string): Promise<SearchProduct[]> {
       base_price,
       compare_at_price,
       is_new,
+      product_type,
       short_description,
       description,
       metal_type,
@@ -60,7 +66,9 @@ async function searchProducts(query: string): Promise<SearchProduct[]> {
       ),
       product_collections (
         collections (
-          name
+          name,
+          slug,
+          collection_type
         )
       ),
       categories (

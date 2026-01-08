@@ -90,7 +90,9 @@ export function useRelatedProducts(productId: string, collectionIds: string[]) {
           product_collections!inner (
             collection_id,
             collections (
-              name
+              name,
+              slug,
+              collection_type
             )
           )
         `
