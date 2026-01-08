@@ -164,7 +164,7 @@ export default function CollectionPage() {
               )}
               {collection?.archived && (
                 <p className="mt-4 text-sm text-muted-foreground italic">
-                  This collection is part of the PHERES archive and is no longer available for purchase.
+                  This PHERES collection is part of our archive and is no longer available to buy.
                 </p>
               )}
             </div>

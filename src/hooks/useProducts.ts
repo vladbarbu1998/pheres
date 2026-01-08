@@ -270,7 +270,7 @@ export function useCollectionsByType(collectionType: "couture" | "ready_to_wear"
     queryFn: async () => {
       const { data, error } = await supabase
         .from("collections")
-        .select("id, name, slug, description, image_url, is_featured, collection_type, parent_id, is_active, display_order")
+        .select("id, name, slug, description, image_url, is_featured, collection_type, parent_id, is_active, display_order, archived")
         .eq("collection_type", collectionType)
         .not("parent_id", "is", null) // Only child collections
         .order("display_order");
