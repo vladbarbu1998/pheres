@@ -15,6 +15,7 @@ import { ArrowLeft, Share2, Link2, Check, Heart, Send, Linkedin, Mail } from "lu
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useFavoriteToggle } from "@/hooks/useFavoriteToggle";
+import { ProductSpecs } from "@/components/product/ProductSpecs";
 
 interface Metal {
   id: string;
@@ -42,6 +43,8 @@ interface CoutureInfoPanelProps {
   grossWeight?: string | null;
   size?: string | null;
   certification?: string | null;
+  productCode?: string | null;
+  modelNumber?: string | null;
   productImageUrl?: string | null;
   onInquire: () => void;
 }
@@ -79,6 +82,10 @@ export function CoutureInfoPanel({
   metals = [],
   stones = [],
   grossWeight,
+  size,
+  certification,
+  productCode,
+  modelNumber,
   productImageUrl,
   onInquire,
 }: CoutureInfoPanelProps) {
@@ -241,10 +248,29 @@ export function CoutureInfoPanel({
         Contact a PHERES Advisor
       </Link>
 
+      {/* Full Specifications */}
+      {(metals.length > 0 || stones.length > 0 || grossWeight || size || certification) && (
+        <div 
+          className="pt-6 border-t border-border/50 mb-8 animate-fade-in"
+          style={{ animationDelay: "450ms", animationFillMode: "both" }}
+        >
+          <ProductSpecs
+            productCode={productCode}
+            modelNumber={modelNumber}
+            metals={metals}
+            grossWeight={grossWeight}
+            size={size}
+            stones={stones}
+            certification={certification}
+            collectionName={collectionName}
+          />
+        </div>
+      )}
+
       {/* Share Button */}
       <div 
         className="flex justify-center animate-fade-in"
-        style={{ animationDelay: "450ms", animationFillMode: "both" }}
+        style={{ animationDelay: "500ms", animationFillMode: "both" }}
       >
         {canShare ? (
           <Button

@@ -115,7 +115,7 @@ export default function CoutureProductPage() {
               {productLoading ? (
                 <CoutureInfoPanelSkeleton />
               ) : (
-              <CoutureInfoPanel
+                <CoutureInfoPanel
                   productId={product!.id}
                   productName={product!.name}
                   shortDescription={product!.short_description}
@@ -124,6 +124,10 @@ export default function CoutureProductPage() {
                   metals={(product as any).product_metals || []}
                   stones={(product as any).product_stones || []}
                   grossWeight={(product as any).gross_weight}
+                  size={(product as any).size}
+                  certification={product!.certification}
+                  productCode={product!.sku}
+                  modelNumber={(product as any).model_number}
                   productImageUrl={sortedImages[0]?.image_url || null}
                   onInquire={() => setInquiryOpen(true)}
                 />
