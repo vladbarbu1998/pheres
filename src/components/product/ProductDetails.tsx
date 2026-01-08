@@ -20,7 +20,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
         {/* Craftsmanship & Materials */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="craftsmanship" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
               <span className="flex items-center gap-3">
                 <Gem className="h-5 w-5 text-primary" />
                 Craftsmanship & Materials
@@ -51,7 +51,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
         {/* Shipping & Delivery */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="shipping" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
               <span className="flex items-center gap-3">
                 <Truck className="h-5 w-5 text-primary" />
                 Shipping & Delivery
@@ -71,7 +71,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
         {/* Returns & Warranty */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="returns" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
               <span className="flex items-center gap-3">
                 <Shield className="h-5 w-5 text-primary" />
                 Returns & Warranty
@@ -91,7 +91,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
         {/* Care Instructions */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="care" className="border-b-0">
-            <AccordionTrigger className="font-label text-base font-medium">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2">
               <span className="flex items-center gap-3">
                 <Award className="h-5 w-5 text-primary" />
                 Care Instructions
