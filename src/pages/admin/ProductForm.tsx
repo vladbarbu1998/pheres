@@ -60,6 +60,7 @@ const baseProductSchema = z.object({
   is_featured: z.boolean(),
   is_new: z.boolean(),
   is_bestseller: z.boolean(),
+  archived: z.boolean().default(false),
 });
 
 // Ready To Wear schema - requires price
@@ -136,6 +137,7 @@ export default function ProductForm() {
       is_featured: false,
       is_new: false,
       is_bestseller: false,
+      archived: false,
       short_description: "",
       base_price: isCouture ? 0 : undefined,
     },
@@ -175,6 +177,7 @@ export default function ProductForm() {
         is_featured: product.is_featured,
         is_new: product.is_new,
         is_bestseller: product.is_bestseller,
+        archived: product.archived ?? false,
         model_number: (product as any).model_number || "",
       });
       setImages(
@@ -342,6 +345,7 @@ export default function ProductForm() {
         is_featured: data.is_featured ?? false,
         is_new: data.is_new ?? false,
         is_bestseller: data.is_bestseller ?? false,
+        archived: data.archived ?? false,
         product_type: productType,
         model_number: isCouture ? (data.model_number || null) : null,
       };
@@ -625,16 +629,33 @@ export default function ProductForm() {
                       </p>
                     )}
                   </div>
-                  <Controller
-                    control={control}
-                    name="is_active"
-                    render={({ field }) => (
-                      <div className="flex items-center gap-1.5">
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                        <Label className="font-normal text-sm">Active</Label>
-                      </div>
-                    )}
-                  />
+                  <div className="flex items-center gap-4">
+                    <Controller
+                      control={control}
+                      name="is_active"
+                      render={({ field }) => (
+                        <div className="flex items-center gap-1.5">
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          <Label className="font-normal text-sm">Active</Label>
+                        </div>
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="archived"
+                      render={({ field }) => (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            <Label className="font-normal text-sm">Archived</Label>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Archived products remain visible but cannot be purchased.
+                          </p>
+                        </div>
+                      )}
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>

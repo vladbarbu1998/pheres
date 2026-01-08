@@ -256,72 +256,92 @@ export default function AdminProducts() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {productList.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>
-                  <span className="text-xs font-mono text-muted-foreground">
-                    {product.product_number || "—"}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
-                    {getPrimaryImage(product) ? (
-                      <img
-                        src={getPrimaryImage(product)}
-                        alt={product.name}
-                        className="h-full w-full object-cover object-center"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
-                        —
-                      </div>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-xs text-muted-foreground">{product.slug}</p>
-                  </div>
-                </TableCell>
-                {!isCouture && (
-                  <TableCell className="hidden md:table-cell">
-                    ${Number(product.base_price).toFixed(2)}
+            {productList.map((product) => {
+              // Compute effective_archived: product is archived OR any of its collections is archived
+              const collectionArchived = product.product_collections?.some(
+                (pc: any) => pc.collections?.archived === true
+              ) ?? false;
+              const effectiveArchived = product.archived || collectionArchived;
+              
+              return (
+                <TableRow key={product.id} className={effectiveArchived ? "opacity-60" : ""}>
+                  <TableCell>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {product.product_number || "—"}
+                    </span>
                   </TableCell>
-                )}
-                <TableCell className="hidden md:table-cell">
-                  <span className="text-sm text-muted-foreground">
-                    {(product as any).category?.name || "—"}
-                  </span>
-                </TableCell>
-                <TableCell className="hidden lg:table-cell">
-                  <span className="text-sm text-muted-foreground">
-                    {getCollectionNames(product) || "—"}
-                  </span>
-                </TableCell>
-                <TableCell className="hidden sm:table-cell">
-                  <Badge variant={product.is_active ? "default" : "secondary"}>
-                    {product.is_active ? "Active" : "Draft"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" asChild>
-                      <Link to={`/admin/products/${product.id}`}>
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setDeleteId(product.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell>
+                    <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
+                      {getPrimaryImage(product) ? (
+                        <img
+                          src={getPrimaryImage(product)}
+                          alt={product.name}
+                          className="h-full w-full object-cover object-center"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
+                          —
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <p className="font-medium">{product.name}</p>
+                      <p className="text-xs text-muted-foreground">{product.slug}</p>
+                    </div>
+                  </TableCell>
+                  {!isCouture && (
+                    <TableCell className="hidden md:table-cell">
+                      ${Number(product.base_price).toFixed(2)}
+                    </TableCell>
+                  )}
+                  <TableCell className="hidden md:table-cell">
+                    <span className="text-sm text-muted-foreground">
+                      {(product as any).category?.name || "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <span className="text-sm text-muted-foreground">
+                      {getCollectionNames(product) || "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <div className="flex flex-wrap gap-1">
+                      <Badge variant={product.is_active ? "default" : "secondary"}>
+                        {product.is_active ? "Active" : "Draft"}
+                      </Badge>
+                      {product.archived && (
+                        <Badge variant="outline" className="bg-muted text-muted-foreground">
+                          Archived
+                        </Badge>
+                      )}
+                      {!product.archived && collectionArchived && (
+                        <Badge variant="outline" className="bg-muted/50 text-muted-foreground text-[10px]">
+                          Via Collection
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link to={`/admin/products/${product.id}`}>
+                          <Pencil className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeleteId(product.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

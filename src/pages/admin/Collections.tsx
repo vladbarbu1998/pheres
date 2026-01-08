@@ -54,6 +54,7 @@ interface CollectionFormData {
   image_url: string;
   is_active: boolean;
   is_featured: boolean;
+  archived: boolean;
 }
 
 export default function AdminCollections() {
@@ -70,6 +71,7 @@ export default function AdminCollections() {
     image_url: "",
     is_active: true,
     is_featured: false,
+    archived: false,
   });
 
   // Fetch data
@@ -103,6 +105,7 @@ export default function AdminCollections() {
       image_url: "",
       is_active: true,
       is_featured: false,
+      archived: false,
     });
     setEditingId(null);
   };
@@ -120,6 +123,7 @@ export default function AdminCollections() {
       image_url: collection.image_url || "",
       is_active: collection.is_active,
       is_featured: collection.is_featured,
+      archived: collection.archived ?? false,
     });
     setEditingId(collection.id);
     setIsDialogOpen(true);
@@ -265,7 +269,7 @@ export default function AdminCollections() {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {collections.map((col) => (
-          <Card key={col.id}>
+          <Card key={col.id} className={col.archived ? "opacity-60" : ""}>
             <CardContent className="p-4">
               <div className="aspect-square w-full mb-3 overflow-hidden rounded-lg bg-muted">
                 {col.image_url ? (
@@ -280,8 +284,11 @@ export default function AdminCollections() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <h3 className="font-medium">{col.name}</h3>
+                {col.archived && (
+                  <Badge variant="outline" className="text-xs bg-muted text-muted-foreground">Archived</Badge>
+                )}
                 {!col.is_active && (
                   <Badge variant="secondary" className="text-xs">Inactive</Badge>
                 )}
@@ -441,6 +448,18 @@ export default function AdminCollections() {
                 />
                 <Label>Featured</Label>
               </div>
+            </div>
+            <div className="space-y-2 pt-4 border-t">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={formData.archived}
+                  onCheckedChange={(val) => setFormData((prev) => ({ ...prev, archived: val }))}
+                />
+                <Label>Archived (no longer sold, kept for archive/proof)</Label>
+              </div>
+              <p className="text-xs text-muted-foreground pl-8">
+                Archived collections remain visible but their products cannot be purchased.
+              </p>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
