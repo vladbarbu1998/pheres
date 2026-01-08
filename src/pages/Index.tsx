@@ -5,7 +5,8 @@ import { Layout } from "@/components/layout/Layout";
 import { useFeaturedPress } from "@/hooks/usePress";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { BrandHeritageSection } from "@/components/home/BrandHeritageSection";
-
+import universeCouture from "@/assets/universe-couture.jpg";
+import universeRtw from "@/assets/universe-rtw.jpg";
 export default function Index() {
   const { data: pressEntries } = useFeaturedPress();
 
@@ -58,13 +59,12 @@ export default function Index() {
               className="group block animate-fade-in"
             >
               <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                  <span className="font-serif text-[120px] font-extralight leading-none text-primary/10 md:text-[180px]">
-                    C
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <img 
+                  src={universeCouture} 
+                  alt="Pheres Couture Collection" 
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent transition-opacity duration-500 group-hover:from-black/50" />
               </div>
               
               <div className="pt-8 text-center">
@@ -88,13 +88,12 @@ export default function Index() {
               style={{ animationDelay: "150ms" }}
             >
               <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-transparent to-secondary/20" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                  <span className="font-serif text-[120px] font-extralight leading-none text-foreground/10 md:text-[180px]">
-                    R
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <img 
+                  src={universeRtw} 
+                  alt="Pheres Ready to Wear Collection" 
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent transition-opacity duration-500 group-hover:from-black/50" />
               </div>
               
               <div className="pt-8 text-center">
