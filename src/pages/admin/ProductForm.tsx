@@ -605,24 +605,39 @@ export default function ProductForm() {
                   <div className="space-y-1.5 flex-1">
                     <Label>Collections</Label>
                     {availableCollections && availableCollections.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {availableCollections.map((col) => (
-                          <Button
-                            key={col.id}
-                            type="button"
-                            variant={selectedCollections.includes(col.id) ? "default" : "outline"}
-                            onClick={() =>
-                              setSelectedCollections((prev) =>
-                                prev.includes(col.id)
-                                  ? prev.filter((cid) => cid !== col.id)
-                                  : [...prev, col.id]
-                              )
-                            }
-                          >
-                            {col.name}
-                          </Button>
-                        ))}
-                      </div>
+                      <>
+                        <div className="flex flex-wrap gap-2">
+                          {availableCollections.map((col) => (
+                            <Button
+                              key={col.id}
+                              type="button"
+                              variant={selectedCollections.includes(col.id) ? "default" : "outline"}
+                              className={cn(
+                                (col as any).archived && "opacity-70"
+                              )}
+                              onClick={() =>
+                                setSelectedCollections((prev) =>
+                                  prev.includes(col.id)
+                                    ? prev.filter((cid) => cid !== col.id)
+                                    : [...prev, col.id]
+                                )
+                              }
+                            >
+                              {col.name}
+                              {(col as any).archived && (
+                                <span className="ml-1.5 text-xs opacity-70">(Archived)</span>
+                              )}
+                            </Button>
+                          ))}
+                        </div>
+                        {selectedCollections.some(id => 
+                          (availableCollections as any[])?.find(c => c.id === id)?.archived
+                        ) && (
+                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                            Note: This product belongs to an archived collection. It will be effectively archived regardless of the toggle above.
+                          </p>
+                        )}
+                      </>
                     ) : (
                       <p className="text-sm text-muted-foreground">
                         No collections available.

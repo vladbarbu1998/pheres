@@ -10,6 +10,7 @@ interface Product {
   base_price: number;
   compare_at_price?: number | null;
   is_new?: boolean;
+  archived?: boolean;
   product_images?: Array<{
     image_url: string;
     is_primary: boolean;
@@ -19,6 +20,7 @@ interface Product {
       name: string;
       slug?: string;
       collection_type?: CollectionType;
+      archived?: boolean;
     } | null;
   }>;
 }
@@ -69,6 +71,12 @@ export function RelatedProducts({
             )?.collections;
             const collectionType: CollectionType | null = coutureCollection ? "couture" : null;
 
+            // Check if effectively archived (product archived OR any collection archived)
+            const isEffectivelyArchived = product.archived || 
+              product.product_collections?.some(
+                (pc) => pc.collections?.archived === true
+              ) || false;
+
             return (
               <ProductCard
                 key={product.id}
@@ -82,6 +90,7 @@ export function RelatedProducts({
                 collectionType={collectionType}
                 coutureCollectionSlug={coutureCollection?.slug}
                 isNew={product.is_new}
+                isArchived={isEffectivelyArchived}
                 className="animate-fade-in-up"
                 style={{ animationDelay: `${index * 50}ms` }}
               />

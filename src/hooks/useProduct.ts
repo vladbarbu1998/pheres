@@ -84,6 +84,7 @@ export function useRelatedProducts(productId: string, collectionIds: string[]) {
           base_price,
           compare_at_price,
           is_new,
+          archived,
           product_images (
             image_url,
             is_primary
@@ -93,7 +94,8 @@ export function useRelatedProducts(productId: string, collectionIds: string[]) {
             collections (
               name,
               slug,
-              collection_type
+              collection_type,
+              archived
             )
           )
         `
