@@ -56,6 +56,7 @@ export function useProducts({
           is_new,
           is_bestseller,
           is_featured,
+          archived,
           metal_type,
           stone_type,
           category_id,

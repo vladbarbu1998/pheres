@@ -60,6 +60,7 @@ interface ProductInfoProps {
   stones?: ProductStone[];
   certification?: string | null;
   isNew?: boolean;
+  isArchived?: boolean;
   variants?: Variant[];
 }
 
@@ -80,6 +81,7 @@ export function ProductInfo({
   stones = [],
   certification,
   isNew,
+  isArchived,
   variants = [],
 }: ProductInfoProps) {
   const isCouture = collectionType === "couture";
@@ -119,12 +121,17 @@ export function ProductInfo({
     <div className="flex flex-col gap-6">
       {/* Badges */}
       <div className="flex flex-wrap gap-2">
-        {isNew && (
+        {isArchived && (
+          <span className="bg-muted px-3 py-1 font-label text-xs font-medium tracking-wide text-muted-foreground">
+            ARCHIVE PIECE
+          </span>
+        )}
+        {isNew && !isArchived && (
           <span className="bg-foreground px-3 py-1 font-label text-xs font-medium tracking-wide text-background">
             NEW ARRIVAL
           </span>
         )}
-        {hasDiscount && (
+        {hasDiscount && !isArchived && (
           <span className="bg-primary px-3 py-1 font-label text-xs font-medium tracking-wide text-primary-foreground">
             {discountPercent}% OFF
           </span>
@@ -146,8 +153,12 @@ export function ProductInfo({
         {name}
       </h1>
 
-      {/* Price - hide for Couture */}
-      {isCouture ? (
+      {/* Price - hide for Couture and Archived */}
+      {isArchived ? (
+        <p className="text-muted-foreground">
+          This PHERES creation is part of a past collection and is no longer available for purchase.
+        </p>
+      ) : isCouture ? (
         <div className="flex items-baseline gap-3">
           <span className="font-display text-xl font-medium text-muted-foreground italic">
             Price Upon Request
@@ -174,8 +185,8 @@ export function ProductInfo({
         />
       )}
 
-      {/* Variant selector - only for purchasable products */}
-      {!isCouture && hasVariants && (
+      {/* Variant selector - only for purchasable products (not archived) */}
+      {!isCouture && !isArchived && hasVariants && (
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">
             Select Option
@@ -202,22 +213,44 @@ export function ProductInfo({
 
       {/* Actions */}
       <div className="flex flex-col gap-4 pt-2">
-        {isCouture ? (
+        {isArchived ? (
+          /* Archived: No purchase CTAs, only wishlist */
+          <Button 
+            variant="outline"
+            className="w-full h-11 px-8 sm:w-auto"
+            onClick={toggleFavorite}
+            disabled={isToggling}
+          >
+            <Heart className={cn("mr-2 h-4 w-4", isFavorited && "fill-primary text-primary")} />
+            {isFavorited ? "In Wishlist" : "Add to Wishlist"}
+          </Button>
+        ) : isCouture ? (
           /* Couture: Get in Touch CTA */
-          <div className="flex flex-col gap-3">
+          <>
+            <div className="flex flex-col gap-3">
+              <Button 
+                className="w-full h-12 px-8"
+                asChild
+              >
+                <Link to="/contact?inquiry=couture">
+                  <Mail className="mr-2 h-4 w-4" />
+                  Inquire About This Piece
+                </Link>
+              </Button>
+              <p className="text-sm text-muted-foreground text-center">
+                This is a one-of-a-kind couture piece. Contact us for availability and pricing.
+              </p>
+            </div>
             <Button 
-              className="w-full h-12 px-8"
-              asChild
+              variant="outline"
+              className="w-full h-11 px-8 sm:w-auto"
+              onClick={toggleFavorite}
+              disabled={isToggling}
             >
-              <Link to="/contact?inquiry=couture">
-                <Mail className="mr-2 h-4 w-4" />
-                Inquire About This Piece
-              </Link>
+              <Heart className={cn("mr-2 h-4 w-4", isFavorited && "fill-primary text-primary")} />
+              {isFavorited ? "In Wishlist" : "Add to Wishlist"}
             </Button>
-            <p className="text-sm text-muted-foreground text-center">
-              This is a one-of-a-kind couture piece. Contact us for availability and pricing.
-            </p>
-          </div>
+          </>
         ) : (
           /* Ready To Wear: Standard cart flow */
           <>
@@ -251,17 +284,17 @@ export function ProductInfo({
                 )}
               </Button>
             </div>
+            <Button 
+              variant="outline"
+              className="w-full h-11 px-8 sm:w-auto"
+              onClick={toggleFavorite}
+              disabled={isToggling}
+            >
+              <Heart className={cn("mr-2 h-4 w-4", isFavorited && "fill-primary text-primary")} />
+              {isFavorited ? "In Wishlist" : "Add to Wishlist"}
+            </Button>
           </>
         )}
-        <Button 
-          variant="outline"
-          className="w-full h-11 px-8 sm:w-auto"
-          onClick={toggleFavorite}
-          disabled={isToggling}
-        >
-          <Heart className={cn("mr-2 h-4 w-4", isFavorited && "fill-primary text-primary")} />
-          {isFavorited ? "In Wishlist" : "Add to Wishlist"}
-        </Button>
       </div>
 
       {/* Specs */}
