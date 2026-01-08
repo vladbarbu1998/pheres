@@ -416,7 +416,7 @@ export default function AdminProducts() {
           </Button>
 
           {/* Search */}
-          <div className="relative flex-1 sm:max-w-[200px]">
+          <div className="relative flex-1 sm:max-w-[280px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
