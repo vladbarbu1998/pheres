@@ -16,6 +16,7 @@ export function useFeaturedProducts(limit = 8) {
           base_price,
           compare_at_price,
           is_new,
+          product_type,
           product_images (
             image_url,
             is_primary,
@@ -23,7 +24,9 @@ export function useFeaturedProducts(limit = 8) {
           ),
           product_collections (
             collections (
-              name
+              name,
+              slug,
+              collection_type
             )
           )
         `
@@ -47,6 +50,7 @@ export function useFeaturedProducts(limit = 8) {
             base_price,
             compare_at_price,
             is_new,
+            product_type,
             product_images (
               image_url,
               is_primary,
@@ -54,7 +58,9 @@ export function useFeaturedProducts(limit = 8) {
             ),
             product_collections (
               collections (
-                name
+                name,
+                slug,
+                collection_type
               )
             )
           `

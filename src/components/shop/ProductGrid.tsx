@@ -23,6 +23,7 @@ interface Product {
   product_collections?: Array<{
     collections: {
       name: string;
+      slug?: string;
       collection_type?: CollectionType;
     } | null;
   }>;
@@ -70,9 +71,15 @@ export function ProductGrid({
         const firstImage = product.product_images?.[0];
         const imageUrl = primaryImage?.image_url || firstImage?.image_url || null;
         
+        // Find couture collection if exists
+        const coutureCollection = product.product_collections?.find(
+          pc => pc.collections?.collection_type === "couture"
+        )?.collections;
+        
         const collectionName = product.product_collections?.[0]?.collections?.name || null;
-        const collectionType = product.product_collections?.[0]?.collections?.collection_type || null;
+        const collectionType = coutureCollection ? "couture" : (product.product_collections?.[0]?.collections?.collection_type || null);
         const categorySlug = product.categories?.slug || null;
+        const extractedCoutureSlug = coutureCollection?.slug || null;
 
         return (
           <ProductCard
@@ -87,7 +94,7 @@ export function ProductGrid({
             collectionType={collectionType}
             categorySlug={categorySlug}
             isNew={product.is_new}
-            coutureCollectionSlug={coutureCollectionSlug}
+            coutureCollectionSlug={extractedCoutureSlug || coutureCollectionSlug}
             className="animate-fade-in-up"
             style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
           />

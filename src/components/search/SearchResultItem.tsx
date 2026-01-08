@@ -8,6 +8,8 @@ interface SearchResultItemProps {
   imageUrl: string | null;
   collectionName?: string | null;
   categorySlug?: string | null;
+  productType?: string | null;
+  coutureCollectionSlug?: string | null;
   onClick?: () => void;
 }
 
@@ -18,9 +20,16 @@ export function SearchResultItem({
   imageUrl,
   collectionName,
   categorySlug,
+  productType,
+  coutureCollectionSlug,
   onClick,
 }: SearchResultItemProps) {
-  const productUrl = categorySlug ? `/shop/${categorySlug}/${slug}` : `/product/${slug}`;
+  // Build URL - couture products go to /couture/
+  const productUrl = productType === "couture" && coutureCollectionSlug
+    ? `/couture/${coutureCollectionSlug}/${slug}`
+    : categorySlug 
+      ? `/shop/${categorySlug}/${slug}` 
+      : `/product/${slug}`;
 
   return (
     <Link

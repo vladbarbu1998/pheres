@@ -110,12 +110,20 @@ export function useFavorites() {
             base_price,
             compare_at_price,
             is_new,
+            product_type,
             categories (
               slug
             ),
             product_images (
               image_url,
               is_primary
+            ),
+            product_collections (
+              collections (
+                name,
+                slug,
+                collection_type
+              )
             )
           )
         `)

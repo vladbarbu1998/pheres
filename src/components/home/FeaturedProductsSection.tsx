@@ -106,18 +106,27 @@ interface ProductWithImages {
   base_price: number;
   compare_at_price?: number | null;
   is_new?: boolean;
+  product_type?: string | null;
   product_images?: Array<{ image_url: string; is_primary: boolean }>;
-  product_collections?: Array<{ collections?: { name: string } }>;
+  product_collections?: Array<{ collections?: { name: string; slug?: string; collection_type?: string } }>;
 }
 
 function MainProductCard({ product }: { product: ProductWithImages }) {
   const primaryImage = product.product_images?.find((img) => img.is_primary);
   const imageUrl = primaryImage?.image_url || product.product_images?.[0]?.image_url;
   const collectionName = product.product_collections?.[0]?.collections?.name;
+  
+  // Build URL based on product type - couture products go to /couture/
+  const coutureCollection = product.product_collections?.find(
+    pc => pc.collections?.collection_type === "couture"
+  )?.collections;
+  const productUrl = coutureCollection 
+    ? `/couture/${coutureCollection.slug}/${product.slug}`
+    : `/product/${product.slug}`;
 
   return (
     <Link
-      to={`/product/${product.slug}`}
+      to={productUrl}
       className="group relative block animate-fade-in"
     >
       {/* Square Image Container */}
@@ -185,9 +194,17 @@ function GridProductCard({
   const imageUrl = primaryImage?.image_url || product.product_images?.[0]?.image_url;
   const collectionName = product.product_collections?.[0]?.collections?.name;
 
+  // Build URL based on product type - couture products go to /couture/
+  const coutureCollection = product.product_collections?.find(
+    pc => pc.collections?.collection_type === "couture"
+  )?.collections;
+  const productUrl = coutureCollection 
+    ? `/couture/${coutureCollection.slug}/${product.slug}`
+    : `/product/${product.slug}`;
+
   return (
     <Link
-      to={`/product/${product.slug}`}
+      to={productUrl}
       className="group flex flex-col animate-fade-in"
       style={{ animationDelay: `${(index + 1) * 80}ms` }}
     >
