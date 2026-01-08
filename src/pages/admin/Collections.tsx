@@ -64,6 +64,8 @@ export default function AdminCollections() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [archiveConfirmOpen, setArchiveConfirmOpen] = useState(false);
+  const [pendingArchiveData, setPendingArchiveData] = useState<CollectionFormData | null>(null);
   const [formData, setFormData] = useState<CollectionFormData>({
     name: "",
     slug: "",
@@ -129,12 +131,29 @@ export default function AdminCollections() {
     setIsDialogOpen(true);
   };
 
+  // Get the existing collection being edited to check archive status change
+  const existingCollection = editingId 
+    ? [...(coutureCollections || []), ...(readyToWearCollections || [])].find(c => c.id === editingId)
+    : null;
+
   const handleSave = async () => {
     if (!formData.name || !formData.slug) {
       toast.error("Name and slug are required");
       return;
     }
 
+    // Check if we're toggling archive ON for an existing collection
+    if (editingId && formData.archived && !existingCollection?.archived) {
+      // Show confirmation dialog
+      setPendingArchiveData(formData);
+      setArchiveConfirmOpen(true);
+      return;
+    }
+
+    await performSave(formData);
+  };
+
+  const performSave = async (data: CollectionFormData) => {
     setIsSaving(true);
 
     try {
@@ -145,7 +164,7 @@ export default function AdminCollections() {
         const { error } = await supabase
           .from("collections")
           .update({
-            ...formData,
+            ...data,
             parent_id: parentId, // Ensure parent_id is set
           })
           .eq("id", editingId);
@@ -154,7 +173,7 @@ export default function AdminCollections() {
       } else {
         // Create new child collection
         const { error } = await supabase.from("collections").insert({
-          ...formData,
+          ...data,
           parent_id: parentId,
           collection_type: activeTab, // Will be synced by trigger anyway
         });
@@ -162,10 +181,12 @@ export default function AdminCollections() {
         toast.success("Collection created");
       }
 
-      // Invalidate all collection queries
+      // Invalidate all collection and product queries
       queryClient.invalidateQueries({ queryKey: ["admin-collections"] });
       queryClient.invalidateQueries({ queryKey: ["admin-collections-by-type"] });
       queryClient.invalidateQueries({ queryKey: ["admin-child-collections"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-product"] });
       setIsDialogOpen(false);
       resetForm();
     } catch (error: any) {
@@ -174,6 +195,14 @@ export default function AdminCollections() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleArchiveConfirm = async () => {
+    if (pendingArchiveData) {
+      await performSave(pendingArchiveData);
+    }
+    setArchiveConfirmOpen(false);
+    setPendingArchiveData(null);
   };
 
   const handleAssignToParent = async (collectionId: string, parentType: CollectionType) => {
@@ -473,6 +502,25 @@ export default function AdminCollections() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Archive Confirmation */}
+      <AlertDialog open={archiveConfirmOpen} onOpenChange={setArchiveConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Archive collection?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Archiving this collection will also archive all products within it. 
+              They will no longer be purchasable on the website.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingArchiveData(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleArchiveConfirm}>
+              Archive Collection & Products
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
