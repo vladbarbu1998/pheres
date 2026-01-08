@@ -14,9 +14,9 @@ interface ProductDetailsProps {
 
 export function ProductDetails({ description, certification }: ProductDetailsProps) {
   return (
-    <section className="border-t border-border pt-12">
+    <section className="border-t border-border pt-16">
       {/* 2x2 Accordion Grid */}
-      <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+      <div className="grid gap-6 pb-4 md:grid-cols-2 md:gap-8">
         {/* Craftsmanship & Materials */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="craftsmanship" className="border-b-0 border border-border/30 rounded-sm bg-card/50 transition-all duration-200 hover:border-primary/20 hover:shadow-sm cursor-pointer">
