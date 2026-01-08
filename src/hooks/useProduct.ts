@@ -101,6 +101,7 @@ export function useRelatedProducts(productId: string, collectionIds: string[]) {
         `
         )
         .eq("is_active", true)
+        .eq("archived", false)
         .neq("id", productId)
         .in("product_collections.collection_id", collectionIds)
         .limit(8);

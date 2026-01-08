@@ -69,7 +69,8 @@ export function useRecentlyViewedProducts(productIds: string[]) {
           )
         `)
         .in("id", productIds)
-        .eq("is_active", true);
+        .eq("is_active", true)
+        .eq("archived", false);
 
       if (error) throw error;
 
