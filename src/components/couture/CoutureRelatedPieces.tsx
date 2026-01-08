@@ -66,7 +66,7 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
   return (
     <section className="py-16 md:py-20 border-t border-border/30">
       <div className="container max-w-7xl mx-auto px-4">
-        <p className="font-label text-xs font-medium uppercase tracking-[0.25em] text-primary mb-4 text-center">
+        <p className="font-label text-sm font-medium uppercase tracking-[0.25em] text-primary mb-4 text-center">
           Discover More
         </p>
         <h3 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-12 text-center">
