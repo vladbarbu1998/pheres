@@ -11,6 +11,7 @@ interface SearchProduct {
   base_price: number;
   compare_at_price?: number | null;
   is_new?: boolean;
+  archived?: boolean;
   product_type?: string | null;
   product_images?: Array<{
     image_url: string;
@@ -49,6 +50,7 @@ async function searchProducts(query: string): Promise<SearchProduct[]> {
       base_price,
       compare_at_price,
       is_new,
+      archived,
       product_type,
       short_description,
       description,

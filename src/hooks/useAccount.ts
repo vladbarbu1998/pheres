@@ -110,6 +110,7 @@ export function useFavorites() {
             base_price,
             compare_at_price,
             is_new,
+            archived,
             product_type,
             categories (
               slug

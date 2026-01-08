@@ -126,6 +126,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                         categorySlug={categorySlug}
                         productType={product.product_type}
                         coutureCollectionSlug={coutureCollection?.slug}
+                        isArchived={(product as any).archived === true}
                         onClick={handleResultClick}
                       />
                     );

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
@@ -37,6 +38,18 @@ export default function CollectionTypePage() {
   
   const config = TYPE_CONFIG[type as CollectionTypeParam];
   const { data: collections, isLoading, isError } = useCollectionsByType(config.dbType);
+
+  // Sort collections: active first, archived last (preserving display_order within each group)
+  const sortedCollections = useMemo(() => {
+    if (!collections) return [];
+    return [...collections].sort((a, b) => {
+      // Archived goes last
+      if (a.archived && !b.archived) return 1;
+      if (!a.archived && b.archived) return -1;
+      // Within same archived status, preserve display_order
+      return (a.display_order ?? 0) - (b.display_order ?? 0);
+    });
+  }, [collections]);
 
   return (
     <Layout>
@@ -86,9 +99,9 @@ export default function CollectionTypePage() {
               Unable to load collections. Please try again later.
             </p>
           </div>
-        ) : collections && collections.length > 0 ? (
+        ) : sortedCollections.length > 0 ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {collections.map((collection, index) => {
+            {sortedCollections.map((collection, index) => {
               // Use /couture/:slug for couture collections, /shop/collection/:slug for ready-to-wear
               const collectionUrl = type === "couture" 
                 ? `/couture/${collection.slug}`

@@ -16,6 +16,7 @@ export function useFeaturedProducts(limit = 8) {
           base_price,
           compare_at_price,
           is_new,
+          archived,
           product_type,
           product_images (
             image_url,
@@ -50,6 +51,7 @@ export function useFeaturedProducts(limit = 8) {
             base_price,
             compare_at_price,
             is_new,
+            archived,
             product_type,
             product_images (
               image_url,

@@ -171,16 +171,18 @@ export default function FavoritesPage() {
                         {product.name}
                       </h3>
                     </Link>
-                    <div className="mt-1 flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground">
-                        ${Number(product.base_price).toLocaleString()}
-                      </span>
-                      {product.compare_at_price && Number(product.compare_at_price) > Number(product.base_price) && (
-                        <span className="text-xs text-muted-foreground line-through">
-                          ${Number(product.compare_at_price).toLocaleString()}
+                    {!product.archived && (
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">
+                          ${Number(product.base_price).toLocaleString()}
                         </span>
-                      )}
-                    </div>
+                        {product.compare_at_price && Number(product.compare_at_price) > Number(product.base_price) && (
+                          <span className="text-xs text-muted-foreground line-through">
+                            ${Number(product.compare_at_price).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <div className="flex gap-2 mt-2">
                       <Button
                         variant="outline"
@@ -276,16 +278,18 @@ export default function FavoritesPage() {
                         {product.name}
                       </h3>
                     </Link>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground">
-                        ${Number(product.base_price).toLocaleString()}
-                      </span>
-                      {product.compare_at_price && Number(product.compare_at_price) > Number(product.base_price) && (
-                        <span className="text-sm text-muted-foreground line-through">
-                          ${Number(product.compare_at_price).toLocaleString()}
+                    {!product.archived && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">
+                          ${Number(product.base_price).toLocaleString()}
                         </span>
-                      )}
-                    </div>
+                        {product.compare_at_price && Number(product.compare_at_price) > Number(product.base_price) && (
+                          <span className="text-sm text-muted-foreground line-through">
+                            ${Number(product.compare_at_price).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

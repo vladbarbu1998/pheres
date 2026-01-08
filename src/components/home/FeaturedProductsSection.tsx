@@ -106,6 +106,7 @@ interface ProductWithImages {
   base_price: number;
   compare_at_price?: number | null;
   is_new?: boolean;
+  archived?: boolean;
   product_type?: string | null;
   product_images?: Array<{ image_url: string; is_primary: boolean }>;
   product_collections?: Array<{ collections?: { name: string; slug?: string; collection_type?: string } }>;
@@ -163,14 +164,16 @@ function MainProductCard({ product }: { product: ProductWithImages }) {
             <h3 className="font-display text-sm font-medium text-foreground md:text-lg">
               {product.name}
             </h3>
-            <p className="text-xs text-foreground md:text-sm">
-              ${Number(product.base_price).toLocaleString()}
-              {product.compare_at_price && product.compare_at_price > product.base_price && (
-                <span className="ml-1.5 text-[10px] text-foreground/60 line-through md:text-xs">
-                  ${Number(product.compare_at_price).toLocaleString()}
-                </span>
-              )}
-            </p>
+            {!product.archived && (
+              <p className="text-xs text-foreground md:text-sm">
+                ${Number(product.base_price).toLocaleString()}
+                {product.compare_at_price && product.compare_at_price > product.base_price && (
+                  <span className="ml-1.5 text-[10px] text-foreground/60 line-through md:text-xs">
+                    ${Number(product.compare_at_price).toLocaleString()}
+                  </span>
+                )}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -242,14 +245,16 @@ function GridProductCard({
         <h3 className="font-display text-sm font-medium text-foreground transition-colors group-hover:text-primary md:text-base">
           {product.name}
         </h3>
-        <p className="text-xs text-foreground md:text-sm">
-          ${Number(product.base_price).toLocaleString()}
-          {product.compare_at_price && product.compare_at_price > product.base_price && (
-            <span className="ml-1.5 text-[10px] text-muted-foreground line-through md:text-xs">
-              ${Number(product.compare_at_price).toLocaleString()}
-            </span>
-          )}
-        </p>
+        {!product.archived && (
+          <p className="text-xs text-foreground md:text-sm">
+            ${Number(product.base_price).toLocaleString()}
+            {product.compare_at_price && product.compare_at_price > product.base_price && (
+              <span className="ml-1.5 text-[10px] text-muted-foreground line-through md:text-xs">
+                ${Number(product.compare_at_price).toLocaleString()}
+              </span>
+            )}
+          </p>
+        )}
       </div>
     </Link>
   );
