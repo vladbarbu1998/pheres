@@ -14,7 +14,7 @@ interface ProductDetailsProps {
 
 export function ProductDetails({ description, certification }: ProductDetailsProps) {
   return (
-    <section className="border-t border-border pt-12">
+    <section className="border-t border-border py-12">
       {/* 2x2 Accordion Grid */}
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
         {/* Craftsmanship & Materials */}
@@ -118,7 +118,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
       </div>
 
       {/* Trust badges */}
-      <div className="mt-12 border-y border-border py-6">
+      <div className="border-y border-border py-6">
         <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
           <div>
             <p className="font-label text-sm font-semibold text-foreground">Certified</p>
