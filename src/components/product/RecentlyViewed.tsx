@@ -20,7 +20,7 @@ export function RecentlyViewed({ currentProductId }: RecentlyViewedProps) {
   }
 
   return (
-    <section className="mt-12 lg:mt-16 border-t border-border pt-12">
+    <section className="mt-12 lg:mt-16 border-t border-border pt-[30px]">
       <div className="mb-8 text-center">
         <p className="font-label text-sm font-medium uppercase tracking-[0.25em] text-primary mb-2">
           Your History
