@@ -45,10 +45,9 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="space-y-3">
-                <Skeleton className="aspect-[3/4] rounded-sm" />
+                <Skeleton className="aspect-square rounded-sm" />
                 <Skeleton className="h-4 w-24" />
                 <Skeleton className="h-5 w-full" />
-                <Skeleton className="h-3 w-28" />
               </div>
             ))}
           </div>
@@ -67,9 +66,9 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
   return (
     <section className="py-16 md:py-20 border-t border-border/30">
       <div className="container max-w-7xl mx-auto px-4">
-        <h2 className="text-xs uppercase tracking-[0.25em] text-primary mb-4 text-center">
+        <p className="font-label text-xs uppercase tracking-[0.25em] text-primary mb-4 text-center">
           Discover More
-        </h2>
+        </p>
         <h3 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-12 text-center">
           You May Also Love
         </h3>
@@ -95,8 +94,8 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
                 to={productUrl}
                 className="group block"
               >
-                {/* Image */}
-                <div className="aspect-[3/4] overflow-hidden bg-stone-100 rounded-sm mb-4">
+                {/* Image - Square ratio, bigger */}
+                <div className="aspect-square overflow-hidden bg-stone-100 rounded-sm mb-4">
                   {primaryImage ? (
                     <img
                       src={primaryImage.image_url}
@@ -118,14 +117,9 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
                 )}
 
                 {/* Product Name */}
-                <h4 className="font-display text-base font-medium text-foreground group-hover:text-primary transition-colors mb-2">
+                <h4 className="font-display text-base font-medium text-foreground group-hover:text-primary transition-colors">
                   {product.name}
                 </h4>
-
-                {/* Tag */}
-                <p className="text-xs italic text-muted-foreground">
-                  Price Upon Request
-                </p>
               </Link>
             );
           })}
