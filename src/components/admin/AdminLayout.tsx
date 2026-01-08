@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   FileText,
   Building2,
+  Gem,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +35,7 @@ const navItems = [
   { title: "Press Outlets", href: "/admin/press-outlets", icon: Building2 },
   { title: "Press Articles", href: "/admin/press-articles", icon: FileText },
   { title: "Inbox", href: "/admin/inbox", icon: Mail },
+  { title: "Couture Inquiries", href: "/admin/couture-inquiries", icon: Gem },
 ];
 
 interface AdminLayoutProps {
