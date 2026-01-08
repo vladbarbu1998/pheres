@@ -8,6 +8,7 @@ interface RecentlyViewedProduct {
   base_price: number;
   compare_at_price: number | null;
   is_new: boolean;
+  archived: boolean;
   product_type: "couture" | "ready_to_wear";
   product_images: {
     id: string;
@@ -22,6 +23,7 @@ interface RecentlyViewedProduct {
       name: string;
       slug: string;
       collection_type: "couture" | "ready_to_wear";
+      archived: boolean;
     } | null;
   }[];
   categories: {
@@ -44,6 +46,7 @@ export function useRecentlyViewedProducts(productIds: string[]) {
           base_price,
           compare_at_price,
           is_new,
+          archived,
           product_type,
           product_images (
             id,
@@ -57,7 +60,8 @@ export function useRecentlyViewedProducts(productIds: string[]) {
               id,
               name,
               slug,
-              collection_type
+              collection_type,
+              archived
             )
           ),
           categories (

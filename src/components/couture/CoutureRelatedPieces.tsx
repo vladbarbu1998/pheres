@@ -5,6 +5,7 @@ interface RelatedProduct {
   id: string;
   name: string;
   slug: string;
+  archived?: boolean;
   product_images: {
     id?: string;
     image_url: string;
@@ -19,6 +20,7 @@ interface RelatedProduct {
       name: string;
       slug?: string;
       collection_type?: string;
+      archived?: boolean;
     } | null;
   }[];
 }
@@ -88,6 +90,12 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
               ? `/couture/${collection.slug}/${product.slug}`
               : `/couture/collection/${product.slug}`;
 
+            // Check if effectively archived (product archived OR any collection archived)
+            const isEffectivelyArchived = product.archived || 
+              product.product_collections?.some(
+                (pc) => pc.collections?.archived === true
+              ) || false;
+
             return (
               <Link
                 key={product.id}
@@ -95,7 +103,7 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
                 className="group block"
               >
                 {/* Image - Square ratio, bigger */}
-                <div className="aspect-square overflow-hidden bg-stone-100 rounded-sm mb-4">
+                <div className="relative aspect-square overflow-hidden bg-stone-100 rounded-sm mb-4">
                   {primaryImage ? (
                     <img
                       src={primaryImage.image_url}
@@ -106,6 +114,20 @@ export function CoutureRelatedPieces({ products, isLoading }: CoutureRelatedPiec
                     <div className="h-full w-full flex items-center justify-center">
                       <span className="text-muted-foreground text-sm">No image</span>
                     </div>
+                  )}
+                  
+                  {/* Archive badge */}
+                  {isEffectivelyArchived && (
+                    <div className="absolute left-3 top-3 z-10">
+                      <span className="bg-background/90 backdrop-blur-sm px-2 py-1 font-label text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                        Archive
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Subtle muting overlay for archived */}
+                  {isEffectivelyArchived && (
+                    <div className="absolute inset-0 bg-black/5 pointer-events-none" />
                   )}
                 </div>
 

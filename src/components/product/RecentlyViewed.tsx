@@ -51,6 +51,12 @@ export function RecentlyViewed({ currentProductId }: RecentlyViewedProps) {
               (pc) => pc.collections?.collection_type === "couture"
             )?.collections;
 
+            // Check if effectively archived (product archived OR any collection archived)
+            const isEffectivelyArchived = product.archived || 
+              product.product_collections?.some(
+                (pc) => pc.collections?.archived === true
+              ) || false;
+
             return (
               <ProductCard
                 key={product.id}
@@ -65,6 +71,7 @@ export function RecentlyViewed({ currentProductId }: RecentlyViewedProps) {
                 categorySlug={product.categories?.slug}
                 coutureCollectionSlug={coutureCollection?.slug}
                 isNew={product.is_new}
+                isArchived={isEffectivelyArchived}
               />
             );
           })}
