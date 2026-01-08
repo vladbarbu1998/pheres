@@ -94,6 +94,12 @@ export default function CollectionTypePage() {
                 ? `/couture/${collection.slug}`
                 : `/shop/collection/${collection.slug}`;
               
+              const isArchived = collection.archived;
+              const archiveBadge = type === "couture" ? "Archive" : "Past Collection";
+              const ctaText = isArchived
+                ? (type === "couture" ? "View Archive Pieces" : "View Archive")
+                : "View Pieces";
+              
               return (
                 <Link
                   key={collection.id}
@@ -117,6 +123,20 @@ export default function CollectionTypePage() {
                     </div>
                   )}
                   
+                  {/* Archive badge */}
+                  {isArchived && (
+                    <div className="absolute left-4 top-4 z-10">
+                      <span className="bg-background/90 backdrop-blur-sm px-3 py-1.5 font-label text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                        {archiveBadge}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Subtle muting overlay for archived */}
+                  {isArchived && (
+                    <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+                  )}
+                  
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   
@@ -129,7 +149,7 @@ export default function CollectionTypePage() {
                       {collection.name}
                     </h2>
                     <span className="mt-2 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white/80 transition-all duration-300 group-hover:gap-3 group-hover:text-white">
-                      View Pieces
+                      {ctaText}
                       <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>

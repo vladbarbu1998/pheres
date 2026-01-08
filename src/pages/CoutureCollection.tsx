@@ -164,6 +164,11 @@ export default function CoutureCollectionPage() {
                   dangerouslySetInnerHTML={{ __html: sanitizeHtml(collection.description) }}
                 />
               )}
+              {collection?.archived && (
+                <p className="mt-4 text-sm text-muted-foreground italic">
+                  This PHERES couture collection is part of our archive and is no longer available for new inquiries.
+                </p>
+              )}
             </div>
           )}
         </div>
