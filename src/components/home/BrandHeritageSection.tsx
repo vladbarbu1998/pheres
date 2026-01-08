@@ -40,7 +40,7 @@ export function BrandHeritageSection() {
                 
                 {/* Name card overlay */}
                 <div className="absolute -bottom-6 left-6 right-6 bg-card/95 backdrop-blur-sm p-4 text-center border border-border/50 rounded-sm shadow-lg md:left-8 md:right-8">
-                  <h3 className="brand-word text-lg font-semibold text-foreground tracking-wide">
+                  <h3 className="brand-word text-lg font-semibold text-foreground">
                     Narcisa Pheres
                   </h3>
                   <p className="font-label text-xs uppercase tracking-[0.2em] text-muted-foreground mt-1">
