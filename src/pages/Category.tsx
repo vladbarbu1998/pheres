@@ -71,6 +71,7 @@ export default function CategoryPage() {
     sortBy,
     page,
     pageSize: 12,
+    productType: "ready_to_wear",
   });
 
   // Update document title and meta for SEO
