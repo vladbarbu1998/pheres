@@ -148,11 +148,6 @@ export function ProductCard({
 
             {/* Badges */}
             <div className="absolute left-3 top-3 flex flex-col gap-2">
-              {isCouture && (
-                <span className="bg-primary px-2 py-1 font-display text-xs font-medium tracking-wide text-primary-foreground">
-                  COUTURE
-                </span>
-              )}
               {isNew && !isCouture && (
                 <span className="bg-foreground px-2 py-1 font-display text-xs font-medium tracking-wide text-background">
                   NEW
