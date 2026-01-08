@@ -14,6 +14,7 @@ import {
 import { ArrowLeft, Share2, Link2, Check, Heart, Send, Linkedin, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useFavoriteToggle } from "@/hooks/useFavoriteToggle";
 
 interface Metal {
   id: string;
@@ -31,6 +32,7 @@ interface Stone {
 }
 
 interface CoutureInfoPanelProps {
+  productId: string;
   productName: string;
   shortDescription?: string | null;
   collectionName?: string | null;
@@ -69,6 +71,7 @@ function formatSpecs(metals: Metal[], stones: Stone[], grossWeight?: string | nu
 }
 
 export function CoutureInfoPanel({
+  productId,
   productName,
   shortDescription,
   collectionName,
@@ -82,6 +85,7 @@ export function CoutureInfoPanel({
   const specs = formatSpecs(metals, stones, grossWeight);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(productId);
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareText = `Discover ${productName} - One of a Kind piece by PHERES`;
@@ -214,6 +218,18 @@ export function CoutureInfoPanel({
         style={{ animationDelay: "350ms", animationFillMode: "both" }}
       >
         Request Information
+      </Button>
+
+      {/* Add to Favorites */}
+      <Button
+        variant="outline"
+        onClick={toggleFavorite}
+        disabled={isToggling}
+        className="w-full h-12 text-base font-medium tracking-wide mb-4 animate-fade-in"
+        style={{ animationDelay: "375ms", animationFillMode: "both" }}
+      >
+        <Heart className={cn("mr-2 h-4 w-4", isFavorited && "fill-primary text-primary")} />
+        {isFavorited ? "In Wishlist" : "Add to Wishlist"}
       </Button>
 
       {/* Secondary CTA */}

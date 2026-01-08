@@ -115,7 +115,8 @@ export default function CoutureProductPage() {
               {productLoading ? (
                 <CoutureInfoPanelSkeleton />
               ) : (
-                <CoutureInfoPanel
+              <CoutureInfoPanel
+                  productId={product!.id}
                   productName={product!.name}
                   shortDescription={product!.short_description}
                   collectionName={primaryCollection?.name || collection?.name || null}
