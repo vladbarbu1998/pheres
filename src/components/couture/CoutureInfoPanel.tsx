@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
 import { CoutureKeyDetails } from "./CoutureKeyDetails";
 import {
@@ -101,9 +102,10 @@ export function CoutureInfoPanel({
 
       {/* Short Description */}
       {shortDescription && (
-        <p className="text-base text-muted-foreground leading-relaxed mb-8 max-w-prose">
-          {shortDescription}
-        </p>
+        <div 
+          className="text-base text-muted-foreground leading-relaxed mb-8 max-w-prose prose prose-sm"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(shortDescription) }}
+        />
       )}
 
       {/* Primary CTA */}
