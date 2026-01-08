@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, ShoppingBag, Loader2, Mail } from "lucide-react";
+import { Heart, ShoppingBag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -182,21 +182,9 @@ export function ProductCard({
               </Button>
             </div>
 
-            {/* Quick add / Inquire button - bottom */}
-            <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
-              {isCouture ? (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
-                  asChild
-                >
-                  <Link to="/contact?inquiry=couture">
-                    <Mail className="mr-2 h-4 w-4" />
-                    Inquire
-                  </Link>
-                </Button>
-              ) : (
+            {/* Quick add button - bottom (only for ready-to-wear) */}
+            {!isCouture && (
+              <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
                 <Button
                   variant="secondary"
                   size="sm"
@@ -214,8 +202,8 @@ export function ProductCard({
                     </>
                   )}
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </Link>
 
@@ -231,11 +219,7 @@ export function ProductCard({
               {name}
             </h3>
           </Link>
-          {isCouture ? (
-            <span className="text-sm font-medium text-muted-foreground italic">
-              Price Upon Request
-            </span>
-          ) : (
+          {!isCouture && (
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-foreground">
                 ${price.toLocaleString()}
