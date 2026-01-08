@@ -313,9 +313,16 @@ serve(async (req) => {
         base_price,
         sku,
         is_active,
+        archived,
+        product_type,
         product_images (
           image_url,
           is_primary
+        ),
+        product_collections (
+          collections (
+            archived
+          )
         )
       `)
       .in("id", productIds);
@@ -325,6 +332,40 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Failed to fetch products" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ====== ARCHIVE CHECK (takes priority over all other checks) ======
+    for (const product of products) {
+      const productArchived = product.archived === true;
+      const collectionArchived = (product as any).product_collections?.some(
+        (pc: any) => pc.collections?.archived === true
+      ) ?? false;
+
+      if (productArchived || collectionArchived) {
+        console.log(`Rejected order: Product ${product.id} is archived (product: ${productArchived}, collection: ${collectionArchived})`);
+        return new Response(
+          JSON.stringify({ 
+            error: "Some products are archived and cannot be purchased",
+            code: "PRODUCT_ARCHIVED",
+            details: { productId: product.id }
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // ====== COUTURE CHECK (after archive, before is_active) ======
+    const coutureProducts = products.filter((p: any) => p.product_type === 'couture');
+    if (coutureProducts.length > 0) {
+      console.log(`Rejected order: Couture products cannot be purchased online: ${coutureProducts.map(p => p.id).join(', ')}`);
+      return new Response(
+        JSON.stringify({ 
+          error: "Couture products cannot be purchased online. Please contact us for inquiries.",
+          code: "COUTURE_INQUIRY_ONLY",
+          details: { productIds: coutureProducts.map(p => p.id) }
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
