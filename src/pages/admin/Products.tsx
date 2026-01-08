@@ -385,6 +385,7 @@ export default function AdminProducts() {
                     ? col.collection_type === "couture" 
                     : col.collection_type === "ready_to_wear"
                 )
+                .filter((col) => col.parent_id !== null)
                 .map((col) => (
                   <SelectItem key={col.id} value={col.id}>
                     {col.name}
