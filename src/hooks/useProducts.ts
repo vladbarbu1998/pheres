@@ -8,6 +8,7 @@ interface UseProductsOptions {
   collectionSlug?: string;
   page?: number;
   pageSize?: number;
+  productType?: "couture" | "ready_to_wear";
 }
 
 export function useProducts({
@@ -16,9 +17,10 @@ export function useProducts({
   collectionSlug,
   page = 1,
   pageSize = 12,
+  productType,
 }: UseProductsOptions = {}) {
   return useQuery({
-    queryKey: ["products", filters, sortBy, collectionSlug, page, pageSize],
+    queryKey: ["products", filters, sortBy, collectionSlug, page, pageSize, productType],
     queryFn: async () => {
       // If filtering by collections, get product IDs from product_collections first
       let collectionProductIds: string[] | null = null;
@@ -88,6 +90,11 @@ export function useProducts({
           { count: "exact" }
         )
         .eq("is_active", true);
+
+      // Filter by product type (couture vs ready_to_wear)
+      if (productType) {
+        query = query.eq("product_type", productType);
+      }
 
       // Filter by collection slug (for collection page)
       if (collectionSlug) {
@@ -319,12 +326,12 @@ export function useCategory(slug: string) {
   });
 }
 
-// Hook to get distinct filter options from active products
+// Hook to get distinct filter options from active ready-to-wear products
 export function useProductFilterOptions() {
   return useQuery({
     queryKey: ["product-filter-options"],
     queryFn: async () => {
-      // Fetch all active products with their category_id, stone_type, collections, and product_stones
+      // Fetch all active ready-to-wear products with their category_id, stone_type, collections, and product_stones
       const { data: products, error } = await supabase
         .from("products")
         .select(`
@@ -337,7 +344,8 @@ export function useProductFilterOptions() {
             stone_type
           )
         `)
-        .eq("is_active", true);
+        .eq("is_active", true)
+        .eq("product_type", "ready_to_wear");
 
       if (error) throw error;
 
@@ -486,7 +494,7 @@ export function useCategoryFilterOptions(categorySlug: string) {
         };
       }
 
-      // Fetch products in this category with their details
+      // Fetch ready-to-wear products in this category with their details
       const { data: products, error } = await supabase
         .from("products")
         .select(`
@@ -500,6 +508,7 @@ export function useCategoryFilterOptions(categorySlug: string) {
           )
         `)
         .eq("is_active", true)
+        .eq("product_type", "ready_to_wear")
         .eq("category_id", category.id);
 
       if (error) throw error;

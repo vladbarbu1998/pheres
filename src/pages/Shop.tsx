@@ -61,6 +61,7 @@ export default function ShopPage() {
     sortBy,
     page,
     pageSize: 12,
+    productType: "ready_to_wear",
   });
 
   const handleSortChange = (sort: SortOption) => {
