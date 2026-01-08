@@ -37,7 +37,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { exportToCsv } from "@/lib/exportCsv";
 import { toast } from "sonner";
-import { Plus, Search, Trash2, Pencil, Download, Loader2 } from "lucide-react";
+import { Plus, Search, Trash2, Pencil, Download, Loader2, RotateCcw } from "lucide-react";
 import { format } from "date-fns";
 
 export default function AdminProducts() {
@@ -81,6 +81,16 @@ export default function AdminProducts() {
     }
     setSearchParams(newParams, { replace: true });
   };
+
+  // Reset all filters
+  const handleResetFilters = () => {
+    setSearch("");
+    const newParams = new URLSearchParams();
+    newParams.set("type", activeTab);
+    setSearchParams(newParams, { replace: true });
+  };
+
+  const hasActiveFilters = !!search || !!categoryId || !!collectionId;
 
   // Handle tab change
   const handleTabChange = (value: string) => {
@@ -404,6 +414,18 @@ export default function AdminProducts() {
               className="pl-9"
             />
           </div>
+
+          {/* Reset filters */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleResetFilters}
+            disabled={!hasActiveFilters}
+            title="Reset filters"
+            className="shrink-0"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </Button>
         </div>
 
         {isLoading ? (
