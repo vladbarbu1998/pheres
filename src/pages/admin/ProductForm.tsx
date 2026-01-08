@@ -428,7 +428,7 @@ export default function ProductForm() {
       queryClient.invalidateQueries({ queryKey: ["all-stone-types"] });
       queryClient.invalidateQueries({ queryKey: ["product-filter-options"] });
       toast.success(isNew ? "Product created" : "Product updated");
-      navigate("/admin/products");
+      navigate(`/admin/products?type=${productType}`);
     } catch (error: any) {
       console.error(error);
       if (error?.code === "23505" && error?.message?.includes("products_slug_key")) {
