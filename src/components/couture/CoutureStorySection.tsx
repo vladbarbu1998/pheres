@@ -45,7 +45,7 @@ export function CoutureStorySection() {
                 <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                   <item.icon className="h-6 w-6 text-primary" />
                 </div>
-                <h4 className="font-display font-semibold text-foreground mb-2">
+                <h4 className="font-label font-semibold text-foreground mb-2">
                   {item.title}
                 </h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
