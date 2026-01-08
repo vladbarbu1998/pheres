@@ -644,14 +644,9 @@ export default function ProductForm() {
                       control={control}
                       name="archived"
                       render={({ field }) => (
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            <Label className="font-normal text-sm">Archived</Label>
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            Archived products remain visible but cannot be purchased.
-                          </p>
+                        <div className="flex items-center gap-1.5">
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          <Label className="font-normal text-sm">Archived</Label>
                         </div>
                       )}
                     />
