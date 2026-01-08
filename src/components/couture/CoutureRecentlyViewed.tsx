@@ -66,11 +66,8 @@ export function CoutureRecentlyViewed({ currentProductId }: CoutureRecentlyViewe
               ? `/couture/${coutureCollection.slug}/${product.slug}`
               : `/couture/${product.slug}`;
 
-            // Check if effectively archived (product archived OR any collection archived)
-            const isEffectivelyArchived = product.archived || 
-              product.product_collections?.some(
-                (pc) => pc.collections?.archived === true
-              ) || false;
+            // Only product's own archived flag matters (collection archive cascades via trigger)
+            const isEffectivelyArchived = product.archived === true;
 
             return (
               <Link

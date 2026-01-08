@@ -75,13 +75,11 @@ export default function CoutureProductPage() {
       })
     : [];
 
-  // Compute effective archived status
+  // Compute effective archived status - only product's own flag matters
+  // (collection archive cascades to products via database trigger)
   const effectiveArchived = useMemo(() => {
     if (!product) return false;
-    if ((product as any).archived) return true;
-    return product.product_collections?.some(
-      (pc: any) => pc.collections?.archived === true
-    ) ?? false;
+    return (product as any).archived === true;
   }, [product]);
 
   // Error state

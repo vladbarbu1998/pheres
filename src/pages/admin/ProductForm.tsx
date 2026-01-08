@@ -634,7 +634,7 @@ export default function ProductForm() {
                           (availableCollections as any[])?.find(c => c.id === id)?.archived
                         ) && (
                           <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
-                            Note: This product belongs to an archived collection. It will be effectively archived regardless of the toggle above.
+                            Note: This collection is archived. When a collection is archived, all its products are automatically archived too. You can manually unarchive this product using the toggle above to make it purchasable again.
                           </p>
                         )}
                       </>

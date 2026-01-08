@@ -8,7 +8,7 @@ interface ProductArchiveResult {
   isEffectivelyArchived: boolean;
   isCouture: boolean;
   isPurchasable: boolean;
-  reason?: "PRODUCT_ARCHIVED" | "COLLECTION_ARCHIVED" | "COUTURE_INQUIRY_ONLY";
+  reason?: "PRODUCT_ARCHIVED" | "COUTURE_INQUIRY_ONLY";
 }
 
 interface ProductWithArchiveData {
@@ -36,25 +36,17 @@ export function checkProductsPurchasability(
   products: ProductWithArchiveData[]
 ): ProductArchiveResult[] {
   return products.map((product) => {
-    const productArchived = product.archived === true;
-
-    // Check if ANY linked collection is archived
-    const collectionArchived =
-      product.product_collections?.some(
-        (pc) => pc.collections?.archived === true
-      ) ?? false;
-
-    const isEffectivelyArchived = productArchived || collectionArchived;
+    // Only the product's own archived flag matters now
+    // (collection archive cascades to products via database trigger)
+    const isEffectivelyArchived = product.archived === true;
     const isCouture = product.product_type === "couture";
 
     // Archived always wins, then couture check
     const isPurchasable = !isEffectivelyArchived && !isCouture;
 
     let reason: ProductArchiveResult["reason"];
-    if (productArchived) {
+    if (isEffectivelyArchived) {
       reason = "PRODUCT_ARCHIVED";
-    } else if (collectionArchived) {
-      reason = "COLLECTION_ARCHIVED";
     } else if (isCouture) {
       reason = "COUTURE_INQUIRY_ONLY";
     }
@@ -71,11 +63,9 @@ export function checkProductsPurchasability(
 
 /**
  * Check if a single product is effectively archived
+ * Only the product's own archived flag matters now
+ * (collection archive cascades to products via database trigger)
  */
 export function isEffectivelyArchived(product: ProductWithArchiveData): boolean {
-  if (product.archived) return true;
-  
-  return product.product_collections?.some(
-    (pc) => pc.collections?.archived === true
-  ) ?? false;
+  return product.archived === true;
 }
