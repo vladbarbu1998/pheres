@@ -404,28 +404,27 @@ export default function AdminProducts() {
             </SelectContent>
           </Select>
 
+          {/* Reset filters */}
+          <Button
+            variant="outline"
+            onClick={handleResetFilters}
+            disabled={!hasActiveFilters}
+            className="shrink-0"
+          >
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Reset
+          </Button>
+
           {/* Search */}
-          <div className="relative flex-1">
+          <div className="relative flex-1 sm:max-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
             />
           </div>
-
-          {/* Reset filters */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleResetFilters}
-            disabled={!hasActiveFilters}
-            title="Reset filters"
-            className="shrink-0"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </Button>
         </div>
 
         {isLoading ? (
