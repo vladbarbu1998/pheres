@@ -118,12 +118,24 @@ export function CoutureInfoPanel({
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
     },
     {
-      name: "X",
+      name: "X (Twitter)",
       url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
+    },
+    {
+      name: "WhatsApp",
+      url: `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+    },
+    {
+      name: "LinkedIn",
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      name: "Email",
+      url: `mailto:?subject=${encodeURIComponent(productName + " - PHERES")}&body=${encodeURIComponent(shareText + "\n\n" + shareUrl)}`,
     },
   ];
 
-  const supportsNativeShare = typeof navigator !== "undefined" && !!navigator.share;
+  const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   return (
     <div className="flex flex-col h-full lg:sticky lg:top-24">
@@ -209,7 +221,7 @@ export function CoutureInfoPanel({
         className="flex justify-center animate-fade-in"
         style={{ animationDelay: "450ms", animationFillMode: "both" }}
       >
-        {supportsNativeShare ? (
+        {canShare ? (
           <Button
             variant="ghost"
             size="sm"
