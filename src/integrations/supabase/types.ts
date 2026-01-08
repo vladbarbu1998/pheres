@@ -162,6 +162,7 @@ export type Database = {
       }
       collections: {
         Row: {
+          archived: boolean
           collection_type: Database["public"]["Enums"]["collection_type"]
           created_at: string
           description: string | null
@@ -176,6 +177,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived?: boolean
           collection_type?: Database["public"]["Enums"]["collection_type"]
           created_at?: string
           description?: string | null
@@ -190,6 +192,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived?: boolean
           collection_type?: Database["public"]["Enums"]["collection_type"]
           created_at?: string
           description?: string | null
@@ -917,6 +920,7 @@ export type Database = {
       }
       products: {
         Row: {
+          archived: boolean
           base_price: number
           category_id: string | null
           certification: string | null
@@ -947,6 +951,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived?: boolean
           base_price: number
           category_id?: string | null
           certification?: string | null
@@ -977,6 +982,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived?: boolean
           base_price?: number
           category_id?: string | null
           certification?: string | null
