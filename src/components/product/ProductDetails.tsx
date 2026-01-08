@@ -19,8 +19,8 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
         {/* Craftsmanship & Materials */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="craftsmanship" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
+          <AccordionItem value="craftsmanship" className="border-b-0 border border-border/30 rounded-sm bg-card/50 transition-all duration-200 hover:border-primary/20 hover:shadow-sm cursor-pointer">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 p-4">
               <span className="flex items-center gap-3">
                 <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Gem className="h-4 w-4 text-primary" />
@@ -28,7 +28,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
                 Craftsmanship & Materials
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground leading-relaxed">
+            <AccordionContent className="text-muted-foreground leading-relaxed px-4 pb-4">
               {description ? (
                 <div 
                   className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground leading-relaxed"
@@ -52,8 +52,8 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
 
         {/* Shipping & Delivery */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="shipping" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
+          <AccordionItem value="shipping" className="border-b-0 border border-border/30 rounded-sm bg-card/50 transition-all duration-200 hover:border-primary/20 hover:shadow-sm cursor-pointer">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 p-4">
               <span className="flex items-center gap-3">
                 <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Truck className="h-4 w-4 text-primary" />
@@ -61,7 +61,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
                 Shipping & Delivery
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground leading-relaxed">
+            <AccordionContent className="text-muted-foreground leading-relaxed px-4 pb-4">
               <ul className="space-y-2">
                 <li>Complimentary insured shipping on all orders</li>
                 <li>Discreet, secure packaging</li>
@@ -74,8 +74,8 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
 
         {/* Returns & Warranty */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="returns" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
+          <AccordionItem value="returns" className="border-b-0 border border-border/30 rounded-sm bg-card/50 transition-all duration-200 hover:border-primary/20 hover:shadow-sm cursor-pointer">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 p-4">
               <span className="flex items-center gap-3">
                 <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Shield className="h-4 w-4 text-primary" />
@@ -83,7 +83,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
                 Returns & Warranty
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground leading-relaxed">
+            <AccordionContent className="text-muted-foreground leading-relaxed px-4 pb-4">
               <ul className="space-y-2">
                 <li>30-day return policy for unworn items</li>
                 <li>Lifetime warranty on craftsmanship</li>
@@ -96,8 +96,8 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
 
         {/* Care Instructions */}
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="care" className="border-b-0 border border-border/30 rounded-sm bg-card/50 p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
-            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 py-0">
+          <AccordionItem value="care" className="border-b-0 border border-border/30 rounded-sm bg-card/50 transition-all duration-200 hover:border-primary/20 hover:shadow-sm cursor-pointer">
+            <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 flex-none [&>svg]:ml-2 p-4">
               <span className="flex items-center gap-3">
                 <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Award className="h-4 w-4 text-primary" />
@@ -105,7 +105,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
                 Care Instructions
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground leading-relaxed">
+            <AccordionContent className="text-muted-foreground leading-relaxed px-4 pb-4">
               <ul className="space-y-2">
                 <li>Store separately in the provided jewelry box</li>
                 <li>Avoid contact with perfumes, lotions, and chemicals</li>
@@ -118,7 +118,7 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
       </div>
 
       {/* Trust badges */}
-      <div className="mt-12 border-t border-border pt-8">
+      <div className="mt-12 border-t border-border py-8">
         <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
           <div>
             <p className="font-label text-sm font-semibold text-foreground">Certified</p>
