@@ -7,30 +7,23 @@ import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSecti
 import { BrandHeritageSection } from "@/components/home/BrandHeritageSection";
 import universeCouture from "@/assets/universe-couture.jpg";
 import universeRtw from "@/assets/universe-rtw.jpg";
+
 export default function Index() {
   const { data: pressEntries } = useFeaturedPress();
 
   return (
     <Layout>
-      {/* Full-Screen Hero */}
+      {/* 1. Hero - Prima impresie */}
       <section className="relative h-[calc(100vh-73px)] w-full overflow-hidden">
-        {/* Background Image */}
-        {/* TODO: Replace /images/hero-model.webp with your actual hero image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/story-hero.webp')" }}
         />
-        
-        {/* Dark Gradient Overlay - transparent at top, dark at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        
-        {/* Brand Text - positioned at bottom center */}
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 md:pb-24 lg:pb-32">
           <h1 
             className="brand-word text-4xl font-thin tracking-[0.3em] text-white/90 md:text-5xl lg:text-6xl animate-fade-in"
-            style={{ 
-              textShadow: '0 1px 2px rgba(0,0,0,0.3)' 
-            }}
+            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
           >
             Pheres
           </h1>
@@ -40,9 +33,11 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Two Universes Section - Split Screen Cinematic */}
+      {/* 2. Brand Heritage - Povestea, încredere */}
+      <BrandHeritageSection />
+
+      {/* 3. Two Universes - Couture & Ready to Wear */}
       <section className="relative">
-        {/* Section Header */}
         <div className="bg-background py-12 md:py-16 text-center">
           <p className="text-xs tracking-[0.3em] text-primary uppercase mb-3">
             Two Universes
@@ -52,7 +47,6 @@ export default function Index() {
           </h2>
         </div>
 
-        {/* Split Screen Container */}
         <div className="flex flex-col md:flex-row min-h-[60vh] md:min-h-[60vh] lg:min-h-[80vh]">
           {/* Couture - Left */}
           <Link 
@@ -65,8 +59,6 @@ export default function Index() {
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 group-hover:from-black/80" />
-            
-            {/* Text Overlay */}
             <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 text-center text-white px-6">
               <h3 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold tracking-wide">
                 Couture
@@ -81,7 +73,6 @@ export default function Index() {
             </div>
           </Link>
 
-          {/* Divider Line - desktop only */}
           <div className="hidden md:block w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
 
           {/* Ready to Wear - Right */}
@@ -95,8 +86,6 @@ export default function Index() {
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 group-hover:from-black/80" />
-            
-            {/* Text Overlay */}
             <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 text-center text-white px-6">
               <h3 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold tracking-wide">
                 Ready to Wear
@@ -113,11 +102,10 @@ export default function Index() {
         </div>
       </section>
 
-
-      {/* Featured Products Section */}
+      {/* 4. Featured Products - Piese selectate */}
       <FeaturedProductsSection />
 
-      {/* Press Teaser - Worn by Icons */}
+      {/* 5. Press Teaser - Worn by Icons */}
       <section className="border-t border-border/50 bg-primary/5">
         <div className="container py-12 md:py-16">
           <div className="flex flex-col items-center gap-6 text-center">
@@ -164,11 +152,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Brand Heritage Section */}
-      <BrandHeritageSection />
-
-
-      {/* Final CTA */}
+      {/* 6. Final CTA - Begin Your Journey */}
       <section className="border-t border-border/50 bg-secondary/30">
         <div className="container py-16 md:py-24 text-center">
           <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl lg:text-4xl mb-4">
