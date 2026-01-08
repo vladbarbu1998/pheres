@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ArrowLeft, Share2, Link2, Check } from "lucide-react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Share2, Link2, Check, Heart, Send, Linkedin, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface Metal {
   id: string;
@@ -111,26 +114,32 @@ export function CoutureInfoPanel({
   const socialLinks = [
     {
       name: "Pinterest",
+      icon: Heart,
       url: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(productImageUrl || "")}&description=${encodeURIComponent(shareText)}`,
     },
     {
       name: "Facebook",
+      icon: "F",
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
     },
     {
-      name: "X (Twitter)",
+      name: "X",
+      icon: "𝕏",
       url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
     },
     {
       name: "WhatsApp",
+      icon: Send,
       url: `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
     },
     {
       name: "LinkedIn",
+      icon: Linkedin,
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
     },
     {
       name: "Email",
+      icon: Mail,
       url: `mailto:?subject=${encodeURIComponent(productName + " - PHERES")}&body=${encodeURIComponent(shareText + "\n\n" + shareUrl)}`,
     },
   ];
@@ -226,50 +235,85 @@ export function CoutureInfoPanel({
             variant="ghost"
             size="sm"
             onClick={handleNativeShare}
-            className="text-muted-foreground hover:text-foreground gap-2"
+            className="text-muted-foreground hover:text-foreground gap-2 group"
           >
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
             Share This Piece
           </Button>
         ) : (
-          <Popover open={shareOpen} onOpenChange={setShareOpen}>
-            <PopoverTrigger asChild>
+          <DropdownMenu open={shareOpen} onOpenChange={setShareOpen}>
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-muted-foreground hover:text-foreground gap-2"
+                className="text-muted-foreground hover:text-foreground gap-2 group"
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 className={cn(
+                  "h-4 w-4 transition-all duration-300",
+                  shareOpen 
+                    ? "rotate-12 scale-110 text-primary" 
+                    : "group-hover:scale-110 group-hover:rotate-6"
+                )} />
                 Share This Piece
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-48 p-2" align="center">
-              <button
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className="w-52 p-2 bg-background border border-border shadow-xl rounded-xl animate-scale-in" 
+              align="center"
+              sideOffset={8}
+            >
+              <DropdownMenuItem
                 onClick={handleCopyLink}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer focus:bg-muted"
               >
-                {copied ? (
-                  <Check className="h-4 w-4 text-green-500" />
-                ) : (
-                  <Link2 className="h-4 w-4" />
-                )}
-                Copy Link
-              </button>
-              <Separator className="my-1" />
-              {socialLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setShareOpen(false)}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
-                >
-                  {link.name}
-                </a>
-              ))}
-            </PopoverContent>
-          </Popover>
+                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  {copied ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Link2 className="h-4 w-4 text-foreground" />
+                  )}
+                </div>
+                <span className="text-sm font-medium">{copied ? "Copied!" : "Copy Link"}</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator className="my-2" />
+              
+              <p className="px-3 py-1.5 text-xs text-muted-foreground uppercase tracking-wider">Share via</p>
+              
+              <div className="grid grid-cols-3 gap-1 p-1">
+                {socialLinks.map((link, index) => {
+                  const Icon = link.icon;
+                  const isStringIcon = typeof Icon === "string";
+                  
+                  return (
+                    <a
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShareOpen(false)}
+                      className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted transition-all duration-200 group/item"
+                      style={{ 
+                        animationDelay: `${index * 50}ms`,
+                        animationFillMode: "both"
+                      }}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all duration-200 group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:scale-110">
+                        {isStringIcon ? (
+                          <span className="text-sm font-semibold">{Icon}</span>
+                        ) : (
+                          <Icon className="h-4 w-4" />
+                        )}
+                      </div>
+                      <span className="text-[10px] text-muted-foreground group-hover/item:text-foreground transition-colors">
+                        {link.name}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
     </div>
