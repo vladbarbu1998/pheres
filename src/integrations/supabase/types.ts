@@ -249,6 +249,62 @@ export type Database = {
         }
         Relationships: []
       }
+      couture_inquiries: {
+        Row: {
+          country: string
+          created_at: string
+          email: string
+          id: string
+          interested_in_viewing: boolean
+          is_archived: boolean
+          is_read: boolean
+          message: string | null
+          name: string
+          phone: string | null
+          preferred_contact: string
+          product_id: string | null
+          product_name: string
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          email: string
+          id?: string
+          interested_in_viewing?: boolean
+          is_archived?: boolean
+          is_read?: boolean
+          message?: string | null
+          name: string
+          phone?: string | null
+          preferred_contact: string
+          product_id?: string | null
+          product_name: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          email?: string
+          id?: string
+          interested_in_viewing?: boolean
+          is_archived?: boolean
+          is_read?: boolean
+          message?: string | null
+          name?: string
+          phone?: string | null
+          preferred_contact?: string
+          product_id?: string | null
+          product_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "couture_inquiries_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       favorites: {
         Row: {
           created_at: string

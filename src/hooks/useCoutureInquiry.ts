@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 export const coutureInquirySchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -38,17 +39,31 @@ export function useCoutureInquiry(): UseCoutureInquiryReturn {
       // Validate data
       const validated = coutureInquirySchema.parse(data);
 
-      // TODO: Integrate with backend (Supabase edge function or direct insert)
-      // For now, simulate a successful submission
-      console.log("Couture inquiry submitted:", validated);
-      
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Insert into couture_inquiries table
+      const { error: insertError } = await supabase
+        .from("couture_inquiries")
+        .insert({
+          product_id: validated.productId,
+          product_name: validated.productName,
+          name: validated.name,
+          email: validated.email,
+          country: validated.country,
+          preferred_contact: validated.preferredContact,
+          phone: validated.phone || null,
+          message: validated.message || null,
+          interested_in_viewing: validated.interestedInViewing,
+        });
+
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
 
       setIsSuccess(true);
     } catch (err) {
       if (err instanceof z.ZodError) {
         setError(err.errors[0]?.message || "Validation error");
+      } else if (err instanceof Error) {
+        setError(err.message || "Something went wrong. Please try again.");
       } else {
         setError("Something went wrong. Please try again.");
       }
