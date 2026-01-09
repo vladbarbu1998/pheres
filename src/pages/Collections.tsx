@@ -90,10 +90,10 @@ export default function CollectionsPage() {
 
           {/* Right: Stacked - Ready to Wear Card + Context */}
           <div className="flex flex-col gap-px bg-border">
-            {/* Ready to Wear Card - square ratio with full image */}
-            <div className="relative aspect-square md:aspect-auto md:h-[55%] lg:h-[60%] bg-white">
+            {/* Ready to Wear Card - same height as Couture */}
+            <div className="relative min-h-[50vh] md:min-h-0 md:flex-1 bg-white">
               <Link to="/collections/ready-to-wear" className="group relative flex h-full items-center justify-center overflow-hidden">
-                {/* Image - object-contain to show full image */}
+                {/* Image - object-contain to show full image with white bg */}
                 <img
                   src={universeRtw}
                   alt="Ready to Wear jewelry collection"
@@ -102,17 +102,17 @@ export default function CollectionsPage() {
 
                 {/* Content overlay at bottom */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-500 group-hover:from-black/60" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12">
                   <p className="mb-2 font-label text-xs font-medium uppercase tracking-[0.3em] text-white/70">
                     Available Now
                   </p>
-                  <h2 className="font-serif text-2xl font-light tracking-wide text-white md:text-3xl">
+                  <h2 className="font-serif text-3xl font-light tracking-wide text-white md:text-4xl lg:text-5xl">
                     Ready to Wear
                   </h2>
-                  <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70 md:text-base">
                     Refined luxury jewelry, designed for everyday elegance.
                   </p>
-                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:gap-3">
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:gap-3 md:text-base">
                     <span className="relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-white after:transition-all after:duration-300 group-hover:after:w-full">
                       Explore Collection
                     </span>
