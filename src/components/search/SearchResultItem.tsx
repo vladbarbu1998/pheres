@@ -32,6 +32,8 @@ export function SearchResultItem({
     : categorySlug 
       ? `/shop/${categorySlug}/${slug}` 
       : `/product/${slug}`;
+  
+  const isCouture = productType === "couture";
 
   return (
     <Link
@@ -64,8 +66,8 @@ export function SearchResultItem({
         )}
       </div>
 
-      {/* Price - hide for archived products */}
-      {!isArchived && (
+      {/* Price - hide for archived and couture products */}
+      {!isArchived && !isCouture && (
         <div className="shrink-0 text-right">
           <p className="font-medium text-foreground">
             ${price.toLocaleString()}
