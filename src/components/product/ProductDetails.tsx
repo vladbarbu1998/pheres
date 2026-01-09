@@ -63,16 +63,17 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground leading-relaxed px-4 pb-4">
               <ul className="space-y-2">
-                <li>Complimentary insured shipping on all orders</li>
-                <li>Discreet, secure packaging</li>
+                <li>Complimentary insured shipping worldwide</li>
+                <li>Orders processed within 14 business days</li>
+                <li>Tracking number sent via email upon dispatch</li>
+                <li>All packages insured against theft and damage in transit</li>
                 <li>Signature required upon delivery</li>
-                <li>International shipping available to select destinations</li>
               </ul>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
-        {/* Returns & Warranty */}
+        {/* Returns & Exchange */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="returns" className="border-b-0 border border-border/30 rounded-sm bg-card/50 transition-all duration-200 hover:border-primary/20 hover:shadow-sm cursor-pointer">
             <AccordionTrigger className="font-label text-base font-medium justify-start gap-3 [&>svg]:ml-auto p-4">
@@ -80,16 +81,20 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
                 <span className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Shield className="h-4 w-4 text-primary" />
                 </span>
-                Returns & Warranty
+                Returns & Exchange
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground leading-relaxed px-4 pb-4">
               <ul className="space-y-2">
-                <li>30-day return policy for unworn items</li>
-                <li>Lifetime warranty on craftsmanship</li>
-                <li>Complimentary cleaning and inspection</li>
-                <li>Resize service available for rings</li>
+                <li>Exchange or store credit within 3 days of delivery</li>
+                <li>Items must be unworn, unused, and in original packaging</li>
+                <li>Return Merchandise Number (RMN) required</li>
+                <li>Sale items are final sale – no returns or exchanges</li>
+                <li>Customer responsible for return shipping costs</li>
               </ul>
+              <p className="mt-3 text-sm">
+                Contact <a href="mailto:customercare@pheres.com" className="text-primary hover:underline">customercare@pheres.com</a> for assistance.
+              </p>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -129,12 +134,12 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
             <p className="mt-1 text-xs text-muted-foreground">Master Artisans</p>
           </div>
           <div>
-            <p className="font-label text-sm font-semibold text-foreground">Secure</p>
-            <p className="mt-1 text-xs text-muted-foreground">Insured Shipping</p>
+            <p className="font-label text-sm font-semibold text-foreground">Insured</p>
+            <p className="mt-1 text-xs text-muted-foreground">Worldwide Delivery</p>
           </div>
           <div>
-            <p className="font-label text-sm font-semibold text-foreground">Lifetime</p>
-            <p className="mt-1 text-xs text-muted-foreground">Warranty & Care</p>
+            <p className="font-label text-sm font-semibold text-foreground">Secure</p>
+            <p className="mt-1 text-xs text-muted-foreground">Protected Checkout</p>
           </div>
         </div>
       </div>
