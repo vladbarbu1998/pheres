@@ -78,12 +78,12 @@ export default function Index() {
           {/* Ready to Wear - Right */}
           <Link 
             to="/collections/ready-to-wear" 
-            className="group relative flex-1 overflow-hidden min-h-[50vh] md:min-h-0"
+            className="group relative flex-1 overflow-hidden min-h-[50vh] md:min-h-0 bg-white"
           >
             <img 
               src={universeRtw} 
               alt="Pheres Ready to Wear Collection" 
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+              className="absolute inset-0 h-full w-full object-contain transition-transform duration-1000 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 group-hover:from-black/80" />
             <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 text-center text-white px-6">
