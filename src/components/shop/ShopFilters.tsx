@@ -39,6 +39,7 @@ interface Collection {
   id: string;
   name: string;
   slug: string;
+  archived?: boolean;
 }
 
 interface ShopFiltersProps {
@@ -144,7 +145,7 @@ function FilterContent({
                   htmlFor={`col-${collection.id}`}
                   className="font-label text-sm font-normal text-muted-foreground cursor-pointer"
                 >
-                  {collection.name}
+                  {collection.name}{collection.archived ? ' (archived)' : ''}
                 </Label>
               </div>
             ))}

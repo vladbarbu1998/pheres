@@ -15,6 +15,7 @@ interface Collection {
   image_url: string | null;
   collection_type: "couture" | "ready_to_wear";
   parent_id: string | null;
+  archived?: boolean;
 }
 
 interface CollectionGroup {
@@ -28,7 +29,7 @@ function useCollectionsGrouped() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("collections")
-        .select("id, name, slug, description, image_url, collection_type, parent_id")
+        .select("id, name, slug, description, image_url, collection_type, parent_id, archived")
         .eq("is_active", true)
         .order("display_order");
 
@@ -38,15 +39,25 @@ function useCollectionsGrouped() {
       const parents = collections.filter((c) => !c.parent_id);
       const children = collections.filter((c) => c.parent_id);
 
+      // Sort children: non-archived first, archived last
+      const sortChildren = (parentId: string) =>
+        children
+          .filter((c) => c.parent_id === parentId)
+          .sort((a, b) => {
+            if (a.archived && !b.archived) return 1;
+            if (!a.archived && b.archived) return -1;
+            return 0;
+          });
+
       const couture = parents.find((p) => p.collection_type === "couture");
       const readyToWear = parents.find((p) => p.collection_type === "ready_to_wear");
 
       return {
         couture: couture
-          ? { parent: couture, children: children.filter((c) => c.parent_id === couture.id) }
+          ? { parent: couture, children: sortChildren(couture.id) }
           : null,
         readyToWear: readyToWear
-          ? { parent: readyToWear, children: children.filter((c) => c.parent_id === readyToWear.id) }
+          ? { parent: readyToWear, children: sortChildren(readyToWear.id) }
           : null,
       };
     },
@@ -133,7 +144,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
                       to={`/shop/collection/${child.slug}`}
                       className="block font-label text-base font-normal text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
                     >
-                      {child.name}
+                      {child.name}{child.archived ? ' (archived)' : ''}
                     </Link>
                   ))}
                   {(!data?.couture?.children || data.couture.children.length === 0) && (
@@ -183,7 +194,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
                       to={`/shop/collection/${child.slug}`}
                       className="block font-label text-base font-normal text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
                     >
-                      {child.name}
+                      {child.name}{child.archived ? ' (archived)' : ''}
                     </Link>
                   ))}
                 </nav>
@@ -265,7 +276,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
                     onClick={onNavigate}
                     className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {child.name}
+                    {child.name}{child.archived ? ' (archived)' : ''}
                   </Link>
                 ))}
                 {(!data?.couture?.children || data.couture.children.length === 0) && (
@@ -315,7 +326,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
                     onClick={onNavigate}
                     className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {child.name}
+                    {child.name}{child.archived ? ' (archived)' : ''}
                   </Link>
                 ))}
               </nav>
