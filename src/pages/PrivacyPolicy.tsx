@@ -1,8 +1,10 @@
+import { Layout } from "@/components/layout/Layout";
 import { LegalLayout } from "@/components/layout/LegalLayout";
 
 export default function PrivacyPolicy() {
   return (
-    <LegalLayout title="Privacy Policy">
+    <Layout>
+      <LegalLayout title="Privacy Policy">
       <div className="space-y-8 text-muted-foreground">
         <section className="space-y-4">
           <p className="text-lg font-medium text-foreground">
@@ -121,5 +123,6 @@ export default function PrivacyPolicy() {
         </section>
       </div>
     </LegalLayout>
+    </Layout>
   );
 }

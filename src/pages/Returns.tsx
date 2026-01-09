@@ -1,8 +1,10 @@
+import { Layout } from "@/components/layout/Layout";
 import { LegalLayout } from "@/components/layout/LegalLayout";
 
 export default function Returns() {
   return (
-    <LegalLayout title="Returns and Refunds Policy">
+    <Layout>
+      <LegalLayout title="Returns and Refunds Policy">
       <div className="space-y-8 text-muted-foreground">
         <section className="space-y-4">
           <p className="text-lg font-medium text-foreground">
@@ -111,5 +113,6 @@ export default function Returns() {
         </section>
       </div>
     </LegalLayout>
+    </Layout>
   );
 }
