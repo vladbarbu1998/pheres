@@ -4,6 +4,8 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import universeCouture from "@/assets/universe-couture.jpg";
+import universeRtw from "@/assets/universe-rtw.webp";
 
 interface Collection {
   id: string;
@@ -149,15 +151,13 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
               </div>
 
               {/* Image - circular */}
-              {data?.couture?.children[0]?.image_url && (
-                <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
-                  <img
-                    src={data.couture.children[0].image_url}
-                    alt="Couture collection"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
+              <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                <img
+                  src={universeCouture}
+                  alt="Couture collection"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
           </div>
 
@@ -198,15 +198,13 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
               </div>
 
               {/* Image - circular */}
-              {data?.readyToWear?.children[0]?.image_url && (
-                <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
-                  <img
-                    src={data.readyToWear.children[0].image_url}
-                    alt="Ready To Wear collection"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
+              <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+                <img
+                  src={universeRtw}
+                  alt="Ready To Wear collection"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -284,15 +282,13 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
               </Link>
             </div>
             {/* Image */}
-            {data?.couture?.children[0]?.image_url && (
-              <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
-                <img
-                  src={data.couture.children[0].image_url}
-                  alt="Couture"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+            <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
+              <img
+                src={universeCouture}
+                alt="Couture"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
 
           {/* Divider */}
@@ -333,15 +329,13 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
               </Link>
             </div>
             {/* Image */}
-            {data?.readyToWear?.children[0]?.image_url && (
-              <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
-                <img
-                  src={data.readyToWear.children[0].image_url}
-                  alt="Ready To Wear"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+            <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
+              <img
+                src={universeRtw}
+                alt="Ready To Wear"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>
