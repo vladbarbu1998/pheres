@@ -67,7 +67,6 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
                 <li>Orders processed within 14 business days</li>
                 <li>Tracking number sent via email upon dispatch</li>
                 <li>All packages insured against theft and damage in transit</li>
-                <li>Signature required upon delivery</li>
               </ul>
             </AccordionContent>
           </AccordionItem>
