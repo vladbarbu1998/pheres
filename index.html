@@ -39,7 +39,6 @@
       fbq('consent', 'revoke');
       fbq('init', '333602597245288');
     </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=333602597245288&ev=PageView&noscript=1"/></noscript>
 
     <!-- TODO: Update og:title to match your application name -->
     
@@ -57,6 +56,8 @@
 </head>
 
   <body>
+    <!-- Facebook Pixel noscript fallback -->
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=333602597245288&ev=PageView&noscript=1"/></noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
