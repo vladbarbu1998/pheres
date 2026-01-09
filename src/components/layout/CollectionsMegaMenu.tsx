@@ -213,7 +213,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
                 <img
                   src={universeRtw}
                   alt="Ready To Wear collection"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             </div>
