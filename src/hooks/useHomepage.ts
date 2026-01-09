@@ -5,7 +5,7 @@ export function useFeaturedProducts(limit = 8) {
   return useQuery({
     queryKey: ["featured-products", limit],
     queryFn: async () => {
-      // Get newest active, non-archived products
+      // Get newest active, non-archived RTW products only (no couture)
       const { data, error } = await supabase
         .from("products")
         .select(
@@ -34,6 +34,7 @@ export function useFeaturedProducts(limit = 8) {
         )
         .eq("is_active", true)
         .eq("archived", false)
+        .eq("product_type", "ready_to_wear")
         .order("created_at", { ascending: false })
         .limit(limit);
 
