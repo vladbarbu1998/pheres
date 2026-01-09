@@ -222,7 +222,7 @@ export function useCollections() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("collections")
-        .select("id, name, slug, description, image_url, is_featured, collection_type, parent_id")
+        .select("id, name, slug, description, image_url, is_featured, collection_type, parent_id, archived")
         .eq("is_active", true)
         .not("parent_id", "is", null) // Only child collections
         .order("display_order");

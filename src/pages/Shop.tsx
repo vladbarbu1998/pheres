@@ -97,12 +97,16 @@ export default function ShopPage() {
     [allCategories, activeCategoryIds]
   );
 
-  // Filter collections to only show those with active products
+  // Filter collections to only show those with active products, sorted: non-archived first
   const activeCollectionIds = filterOptionsData?.activeCollectionIds || [];
-  const collections = useMemo(
-    () => allCollections.filter((c) => activeCollectionIds.includes(c.id)),
-    [allCollections, activeCollectionIds]
-  );
+  const collections = useMemo(() => {
+    const filtered = allCollections.filter((c) => activeCollectionIds.includes(c.id));
+    return [...filtered].sort((a, b) => {
+      if (a.archived && !b.archived) return 1;
+      if (!a.archived && b.archived) return -1;
+      return 0;
+    });
+  }, [allCollections, activeCollectionIds]);
 
   // Get dynamic stone types from active products
   const stoneTypes = filterOptionsData?.stoneTypes || [];
