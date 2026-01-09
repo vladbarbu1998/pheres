@@ -90,18 +90,36 @@ export default function CollectionsPage() {
 
           {/* Right: Stacked - Ready to Wear Card + Context */}
           <div className="flex flex-col gap-px bg-border">
-            {/* Ready to Wear Card - takes ~60% of right side */}
-            <div className="relative h-[50vh] md:h-[55%] lg:h-[60%]">
-              <UniverseCard
-                overline="Available Now"
-                title="Ready to Wear"
-                subtitle="Refined luxury jewelry, designed for everyday elegance."
-                cta="Explore Collection"
-                href="/collections/ready-to-wear"
-                imageUrl={universeRtw}
-                imageAlt="Ready to Wear jewelry collection"
-                size="small"
-              />
+            {/* Ready to Wear Card - square ratio with full image */}
+            <div className="relative aspect-square md:aspect-auto md:h-[55%] lg:h-[60%] bg-secondary/30">
+              <Link to="/collections/ready-to-wear" className="group relative flex h-full items-center justify-center overflow-hidden">
+                {/* Image - object-contain to show full image */}
+                <img
+                  src={universeRtw}
+                  alt="Ready to Wear jewelry collection"
+                  className="h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                />
+
+                {/* Content overlay at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-500 group-hover:from-black/60" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                  <p className="mb-2 font-label text-xs font-medium uppercase tracking-[0.3em] text-white/70">
+                    Available Now
+                  </p>
+                  <h2 className="font-serif text-2xl font-light tracking-wide text-white md:text-3xl">
+                    Ready to Wear
+                  </h2>
+                  <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">
+                    Refined luxury jewelry, designed for everyday elegance.
+                  </p>
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:gap-3">
+                    <span className="relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-white after:transition-all after:duration-300 group-hover:after:w-full">
+                      Explore Collection
+                    </span>
+                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </Link>
             </div>
 
             {/* Context Text Block - takes ~40% of right side */}
