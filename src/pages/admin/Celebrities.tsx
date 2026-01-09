@@ -305,12 +305,12 @@ export default function AdminCelebrities() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="space-y-4">
           <div>
             <h1 className="text-2xl font-semibold">Celebrity Appearances</h1>
             <p className="text-muted-foreground">Manage celebrities wearing Pheres jewelry</p>
           </div>
-          <Button onClick={handleCreate}>
+          <Button onClick={handleCreate} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             New Appearance
           </Button>
