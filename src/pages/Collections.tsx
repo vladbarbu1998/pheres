@@ -74,8 +74,8 @@ export default function CollectionsPage() {
       {/* Asymmetric Editorial Layout */}
       <section className="min-h-[calc(100vh-4rem)] bg-background md:min-h-[calc(100vh-5rem)]">
         <div className="grid h-full min-h-[calc(100vh-4rem)] grid-cols-1 gap-px bg-border md:min-h-[calc(100vh-5rem)] md:grid-cols-2 lg:grid-cols-[1.4fr_1fr]">
-          {/* Left: Large Couture Card - 60% on desktop, 50% on tablet */}
-          <div className="relative min-h-[50vh] md:min-h-0">
+          {/* Left: Large Couture Card - square on mobile, full height on desktop */}
+          <div className="relative aspect-square md:aspect-auto md:min-h-0">
             <UniverseCard
               overline="On Request Only"
               title="Couture"
