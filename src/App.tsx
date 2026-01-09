@@ -32,6 +32,7 @@ import Product from "./pages/Product";
 import ProductRedirect from "./pages/ProductRedirect";
 import ShopAllRedirect from "./pages/ShopAllRedirect";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookiePolicy from "./pages/CookiePolicy";
 import Terms from "./pages/Terms";
 import Returns from "./pages/Returns";
 import Login from "./pages/account/Login";
@@ -109,6 +110,7 @@ const App = () => (
               <Route path="/shop/:categorySlug/:productSlug" element={<Product />} />
               <Route path="/product/:slug" element={<ProductRedirect />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/cookie-policy" element={<CookiePolicy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/returns" element={<Returns />} />
               <Route path="/shipping" element={<Returns />} />
