@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle, Package, Loader2, ArrowRight, ShoppingBag } from "lucide-react";
@@ -5,9 +6,11 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
+import { trackPurchase, type AnalyticsOrder } from "@/hooks/useAnalytics";
 
 export default function OrderConfirmation() {
   const { orderId } = useParams<{ orderId: string }>();
+  const hasTrackedPurchase = useRef(false);
 
   const { data: order, isLoading, isError } = useQuery({
     queryKey: ["order-confirmation", orderId],
@@ -28,6 +31,32 @@ export default function OrderConfirmation() {
     },
     enabled: !!orderId,
   });
+
+  // Track purchase event (only once per order)
+  useEffect(() => {
+    if (order && !hasTrackedPurchase.current) {
+      hasTrackedPurchase.current = true;
+      
+      const analyticsOrder: AnalyticsOrder = {
+        orderId: order.id,
+        orderNumber: order.order_number,
+        total: order.total,
+        subtotal: order.subtotal,
+        shipping: order.shipping_amount,
+        tax: order.tax_amount,
+        discount: order.discount_amount || 0,
+        items: (order.order_items || []).map((item: any) => ({
+          id: item.product_id || item.id,
+          name: item.product_name,
+          price: item.unit_price,
+          quantity: item.quantity,
+          variant: item.variant_name || null
+        }))
+      };
+      
+      trackPurchase(analyticsOrder);
+    }
+  }, [order]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {

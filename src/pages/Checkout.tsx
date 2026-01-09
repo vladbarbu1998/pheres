@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useProfile, useAddresses } from "@/hooks/useAccount";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { trackBeginCheckout, type AnalyticsProduct } from "@/hooks/useAnalytics";
 
 const checkoutSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -145,6 +146,16 @@ export default function Checkout() {
     }
     
     setIsSubmitting(true);
+    
+    // Track begin_checkout for GA4
+    const analyticsItems: AnalyticsProduct[] = items.map(item => ({
+      id: item.productId,
+      name: item.product.name,
+      price: item.product.base_price + (item.variant?.price_adjustment || 0),
+      variant: item.variant?.name || null,
+      quantity: item.quantity
+    }));
+    trackBeginCheckout(analyticsItems, subtotal);
 
     try {
       const cartPayload = items.map((item) => ({

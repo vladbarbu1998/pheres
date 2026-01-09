@@ -19,6 +19,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProduct, useRelatedProducts } from "@/hooks/useProduct";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
+import { trackViewItem } from "@/hooks/useAnalytics";
 
 export default function ProductPage() {
   const { categorySlug, productSlug } = useParams<{ categorySlug: string; productSlug: string }>();
@@ -32,13 +33,21 @@ export default function ProductPage() {
     refetch,
   } = useProduct(productSlug || "");
 
-  // Track recently viewed (only for RTW products)
+  // Track recently viewed and GA4 view_item (only for RTW products)
   useEffect(() => {
     if (product && product.product_type !== "couture") {
       addProduct({
         id: product.id,
         slug: product.slug,
         productType: "ready_to_wear",
+      });
+      
+      // Track view_item for GA4
+      trackViewItem({
+        id: product.id,
+        name: product.name,
+        price: Number(product.base_price),
+        category: product.categories?.name || null
       });
     }
   }, [product, addProduct]);

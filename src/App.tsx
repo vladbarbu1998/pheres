@@ -1,13 +1,16 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import { CookieConsent } from "@/components/CookieConsent";
+import { trackPageView } from "@/hooks/useAnalytics";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Collections from "./pages/Collections";
@@ -60,6 +63,17 @@ import RoutesDebug from "./pages/RoutesDebug";
 
 const queryClient = new QueryClient();
 
+// Page view tracking component
+function AnalyticsTracker() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+  
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -69,6 +83,8 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <AnalyticsTracker />
+            <CookieConsent />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/collections" element={<Collections />} />

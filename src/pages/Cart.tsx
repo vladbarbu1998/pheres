@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingBag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,9 +7,24 @@ import { CartSummary } from "@/components/cart/CartSummary";
 import { CartCheckoutLayout } from "@/components/cart/CartCheckoutLayout";
 import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/contexts/CartContext";
+import { trackViewCart, type AnalyticsProduct } from "@/hooks/useAnalytics";
 
 export default function Cart() {
-  const { items, isLoading, itemCount } = useCart();
+  const { items, isLoading, itemCount, subtotal } = useCart();
+
+  // Track view_cart when items are loaded
+  useEffect(() => {
+    if (!isLoading && items.length > 0) {
+      const analyticsItems: AnalyticsProduct[] = items.map(item => ({
+        id: item.productId,
+        name: item.product.name,
+        price: item.product.base_price + (item.variant?.price_adjustment || 0),
+        variant: item.variant?.name || null,
+        quantity: item.quantity
+      }));
+      trackViewCart(analyticsItems, subtotal);
+    }
+  }, [isLoading, items, subtotal]);
 
   // Loading state - use Layout directly like Checkout does
   if (isLoading) {
