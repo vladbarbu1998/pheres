@@ -209,11 +209,11 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
               </div>
 
               {/* Image - circular */}
-              <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+              <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08] bg-secondary">
                 <img
                   src={universeRtw}
                   alt="Ready To Wear collection"
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-contain p-4"
                 />
               </div>
             </div>
