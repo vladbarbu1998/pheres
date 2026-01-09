@@ -6,7 +6,7 @@ import { useFeaturedPress } from "@/hooks/usePress";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { BrandHeritageSection } from "@/components/home/BrandHeritageSection";
 import universeCouture from "@/assets/universe-couture.jpg";
-const universeRtw = "https://sbyfgresripeilehcoru.supabase.co/storage/v1/object/public/admin-uploads/collections/1766892837426-Color%20Me%20Yours.webp";
+import universeRtw from "@/assets/universe-rtw.webp";
 
 export default function Index() {
   const { data: pressEntries } = useFeaturedPress();
