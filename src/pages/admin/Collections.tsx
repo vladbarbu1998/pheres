@@ -378,8 +378,8 @@ export default function AdminCollections() {
       )}
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as CollectionType)}>
-        <div className="flex items-center justify-between mb-6">
-          <TabsList>
+        <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
+          <TabsList className="w-full sm:w-auto">
             <TabsTrigger value="ready_to_wear" className="gap-2">
               Ready To Wear
               {readyToWearCollections && (
@@ -394,7 +394,7 @@ export default function AdminCollections() {
             </TabsTrigger>
           </TabsList>
           
-          <Button onClick={openCreate}>
+          <Button onClick={openCreate} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Add {activeTab === "couture" ? "Couture" : "Ready To Wear"} Collection
           </Button>
