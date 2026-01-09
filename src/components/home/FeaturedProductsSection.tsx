@@ -124,6 +124,8 @@ function MainProductCard({ product }: { product: ProductWithImages }) {
   const productUrl = coutureCollection 
     ? `/couture/${coutureCollection.slug}/${product.slug}`
     : `/product/${product.slug}`;
+  
+  const isCouture = coutureCollection !== undefined || product.product_type === "couture";
 
   return (
     <Link
@@ -164,7 +166,7 @@ function MainProductCard({ product }: { product: ProductWithImages }) {
             <h3 className="font-display text-sm font-medium text-foreground md:text-lg">
               {product.name}
             </h3>
-            {!product.archived && (
+            {!product.archived && !isCouture && (
               <p className="text-xs text-foreground md:text-sm">
                 ${Number(product.base_price).toLocaleString()}
                 {product.compare_at_price && product.compare_at_price > product.base_price && (
@@ -204,6 +206,8 @@ function GridProductCard({
   const productUrl = coutureCollection 
     ? `/couture/${coutureCollection.slug}/${product.slug}`
     : `/product/${product.slug}`;
+  
+  const isCouture = coutureCollection !== undefined || product.product_type === "couture";
 
   return (
     <Link
@@ -245,7 +249,7 @@ function GridProductCard({
         <h3 className="font-display text-sm font-medium text-foreground transition-colors group-hover:text-primary md:text-base">
           {product.name}
         </h3>
-        {!product.archived && (
+        {!product.archived && !isCouture && (
           <p className="text-xs text-foreground md:text-sm">
             ${Number(product.base_price).toLocaleString()}
             {product.compare_at_price && product.compare_at_price > product.base_price && (

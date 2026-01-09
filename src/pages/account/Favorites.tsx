@@ -138,6 +138,8 @@ export default function FavoritesPage() {
               : categorySlug 
                 ? `/shop/${categorySlug}/${product.slug}` 
                 : `/shop/all/${product.slug}`;
+            
+            const isCouture = coutureCollection !== undefined || product.product_type === "couture";
 
             return (
               <div key={favorite.id} className="group relative">
@@ -171,7 +173,7 @@ export default function FavoritesPage() {
                         {product.name}
                       </h3>
                     </Link>
-                    {!product.archived && (
+                    {!product.archived && !isCouture && (
                       <div className="mt-1 flex items-center gap-2">
                         <span className="text-sm font-medium text-foreground">
                           ${Number(product.base_price).toLocaleString()}
@@ -184,30 +186,36 @@ export default function FavoritesPage() {
                       </div>
                     )}
                     <div className="flex gap-2 mt-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 flex-1 gap-1.5 text-xs"
-                        onClick={() => handleQuickAdd(product.id, product.name, Number(product.base_price))}
-                        disabled={addingProductId === product.id}
-                      >
-                        {addingProductId === product.id ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <>
-                            <ShoppingBag className="h-3.5 w-3.5" />
-                            Add
-                          </>
-                        )}
-                      </Button>
+                      {!isCouture && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 flex-1 gap-1.5 text-xs"
+                          onClick={() => handleQuickAdd(product.id, product.name, Number(product.base_price))}
+                          disabled={addingProductId === product.id}
+                        >
+                          {addingProductId === product.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <>
+                              <ShoppingBag className="h-3.5 w-3.5" />
+                              Add
+                            </>
+                          )}
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 gap-1.5 px-2 text-xs text-muted-foreground hover:text-destructive"
+                        className={cn(
+                          "h-8 gap-1.5 px-2 text-xs text-muted-foreground hover:text-destructive",
+                          isCouture && "flex-1"
+                        )}
                         onClick={() => removeMutation.mutate(favorite.id)}
                         disabled={removeMutation.isPending}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
+                        {isCouture && <span>Remove</span>}
                       </Button>
                     </div>
                   </div>
@@ -236,29 +244,31 @@ export default function FavoritesPage() {
                         </span>
                       )}
 
-                      {/* Quick add button - bottom */}
-                      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleQuickAdd(product.id, product.name, Number(product.base_price));
-                          }}
-                          disabled={addingProductId === product.id}
-                        >
-                          {addingProductId === product.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              <ShoppingBag className="mr-2 h-4 w-4" />
-                              Add to Cart
-                            </>
-                          )}
-                        </Button>
-                      </div>
+                      {/* Quick add button - bottom (hide for couture) */}
+                      {!isCouture && (
+                        <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="w-full backdrop-blur-sm bg-background/90 hover:bg-background"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleQuickAdd(product.id, product.name, Number(product.base_price));
+                            }}
+                            disabled={addingProductId === product.id}
+                          >
+                            {addingProductId === product.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <>
+                                <ShoppingBag className="mr-2 h-4 w-4" />
+                                Add to Cart
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </Link>
 
@@ -278,7 +288,7 @@ export default function FavoritesPage() {
                         {product.name}
                       </h3>
                     </Link>
-                    {!product.archived && (
+                    {!product.archived && !isCouture && (
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-foreground">
                           ${Number(product.base_price).toLocaleString()}
