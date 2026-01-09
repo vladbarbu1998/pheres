@@ -198,11 +198,11 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
               </div>
 
               {/* Image - circular */}
-              <div className="w-52 h-52 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08]">
+              <div className="w-44 h-44 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-[600ms] ease-out hover:scale-[1.08] bg-white">
                 <img
                   src={universeRtw}
                   alt="Ready To Wear collection"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
@@ -329,11 +329,11 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
               </Link>
             </div>
             {/* Image */}
-            <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-white">
               <img
                 src={universeRtw}
                 alt="Ready To Wear"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
           </div>
