@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { BrandWord } from "@/components/ui/brand-word";
+import universeCouture from "@/assets/universe-couture.jpg";
 
 interface UniverseCardProps {
   title: string;
@@ -80,7 +81,7 @@ export default function CollectionsPage() {
               subtitle="Exceptional high jewelry, crafted with rare gemstones and unparalleled artistry for the most discerning collectors."
               cta="Explore Couture"
               href="/collections/couture"
-              imageUrl="/images/hero-model.webp"
+              imageUrl={universeCouture}
               imageAlt="Couture high jewelry collection"
               size="large"
             />
