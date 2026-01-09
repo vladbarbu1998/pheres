@@ -1,8 +1,10 @@
+import { Layout } from "@/components/layout/Layout";
 import { LegalLayout } from "@/components/layout/LegalLayout";
 
 export default function Terms() {
   return (
-    <LegalLayout title="Terms & Conditions">
+    <Layout>
+      <LegalLayout title="Terms & Conditions">
       <div className="space-y-8 text-muted-foreground">
         <section className="space-y-4">
           <p className="text-lg font-medium text-foreground">
@@ -206,5 +208,6 @@ export default function Terms() {
         </p>
       </div>
     </LegalLayout>
+    </Layout>
   );
 }
