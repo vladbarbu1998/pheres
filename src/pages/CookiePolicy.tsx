@@ -1,20 +1,42 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { LegalLayout } from "@/components/layout/LegalLayout";
 import { Button } from "@/components/ui/button";
-import { setAnalyticsConsent, getConsentStatus } from "@/hooks/useAnalytics";
+import { 
+  setAnalyticsConsent, 
+  setMarketingConsent,
+  getConsentStatus, 
+  getMarketingConsentStatus 
+} from "@/hooks/useAnalytics";
 import { toast } from "sonner";
 
 export default function CookiePolicy() {
-  const handleUpdateConsent = (status: 'granted' | 'denied') => {
+  const [analyticsConsent, setAnalyticsConsentState] = useState(getConsentStatus());
+  const [marketingConsent, setMarketingConsentState] = useState(getMarketingConsentStatus());
+
+  useEffect(() => {
+    setAnalyticsConsentState(getConsentStatus());
+    setMarketingConsentState(getMarketingConsentStatus());
+  }, []);
+
+  const handleUpdateAnalytics = (status: 'granted' | 'denied') => {
     setAnalyticsConsent(status);
+    setAnalyticsConsentState(status);
     toast.success(status === 'granted' 
       ? "Analytics cookies enabled" 
       : "Analytics cookies disabled"
     );
   };
 
-  const currentConsent = getConsentStatus();
+  const handleUpdateMarketing = (status: 'granted' | 'denied') => {
+    setMarketingConsent(status);
+    setMarketingConsentState(status);
+    toast.success(status === 'granted' 
+      ? "Marketing cookies enabled" 
+      : "Marketing cookies disabled"
+    );
+  };
 
   return (
     <Layout>
@@ -67,6 +89,19 @@ export default function CookiePolicy() {
               </ul>
               <p className="text-sm text-muted-foreground mt-2">
                 <strong>Data collected:</strong> Pages visited, time spent on site, browser type, device type, geographic location (country/city level), referral source, and anonymized user behavior patterns.
+              </p>
+            </div>
+
+            <div className="rounded-lg border border-border p-4">
+              <h3 className="font-medium text-foreground mb-2">Marketing Cookies</h3>
+              <p className="text-sm text-muted-foreground mb-2">
+                These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns. These cookies are optional.
+              </p>
+              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                <li><strong>Facebook Pixel (Meta)</strong> – Tracks conversions, builds audiences for ad targeting, and measures ad performance</li>
+              </ul>
+              <p className="text-sm text-muted-foreground mt-2">
+                <strong>Data collected:</strong> Product views, add-to-cart events, checkout initiation, purchases, and page views for remarketing purposes.
               </p>
             </div>
           </div>
@@ -134,6 +169,12 @@ export default function CookiePolicy() {
                 Google's Privacy Policy
               </a>
             </li>
+            <li>
+              <strong>Facebook/Meta Pixel</strong> – For advertising measurement and audience building. 
+              <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
+                Meta's Privacy Policy
+              </a>
+            </li>
           </ul>
         </section>
 
@@ -143,26 +184,60 @@ export default function CookiePolicy() {
             Your Cookie Choices
           </h2>
           <p>
-            When you first visit our website, you will see a cookie consent banner asking for your permission to use analytics cookies. You can change your preferences at any time using the buttons below:
+            When you first visit our website, you will see a cookie consent banner asking for your permission to use cookies. You can change your preferences at any time using the buttons below:
           </p>
           
-          <div className="rounded-lg border border-border p-6 space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Current preference: <strong className="text-foreground">{currentConsent === 'granted' ? 'Analytics Enabled' : currentConsent === 'denied' ? 'Analytics Disabled' : 'Not Set'}</strong>
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button 
-                onClick={() => handleUpdateConsent('granted')}
-                variant={currentConsent === 'granted' ? 'default' : 'outline'}
-              >
-                Accept Analytics Cookies
-              </Button>
-              <Button 
-                onClick={() => handleUpdateConsent('denied')}
-                variant={currentConsent === 'denied' ? 'default' : 'outline'}
-              >
-                Decline Analytics Cookies
-              </Button>
+          <div className="rounded-lg border border-border p-6 space-y-6">
+            {/* Analytics Cookies */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-medium text-foreground">Analytics Cookies</h3>
+                <span className="text-sm text-muted-foreground">
+                  {analyticsConsent === 'granted' ? 'Enabled' : analyticsConsent === 'denied' ? 'Disabled' : 'Not Set'}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button 
+                  onClick={() => handleUpdateAnalytics('granted')}
+                  variant={analyticsConsent === 'granted' ? 'default' : 'outline'}
+                  size="sm"
+                >
+                  Accept Analytics
+                </Button>
+                <Button 
+                  onClick={() => handleUpdateAnalytics('denied')}
+                  variant={analyticsConsent === 'denied' ? 'default' : 'outline'}
+                  size="sm"
+                >
+                  Decline Analytics
+                </Button>
+              </div>
+            </div>
+
+            {/* Marketing Cookies */}
+            <div className="space-y-3 pt-4 border-t">
+              <div className="flex items-center justify-between">
+                <h3 className="font-medium text-foreground">Marketing Cookies</h3>
+                <span className="text-sm text-muted-foreground">
+                  {marketingConsent === 'granted' ? 'Enabled' : marketingConsent === 'denied' ? 'Disabled' : 'Not Set'}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button 
+                  onClick={() => handleUpdateMarketing('granted')}
+                  variant={marketingConsent === 'granted' ? 'default' : 'outline'}
+                  size="sm"
+                >
+                  Accept Marketing
+                </Button>
+                <Button 
+                  onClick={() => handleUpdateMarketing('denied')}
+                  variant={marketingConsent === 'denied' ? 'default' : 'outline'}
+                  size="sm"
+                >
+                  Decline Marketing
+                </Button>
+              </div>
             </div>
           </div>
 
