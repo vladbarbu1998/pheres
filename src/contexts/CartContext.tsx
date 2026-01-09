@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { trackAddToCart, trackRemoveFromCart } from "@/hooks/useAnalytics";
 
 export interface CartItem {
   id: string;
@@ -274,6 +275,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
 
       await fetchCart();
+      
+      // Track add_to_cart - find the product details from refreshed items
+      const addedItem = items.find(item => item.productId === productId && item.variantId === variantId);
+      if (addedItem) {
+        trackAddToCart({
+          id: productId,
+          name: addedItem.product.name,
+          price: addedItem.product.base_price + (addedItem.variant?.price_adjustment || 0),
+          variant: addedItem.variant?.name || null
+        }, quantity);
+      }
+      
       toast({ title: "Added to cart", description: "Item has been added to your cart" });
     } else {
       // Guest cart
@@ -290,6 +303,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       setGuestCart(guestCart);
       await fetchCart();
+      
+      // Track add_to_cart for guest
+      const addedItem = items.find(item => item.productId === productId && item.variantId === variantId);
+      if (addedItem) {
+        trackAddToCart({
+          id: productId,
+          name: addedItem.product.name,
+          price: addedItem.product.base_price + (addedItem.variant?.price_adjustment || 0),
+          variant: addedItem.variant?.name || null
+        }, quantity);
+      }
+      
       toast({ title: "Added to cart", description: "Item has been added to your cart" });
     }
   }, [user, items, fetchCart]);
@@ -350,6 +375,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Store previous items for rollback
     const previousItems = [...items];
     
+    // Find the item being removed for tracking
+    const removedItem = items.find(item => item.id === itemId);
+    
     // Optimistic remove
     setItems(prev => prev.filter(item => item.id !== itemId));
     
@@ -369,6 +397,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const guestCart = getGuestCart();
         guestCart.splice(index, 1);
         setGuestCart(guestCart);
+      }
+      
+      // Track remove_from_cart
+      if (removedItem) {
+        trackRemoveFromCart({
+          id: removedItem.productId,
+          name: removedItem.product.name,
+          price: removedItem.product.base_price + (removedItem.variant?.price_adjustment || 0),
+          variant: removedItem.variant?.name || null
+        }, removedItem.quantity);
       }
       
       toast({ title: "Removed", description: "Item removed from cart" });
