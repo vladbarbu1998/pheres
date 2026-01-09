@@ -91,7 +91,7 @@ export default function CollectionsPage() {
           {/* Right: Stacked - Ready to Wear Card + Context */}
           <div className="flex flex-col gap-px bg-border">
             {/* Ready to Wear Card - square ratio with full image */}
-            <div className="relative aspect-square md:aspect-auto md:h-[55%] lg:h-[60%] bg-secondary/30">
+            <div className="relative aspect-square md:aspect-auto md:h-[55%] lg:h-[60%] bg-white">
               <Link to="/collections/ready-to-wear" className="group relative flex h-full items-center justify-center overflow-hidden">
                 {/* Image - object-contain to show full image */}
                 <img
