@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { BrandWord } from "@/components/ui/brand-word";
 import universeCouture from "@/assets/universe-couture.jpg";
+import universeRtw from "@/assets/universe-rtw.webp";
 
 interface UniverseCardProps {
   title: string;
@@ -97,7 +98,7 @@ export default function CollectionsPage() {
                 subtitle="Refined luxury jewelry, designed for everyday elegance."
                 cta="Explore Collection"
                 href="/collections/ready-to-wear"
-                imageUrl="https://sbyfgresripeilehcoru.supabase.co/storage/v1/object/public/admin-uploads/collections/1766892837426-Color%20Me%20Yours.webp"
+                imageUrl={universeRtw}
                 imageAlt="Ready to Wear jewelry collection"
                 size="small"
               />
