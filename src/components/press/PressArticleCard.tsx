@@ -19,7 +19,7 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
         <div className="flex flex-col sm:flex-row">
           {/* Image - Left side */}
           <div className="relative w-full sm:w-1/3 flex-shrink-0">
-            <div className="flex h-full min-h-[140px] items-center justify-center overflow-hidden bg-muted p-4">
+            <div className="flex h-full min-h-[140px] items-center justify-center overflow-hidden p-4" style={{ backgroundColor: '#F1F0EE' }}>
               {article.outlet?.logo_url ? (
                 <img
                   src={article.outlet.logo_url}
