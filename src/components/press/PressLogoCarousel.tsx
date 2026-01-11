@@ -2,6 +2,10 @@ import { useEffect, useRef } from "react";
 
 // Static logos for the carousel - these are independent of press_outlets table
 const carouselLogos = [
+  { name: "Golden Globes", src: "/images/press/golden-globes-logo.png" },
+  { name: "Katerina Perez", src: "/images/press/katerina-perez-logo.png" },
+  { name: "Luxe Gulf", src: "/images/press/luxe-gulf-logo.png" },
+  { name: "Rapaport", src: "/images/press/rapaport-logo.png" },
   { name: "Vogue", src: "/images/press/vogue-logo.avif" },
   { name: "Forbes", src: "/images/press/forbes-logo.avif" },
   { name: "Harper's Bazaar", src: "/images/press/harpers-bazaar-logo.webp" },
