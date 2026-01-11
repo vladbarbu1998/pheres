@@ -20,18 +20,12 @@ export function PressArticleCard({ article }: PressArticleCardProps) {
           {/* Image - Left side */}
           <div className="relative w-full sm:w-1/3 flex-shrink-0">
             <div className="flex h-full min-h-[140px] items-center justify-center overflow-hidden bg-muted p-4">
-              {article.thumbnail_url ? (
-                <img
-                  src={article.thumbnail_url}
-                  alt={article.title}
-                  className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-              ) : article.outlet?.logo_url ? (
+              {article.outlet?.logo_url ? (
                 <img
                   src={article.outlet.logo_url}
                   alt={article.outlet.name}
-                  className="h-8 w-auto max-w-[60%] object-contain opacity-30 grayscale"
+                  className="max-h-16 w-auto max-w-[70%] object-contain transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
                 />
               ) : null}
             </div>

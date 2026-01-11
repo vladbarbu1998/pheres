@@ -63,7 +63,7 @@ export function useCreatePressArticle() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (article: Omit<PressArticle, "id" | "created_at" | "updated_at">) => {
+    mutationFn: async (article: Omit<PressArticle, "id" | "created_at" | "updated_at" | "thumbnail_url">) => {
       const { data, error } = await supabase
         .from("press_articles")
         .insert([article])

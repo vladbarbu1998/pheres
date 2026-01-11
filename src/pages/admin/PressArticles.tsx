@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import {
   useAdminPressArticles,
   useCreatePressArticle,
@@ -72,7 +71,7 @@ export default function AdminPressArticles() {
   const [formExternalUrl, setFormExternalUrl] = useState("");
   const [formPublishDate, setFormPublishDate] = useState("");
   const [formShortDescription, setFormShortDescription] = useState("");
-  const [formThumbnailUrl, setFormThumbnailUrl] = useState("");
+  
   const [formIsHighlight, setFormIsHighlight] = useState(false);
   const [formIsActive, setFormIsActive] = useState(true);
   const [formDisplayOrder, setFormDisplayOrder] = useState(0);
@@ -97,7 +96,6 @@ export default function AdminPressArticles() {
     setFormExternalUrl("");
     setFormPublishDate("");
     setFormShortDescription("");
-    setFormThumbnailUrl("");
     setFormIsHighlight(false);
     setFormIsActive(true);
     setFormDisplayOrder(0);
@@ -116,7 +114,6 @@ export default function AdminPressArticles() {
     setFormExternalUrl(article.external_url);
     setFormPublishDate(article.publish_date || "");
     setFormShortDescription(article.short_description || "");
-    setFormThumbnailUrl(article.thumbnail_url || "");
     setFormIsHighlight(article.is_highlight);
     setFormIsActive(article.is_active);
     setFormDisplayOrder(article.display_order);
@@ -153,7 +150,6 @@ export default function AdminPressArticles() {
           external_url: formExternalUrl,
           publish_date: formPublishDate || null,
           short_description: formShortDescription || null,
-          thumbnail_url: formThumbnailUrl || null,
           is_highlight: formIsHighlight,
           is_active: formIsActive,
           display_order: formDisplayOrder,
@@ -166,7 +162,6 @@ export default function AdminPressArticles() {
           external_url: formExternalUrl,
           publish_date: formPublishDate || null,
           short_description: formShortDescription || null,
-          thumbnail_url: formThumbnailUrl || null,
           is_highlight: formIsHighlight,
           is_active: formIsActive,
           display_order: formDisplayOrder,
@@ -277,11 +272,11 @@ export default function AdminPressArticles() {
                   <TableRow key={article.id}>
                     <TableCell>
                       <div className="h-10 w-10 rounded-md overflow-hidden bg-muted flex items-center justify-center">
-                        {article.thumbnail_url ? (
+                        {article.outlet?.logo_url ? (
                           <img
-                            src={article.thumbnail_url}
-                            alt={article.title}
-                            className="h-full w-full object-cover object-center"
+                            src={article.outlet.logo_url}
+                            alt={article.outlet.name}
+                            className="h-full w-full object-contain p-1"
                           />
                         ) : (
                           <ImageIcon className="h-4 w-4 text-muted-foreground" />
@@ -390,17 +385,6 @@ export default function AdminPressArticles() {
                   value={formExternalUrl}
                   onChange={(e) => setFormExternalUrl(e.target.value)}
                   placeholder="https://www.vogue.com/article/..."
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Thumbnail Image</Label>
-                <ImageUploadField
-                  value={formThumbnailUrl}
-                  onChange={setFormThumbnailUrl}
-                  folder="press-articles"
-                  aspectRatio="landscape"
-                  placeholder="Upload article thumbnail"
                 />
               </div>
 
