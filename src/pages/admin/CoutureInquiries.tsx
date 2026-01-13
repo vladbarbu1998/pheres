@@ -42,8 +42,10 @@ import {
   Calendar,
   MapPin,
   Gem,
-  Eye
+  Eye,
+  Sparkles
 } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -68,9 +70,14 @@ export default function AdminCoutureInquiries() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "unread" | "archived">("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | "couture" | "concierge">("all");
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [inquiryToDelete, setInquiryToDelete] = useState<string | null>(null);
+
+  // Counts for type filter badges
+  const coutureCount = inquiries?.filter((i) => i.product_id !== null && !i.is_archived).length || 0;
+  const conciergeCount = inquiries?.filter((i) => i.product_id === null && !i.is_archived).length || 0;
 
   const filteredInquiries = inquiries?.filter((inq) => {
     const searchLower = search.toLowerCase();
@@ -81,12 +88,21 @@ export default function AdminCoutureInquiries() {
       inq.country?.toLowerCase().includes(searchLower) ||
       inq.message?.toLowerCase().includes(searchLower);
 
-    if (filter === "unread") return matchesSearch && !inq.is_read && !inq.is_archived;
-    if (filter === "archived") return matchesSearch && inq.is_archived;
-    return matchesSearch && !inq.is_archived;
+    // Type filter
+    const matchesType =
+      typeFilter === "all" ? true :
+      typeFilter === "couture" ? inq.product_id !== null :
+      typeFilter === "concierge" ? inq.product_id === null : true;
+
+    if (filter === "unread") return matchesSearch && matchesType && !inq.is_read && !inq.is_archived;
+    if (filter === "archived") return matchesSearch && matchesType && inq.is_archived;
+    return matchesSearch && matchesType && !inq.is_archived;
   });
 
   const unreadCount = inquiries?.filter((i) => !i.is_read && !i.is_archived).length || 0;
+
+  // Helper to check if inquiry is concierge type
+  const isConciergeInquiry = (inq: Inquiry) => inq.product_id === null;
 
   const handleViewInquiry = async (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry);
@@ -159,12 +175,12 @@ export default function AdminCoutureInquiries() {
   }
 
   return (
-    <AdminLayout title="Couture Inquiries">
+    <AdminLayout title="Inquiries">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold">Couture Inquiries</h1>
+          <h1 className="text-2xl font-semibold">Inquiries</h1>
           <p className="text-muted-foreground">
-            Inquiries about one-of-a-kind pieces
+            Manage couture and concierge service inquiries
             {unreadCount > 0 && (
               <Badge variant="destructive" className="ml-2">
                 {unreadCount} unread
@@ -173,7 +189,33 @@ export default function AdminCoutureInquiries() {
           </p>
         </div>
 
-        {/* Filters */}
+        {/* Type Filter Tabs */}
+        <Tabs value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
+          <TabsList>
+            <TabsTrigger value="all" className="gap-2">
+              All Types
+              <Badge variant="secondary" className="ml-1 text-xs">
+                {coutureCount + conciergeCount}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="couture" className="gap-2">
+              <Gem className="h-3.5 w-3.5" />
+              Couture Pieces
+              <Badge variant="secondary" className="ml-1 text-xs">
+                {coutureCount}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="concierge" className="gap-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              Concierge Service
+              <Badge variant="secondary" className="ml-1 text-xs">
+                {conciergeCount}
+              </Badge>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {/* Status Filters */}
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -274,10 +316,19 @@ export default function AdminCoutureInquiries() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Gem className="h-4 w-4 text-primary" />
+                        {isConciergeInquiry(inq) ? (
+                          <Sparkles className="h-4 w-4 text-amber-500" />
+                        ) : (
+                          <Gem className="h-4 w-4 text-primary" />
+                        )}
                         <span className={`${!inq.is_read ? "font-semibold" : ""}`}>
                           {inq.product_name}
                         </span>
+                        {isConciergeInquiry(inq) && (
+                          <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-600">
+                            Concierge
+                          </Badge>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
@@ -323,8 +374,17 @@ export default function AdminCoutureInquiries() {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Gem className="h-5 w-5 text-primary" />
+                {selectedInquiry && isConciergeInquiry(selectedInquiry) ? (
+                  <Sparkles className="h-5 w-5 text-amber-500" />
+                ) : (
+                  <Gem className="h-5 w-5 text-primary" />
+                )}
                 {selectedInquiry?.product_name}
+                {selectedInquiry && isConciergeInquiry(selectedInquiry) && (
+                  <Badge variant="outline" className="ml-2 border-amber-500/50 text-amber-600">
+                    Concierge Service
+                  </Badge>
+                )}
               </DialogTitle>
             </DialogHeader>
             
