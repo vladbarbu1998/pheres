@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { ConciergeInquiryDialog } from "@/components/concierge/ConciergeInquiryDialog";
 import conciergeHero from "@/assets/concierge-hero.png";
@@ -9,33 +10,14 @@ export default function ConciergeService() {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative min-h-[60vh] lg:min-h-[70vh] flex items-center">
-        <div className="absolute inset-0">
-          <img
-            src={conciergeHero}
-            alt="Pheres fine jewelry pieces elegantly displayed"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-transparent" />
-        </div>
-        <div className="container relative z-10 py-20 lg:py-32">
-          <div className="max-w-xl">
-            <p className="mb-4 font-label text-sm font-medium uppercase tracking-[0.3em] text-primary animate-fade-in">
-              Exclusive Service
-            </p>
-            <h1 className="font-serif text-4xl font-light tracking-wide text-foreground md:text-5xl lg:text-6xl animate-fade-in text-balance">
-              Concierge Service
-            </h1>
-            <p className="mt-6 text-lg text-muted-foreground md:text-xl animate-fade-in leading-relaxed">
-              Personalized luxury assistance tailored to your desires
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        label="Exclusive Service"
+        title="Concierge Service"
+        intro="Personalized luxury assistance tailored to your desires"
+      />
 
       {/* Introduction */}
-      <section className="py-20 lg:py-28 bg-secondary/30">
+      <section className="border-t border-border/50 py-16 md:py-24">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
