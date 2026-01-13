@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
+import { BrandWord } from "@/components/ui/brand-word";
 import { ConciergeInquiryDialog } from "@/components/concierge/ConciergeInquiryDialog";
 import conciergeHero from "@/assets/concierge-hero.png";
 
@@ -21,7 +22,7 @@ export default function ConciergeService() {
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              At Pheres, we understand that exceptional jewelry deserves an equally considered level of service. Our Concierge Service is designed to offer a discreet, personalized experience for clients seeking an elevated level of care, attention, and convenience.
+              At <BrandWord>Pheres</BrandWord>, we understand that exceptional jewelry deserves an equally considered level of service. Our Concierge Service is designed to offer a discreet, personalized experience for clients seeking an elevated level of care, attention, and convenience.
             </p>
           </div>
         </div>
