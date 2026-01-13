@@ -35,6 +35,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import CookiePolicy from "./pages/CookiePolicy";
 import Terms from "./pages/Terms";
 import Returns from "./pages/Returns";
+import ConciergeService from "./pages/ConciergeService";
 import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
 import ForgotPassword from "./pages/account/ForgotPassword";
@@ -114,6 +115,7 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/returns" element={<Returns />} />
               <Route path="/shipping" element={<Returns />} />
+              <Route path="/concierge-service" element={<ConciergeService />} />
             
             {/* Auth routes */}
             <Route path="/account/login" element={<Login />} />

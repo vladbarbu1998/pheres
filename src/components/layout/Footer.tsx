@@ -5,7 +5,7 @@ const footerLinks = {
   shop: [
     { name: "All Jewelry", href: "/shop" },
     { name: "Collections", href: "/collections" },
-    { name: "New Arrivals", href: "/shop?sort=newest" },
+    { name: "Concierge Service", href: "/concierge-service" },
   ],
   about: [
     { name: "Our Story", href: "/story" },
