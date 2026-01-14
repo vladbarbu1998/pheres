@@ -29,7 +29,7 @@ export function Footer() {
           <div className="flex-1">
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-              Italian Luxury Brand; Fine Jewelry & Couture. A one-of-a-kind luxury experience for powerful and independent women.
+              Italian Luxury Brand; Fine Jewelry & Couture. A one-of-a-kind luxury experience for the powerful and discerning collector.
             </p>
           </div>
 
