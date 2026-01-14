@@ -64,19 +64,19 @@ export default function Story() {
               </div>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  <span className="brand-word">Pheres</span> brings luxury back to its roots by creating very exclusive products of extremely high quality that the niche market of connoisseurs truly appreciates.
+                  <span className="brand-word">Pheres</span> was founded in 2006 by designer <span className="brand-word">Narcisa Pheres</span>, with a focus on fine jewelry as a form of personal expression rather than ornament alone.
                 </p>
                 <p>
-                  <span className="brand-word">Narcisa Pheres</span>, a line dedicated exclusively for fine jewelry enthuses with one-of-a-kind diamonds and resonates opulence for the high-end market.
+                  Inspired by the natural world and the passage of time, <span className="brand-word">Narcisa Pheres</span> approaches jewelry as something meant to last and be passed on. Diamonds and rare gems are central to her work, selected for their rarity, color as much as their brilliance.
                 </p>
                 <p>
-                  Founded by designer <span className="brand-word">Narcisa Pheres</span> over a decade ago, as a highly exclusive Italian fashion house, <span className="brand-word">Pheres</span> has taken on a new life of its own.
+                  Each piece is developed through a careful and deliberate process, where design and craftsmanship evolve together. The result is jewelry defined by clarity, balance, and attention to detail, rather than trends.
                 </p>
                 <p>
-                  <span className="brand-word">Pheres</span> maintains its focus on creating unique luxury experiences that walk the fine line between elegance and extravagance—tearing down walls of limitation and boldly innovating a symbiosis of style.
+                  The <span className="brand-word">Narcisa Pheres</span> Fine Jewelry pieces have been seen on many celebrities at high-profile red carpet events (Oscars, Grammys, Golden Globes, Met Gala) and are valued for their refined simplicity, uniqueness, and quiet confidence, with rarity reflected in the exceptional gemstones selected.
                 </p>
                 <p>
-                  Among the <span className="brand-word">Pheres</span> brand are the <span className="brand-word">Narcisa Pheres</span> Fine Jewelry pieces that have been gracing many a red carpet event. With these pieces, in the belief that true opulence is in the detail, the greatest of consideration and care is paid to even the smallest of steps in the design and creation process.
+                  The brand reflects the belief that jewelry should feel personal, unique and timeless.
                 </p>
               </div>
             </div>
