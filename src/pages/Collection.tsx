@@ -1,4 +1,4 @@
-import { useParams, Link, useSearchParams } from "react-router-dom";
+import { useParams, Link, useSearchParams, Navigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
@@ -104,6 +104,11 @@ export default function CollectionPage() {
     filters.minPrice !== null ||
     filters.maxPrice !== null ||
     filters.stoneTypes.length > 0;
+
+  // Redirect couture collections to /couture/:slug
+  if (!collectionLoading && collection?.collection_type === "couture") {
+    return <Navigate to={`/couture/${slug}`} replace />;
+  }
 
   // Collection not found
   if (!collectionLoading && !collection && !collectionError) {

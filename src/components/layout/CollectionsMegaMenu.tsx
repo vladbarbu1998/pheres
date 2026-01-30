@@ -141,7 +141,7 @@ export function CollectionsMegaMenuDesktop({ isActive }: { isActive: boolean }) 
                   {data?.couture?.children.map((child) => (
                     <Link
                       key={child.id}
-                      to={`/shop/collection/${child.slug}`}
+                      to={`/couture/${child.slug}`}
                       className="block font-label text-base font-normal text-foreground hover:text-primary hover:pl-1.5 transition-all duration-200"
                     >
                       {child.name}{child.archived ? ' (archived)' : ''}
@@ -272,7 +272,7 @@ export function CollectionsMegaMenuMobile({ onNavigate }: { onNavigate: () => vo
                 {data?.couture?.children.map((child) => (
                   <Link
                     key={child.id}
-                    to={`/shop/collection/${child.slug}`}
+                    to={`/couture/${child.slug}`}
                     onClick={onNavigate}
                     className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
