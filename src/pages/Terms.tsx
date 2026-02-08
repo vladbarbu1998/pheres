@@ -170,7 +170,7 @@ export default function Terms() {
           <p>
             <span className="brand-word">Pheres</span> Co., Ltd ensures every package against theft and accidental damage while in transit until it is delivered to your specified address. Once the package is delivered, we are no longer responsible for your purchased goods. If you are sending this package as a gift, the person who signs for the package confirms receipt is accountable for the merchandise. If your box is damaged upon arrival, we recommend that you refuse delivery. Please notify Customer Care{" "}
             <a href="mailto:customercare@pheres.com" className="text-primary hover:underline">customercare@pheres.com</a>{" "}
-            or call us at +852 9211 7727 if you have refused a package.
+            or call us at +852 3182 7554 if you have refused a package.
           </p>
         </section>
 
