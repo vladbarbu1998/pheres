@@ -119,7 +119,7 @@ export default function Terms() {
         <section className="space-y-4">
           <h2 className="font-display text-xl font-semibold text-foreground">Ordering</h2>
           <p>
-            Orders should be placed online using the shopping cart. If you encounter any difficulties, please contact us at +81 3 6452 9491 and we will be happy to assist you. All orders must be prepaid by credit card or PayPal. Orders paid via PayPal will be held until PayPal advises your funds have been received.
+            Orders should be placed online using the shopping cart. If you encounter any difficulties, please contact us at +852 3182 7554 and we will be happy to assist you. All orders must be prepaid by credit card or PayPal. Orders paid via PayPal will be held until PayPal advises your funds have been received.
           </p>
           <p>
             On Credit Card transactions, if the Bill To and Ship To are not the same, at our discretion, we will request a Credit Card Authorization Form be submitted to us.
@@ -129,15 +129,29 @@ export default function Terms() {
         <section className="space-y-4">
           <h2 className="font-display text-xl font-semibold text-foreground">Shipping</h2>
           <p>
-            We offer free shipping worldwide. Once the order is dispatched we will send you your shipping information and tracking number via e-mail to the address you used to register on our site.
+            We offer worldwide delivery through carefully selected, secure and fully insured logistics partners.
           </p>
           <p>
-            Your tracking number will not activate to show movement until the parcel is scanned in at the first courier-specific sorting facility generally 24 hours or so after you receive a shipping notification.
+            Shipping, insurance and all applicable taxes, duties and customs charges are borne by the client. All delivery-related costs are determined according to the destination country, applicable regulations and the selected logistics and insurance services.
           </p>
           <p>
-            <span className="brand-word">Pheres</span> Co., Ltd ships every Monday-Friday. We strive to process your order and ship within 14 business days. Some particular items might take longer if so we will notify you via e-mail. If your order is urgent, please call us at +852 9211 7727 or e-mail us at{" "}
+            As each <span className="brand-word">Pheres</span> creation is shipped individually with dedicated insurance and security handling, the final shipping, insurance and tax charges are calculated after the order is placed and will be communicated to the client for approval prior to dispatch. No order will be shipped until the client has confirmed acceptance of the final delivery-related charges.
+          </p>
+          <p>
+            Please note that customs duties, import taxes and local charges may vary depending on the destination country and are outside of our control.
+          </p>
+          <p>
+            Each <span className="brand-word">Pheres</span> creation is individually crafted upon order to ensure exceptional craftsmanship, finishing and quality control. The total lead time, including both the crafting of the piece and its delivery to the client, is up to 30 business days from order confirmation.
+          </p>
+          <p>
+            <span className="brand-word">Pheres</span> Co., Ltd ships Monday to Friday. Certain bespoke or limited creations may require additional time, in which case the client will be informed accordingly.
+          </p>
+          <p>
+            If your order is urgent, please contact us at{" "}
+            <a href="tel:+85292117727" className="text-primary hover:underline">+852 9211 7727</a>{" "}
+            or e-mail us at{" "}
             <a href="mailto:orders@pheres.com" className="text-primary hover:underline">orders@pheres.com</a>{" "}
-            to expedite your order for an additional fee.
+            to request a priority service. An additional service fee may apply.
           </p>
         </section>
 
@@ -199,7 +213,7 @@ export default function Terms() {
             <a href="mailto:info@pheres.com" className="text-primary hover:underline">info@pheres.com</a>
           </p>
           <p className="font-medium text-foreground">
-            <span className="brand-word">Pheres</span> HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
+            <span className="brand-word">Pheres</span> HK LTD., Level 29, Infinitus Plaza, 199 Des Voeux Road, Sheung Wan, Hong Kong
           </p>
         </section>
 

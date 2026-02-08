@@ -37,13 +37,10 @@ export default function Returns() {
             Send the product in its original packaging and the RMA number, along with a note indicating whether you want an exchange (and if so, what other product you want to order) or credit note towards your next purchase to:
           </p>
           <p className="font-medium text-foreground">
-            <span className="brand-word">Pheres</span> HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
+            <span className="brand-word">Pheres</span> HK LTD., Level 29, Infinitus Plaza, 199 Des Voeux Road, Sheung Wan, Hong Kong
           </p>
           <p>
             The customer will have to ensure the return of the parcel at their own cost and bare the return fees.
-          </p>
-          <p>
-            Refund will only be processed once the product is checked and made sure of that no changes or alterations have been made to the product.
           </p>
         </section>
 
@@ -75,9 +72,6 @@ export default function Returns() {
           <p>
             Once our Quality Assurance department has passed your return package, you will receive a confirmation email alerting you that your return has been processed.
           </p>
-          <p>
-            For refunds, please allow 7-10 working days for your credit card company to refund the amount to your account. Please contact your credit card company to know more. Orders paid through PayPal will be credited back to your PayPal account. Please allow up to 10 days for your amount to be credited.
-          </p>
         </section>
 
         <section className="space-y-4">
@@ -108,7 +102,7 @@ export default function Returns() {
             <a href="mailto:customercare@pheres.com" className="text-primary hover:underline">customercare@pheres.com</a>
           </p>
           <p className="font-medium text-foreground">
-            Hong Kong Office: <span className="brand-word">Pheres</span> HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
+            Hong Kong Office: <span className="brand-word">Pheres</span> HK LTD., Level 29, Infinitus Plaza, 199 Des Voeux Road, Sheung Wan, Hong Kong
           </p>
         </section>
       </div>

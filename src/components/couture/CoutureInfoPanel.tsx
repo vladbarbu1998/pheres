@@ -50,30 +50,6 @@ interface CoutureInfoPanelProps {
   onInquire: () => void;
 }
 
-function formatSpecs(metals: Metal[], stones: Stone[], grossWeight?: string | null): string[] {
-  const specs: string[] = [];
-  
-  if (metals.length > 0) {
-    const primaryMetal = metals[0];
-    specs.push(primaryMetal.metal_type);
-  }
-  
-  if (stones.length > 0) {
-    const primaryStone = stones[0];
-    if (primaryStone.stone_carat) {
-      specs.push(`${primaryStone.stone_type} (${primaryStone.stone_carat})`);
-    } else {
-      specs.push(primaryStone.stone_type);
-    }
-  }
-  
-  if (grossWeight) {
-    specs.push(grossWeight);
-  }
-  
-  return specs;
-}
-
 export function CoutureInfoPanel({
   productId,
   productName,
@@ -91,7 +67,6 @@ export function CoutureInfoPanel({
   isArchived,
   onInquire,
 }: CoutureInfoPanelProps) {
-  const specs = formatSpecs(metals, stones, grossWeight);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(productId);
@@ -210,21 +185,6 @@ export function CoutureInfoPanel({
         style={{ animationDelay: "200ms", animationFillMode: "both" }} 
       />
 
-      {/* Compact Specs */}
-      {specs.length > 0 && (
-        <>
-          <p 
-            className="text-sm text-foreground/80 tracking-wide mb-8 animate-fade-in"
-            style={{ animationDelay: "250ms", animationFillMode: "both" }}
-          >
-            {specs.join("  ·  ")}
-          </p>
-          <Separator 
-            className="mb-8 animate-fade-in" 
-            style={{ animationDelay: "300ms", animationFillMode: "both" }} 
-          />
-        </>
-      )}
 
       {/* Primary CTA */}
       {isArchived ? (

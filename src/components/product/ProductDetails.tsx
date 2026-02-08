@@ -63,10 +63,10 @@ export function ProductDetails({ description, certification }: ProductDetailsPro
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground leading-relaxed px-4 pb-4">
               <ul className="space-y-2">
-                <li>Complimentary insured shipping worldwide</li>
-                <li>Orders processed within 14 business days</li>
-                <li>Tracking number sent via email upon dispatch</li>
-                <li>All packages insured against theft and damage in transit</li>
+                <li>Worldwide delivery through secure, fully insured logistics partners</li>
+                <li>Shipping, insurance, taxes and duties borne by the client</li>
+                <li>Up to 30 business days lead time from order confirmation</li>
+                <li>Final delivery charges communicated for approval prior to dispatch</li>
               </ul>
             </AccordionContent>
           </AccordionItem>

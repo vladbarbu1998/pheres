@@ -118,7 +118,7 @@ export default function PrivacyPolicy() {
             </a>
           </p>
           <p className="font-medium text-foreground">
-            <span className="brand-word">Pheres</span> HK LTD., Level 9 & 10, Central Building, 1-3 Pedder Street, Central, Hong Kong
+            <span className="brand-word">Pheres</span> HK LTD., Level 29, Infinitus Plaza, 199 Des Voeux Road, Sheung Wan, Hong Kong
           </p>
         </section>
       </div>

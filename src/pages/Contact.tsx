@@ -27,11 +27,6 @@ const locations = [
     address: "Level 29, Infinitus Plaza, 199 Des Voeux Road, Sheung Wan, Hong Kong",
     phone: "+852 3182 7554",
   },
-  {
-    name: "Tokyo Office",
-    address: "1-19-12 Hamamatsucho, Fuji Building 5F, Minato-Ku, Tokyo 105-0013",
-    phone: "+81 3 6452 9491",
-  },
 ];
 
 const socialLinks = [
