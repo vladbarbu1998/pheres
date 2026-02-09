@@ -30,6 +30,14 @@ export default function OrderConfirmation() {
       return data;
     },
     enabled: !!orderId,
+    // Poll every 3s while payment is still pending (webhook may not have fired yet)
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (data && data.payment_status !== "paid" && data.status !== "paid") {
+        return 3000;
+      }
+      return false;
+    },
   });
 
   // Track purchase event (only once per order)
@@ -103,7 +111,9 @@ export default function OrderConfirmation() {
             Thank You for Your Order!
           </h1>
           <p className="text-muted-foreground">
-            We've received your order and will begin processing it shortly.
+            {order.payment_status === "paid" || order.status === "paid"
+              ? "Your payment has been received. We'll begin processing your order shortly."
+              : "Your order has been created. Payment is being processed."}
           </p>
         </div>
 
@@ -116,10 +126,17 @@ export default function OrderConfirmation() {
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Status</p>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
-                <Package className="h-3.5 w-3.5" />
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-              </span>
+              {order.payment_status === "paid" || order.status === "paid" ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+                  <CheckCircle className="h-3.5 w-3.5" />
+                  Payment Received
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
+                  <Package className="h-3.5 w-3.5" />
+                  Payment Pending
+                </span>
+              )}
             </div>
           </div>
 

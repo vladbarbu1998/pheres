@@ -41,7 +41,7 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 export default function Checkout() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { items, isLoading: cartLoading, subtotal, clearCart } = useCart();
+  const { items, isLoading: cartLoading, subtotal } = useCart();
   const { data: profile } = useProfile();
   const { data: addresses } = useAddresses();
   
@@ -164,6 +164,7 @@ export default function Checkout() {
         quantity: item.quantity,
       }));
 
+      // Step 1: Create order with stripe payment method
       const { data: result, error } = await supabase.functions.invoke("create-order", {
         body: {
           customer_email: data.email,
@@ -180,6 +181,7 @@ export default function Checkout() {
           },
           cart_items: cartPayload,
           customer_notes: data.customer_notes,
+          payment_method: "stripe",
           // Honeypot data for server-side validation
           _hp_name: honeypotName,
           _hp_email: honeypotEmail,
@@ -195,17 +197,24 @@ export default function Checkout() {
         throw new Error(result?.error || "Failed to create order");
       }
 
-      
-      // Clear local cart (server already cleared DB cart)
-      await clearCart();
+      // Step 2: Create Stripe Checkout Session
+      const { data: sessionResult, error: sessionError } = await supabase.functions.invoke("create-checkout-session", {
+        body: { order_id: result.order_id },
+      });
 
-      // Redirect to confirmation
-      toast.success("Order placed successfully!");
-      navigate(`/order-confirmation/${result.order_id}`);
+      if (sessionError) {
+        throw new Error(sessionError.message || "Failed to create payment session");
+      }
+
+      if (!sessionResult?.checkout_url) {
+        throw new Error("Failed to get payment URL");
+      }
+
+      // Step 3: Redirect to Stripe Checkout
+      window.location.href = sessionResult.checkout_url;
     } catch (error: any) {
       console.error("Checkout error:", error);
       toast.error(error.message || "Something went wrong. Please try again.");
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -501,13 +510,13 @@ export default function Checkout() {
         />
       </section>
 
-      {/* TODO: Payment Section */}
-      <section className="space-y-4 rounded-lg border border-dashed p-6 bg-muted/30">
-        <h2 className="font-display text-xl font-medium text-muted-foreground">
+      {/* Payment */}
+      <section className="space-y-4 rounded-lg border p-6 bg-muted/30">
+        <h2 className="font-display text-xl font-medium">
           Payment
         </h2>
         <p className="text-sm text-muted-foreground">
-          Payment integration coming soon. Orders will be marked as pending.
+          You will be redirected to Stripe's secure checkout to complete your payment.
         </p>
       </section>
     </>
@@ -583,10 +592,10 @@ export default function Checkout() {
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Placing Order...
+            Redirecting to payment...
           </>
         ) : (
-          "Place Order"
+          "Proceed to Payment"
         )}
       </Button>
 

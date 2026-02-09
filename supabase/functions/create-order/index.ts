@@ -58,6 +58,7 @@ interface OrderRequest {
   shipping_address: ShippingAddress;
   cart_items: CartItem[];
   customer_notes?: string;
+  payment_method?: string;
   // Honeypot fields for bot detection
   _hp_name?: string;
   _hp_email?: string;
@@ -126,7 +127,7 @@ serve(async (req) => {
       );
     }
 
-    const { customer_email, shipping_address, cart_items, customer_notes, _hp_name, _hp_email, _hp_time } = body;
+    const { customer_email, shipping_address, cart_items, customer_notes, payment_method, _hp_name, _hp_email, _hp_time } = body;
 
     // ====== HONEYPOT VALIDATION (Bot Detection) ======
     
@@ -468,7 +469,7 @@ serve(async (req) => {
         shipping_country: sanitizedAddress.country,
         shipping_phone: sanitizedAddress.phone,
         customer_notes: sanitizedNotes,
-        payment_status: "pending",
+        payment_status: payment_method === "stripe" ? "awaiting_payment" : "pending",
       })
       .select()
       .single();
@@ -501,8 +502,8 @@ serve(async (req) => {
       );
     }
 
-    // Clear the user's cart if authenticated
-    if (user) {
+    // Clear the user's cart if authenticated (skip for Stripe - webhook handles it after payment)
+    if (user && payment_method !== "stripe") {
       await supabaseAdmin
         .from("cart_items")
         .delete()

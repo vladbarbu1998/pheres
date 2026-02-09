@@ -6,6 +6,12 @@ verify_jwt = false
 [functions.order-emails]
 verify_jwt = false
 
+[functions.create-checkout-session]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
 [functions.storage-cleanup]
 verify_jwt = true
 
