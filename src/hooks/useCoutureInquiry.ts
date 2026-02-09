@@ -14,12 +14,15 @@ export const coutureInquirySchema = z.object({
   interestedInViewing: z.boolean().default(false),
   productId: z.string(),
   productName: z.string(),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  }),
 });
 
 export type CoutureInquiryData = z.infer<typeof coutureInquirySchema>;
 
 interface UseCoutureInquiryReturn {
-  submit: (data: CoutureInquiryData) => Promise<void>;
+  submit: (data: CoutureInquiryData, turnstileToken: string) => Promise<void>;
   isSubmitting: boolean;
   isSuccess: boolean;
   error: string | null;
@@ -31,13 +34,22 @@ export function useCoutureInquiry(): UseCoutureInquiryReturn {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const submit = useCallback(async (data: CoutureInquiryData) => {
+  const submit = useCallback(async (data: CoutureInquiryData, turnstileToken: string) => {
     setIsSubmitting(true);
     setError(null);
 
     try {
       // Validate data
       const validated = coutureInquirySchema.parse(data);
+
+      // Verify Turnstile token server-side
+      const { data: verifyResult, error: verifyError } = await supabase.functions.invoke("verify-turnstile", {
+        body: { token: turnstileToken },
+      });
+
+      if (verifyError || !verifyResult?.success) {
+        throw new Error("Verification failed. Please try again.");
+      }
 
       // Insert into couture_inquiries table
       const { error: insertError } = await supabase

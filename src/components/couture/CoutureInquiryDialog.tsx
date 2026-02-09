@@ -2,6 +2,9 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Loader2 } from "lucide-react";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 import {
   Sheet,
   SheetContent,
@@ -40,6 +43,15 @@ export function CoutureInquiryDialog({
   productName,
 }: CoutureInquiryDialogProps) {
   const { submit, isSubmitting, isSuccess, error, reset } = useCoutureInquiry();
+  const {
+    token,
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError: onTurnstileError,
+    resetToken,
+  } = useTurnstile();
 
   const form = useForm<CoutureInquiryData>({
     resolver: zodResolver(coutureInquirySchema),
@@ -53,6 +65,7 @@ export function CoutureInquiryDialog({
       interestedInViewing: false,
       productId,
       productName,
+      consent: undefined as any,
     },
   });
 
@@ -71,12 +84,14 @@ export function CoutureInquiryDialog({
       setTimeout(() => {
         form.reset();
         reset();
+        resetToken();
       }, 300);
     }
-  }, [open, form, reset]);
+  }, [open, form, reset, resetToken]);
 
   const onSubmit = async (data: CoutureInquiryData) => {
-    await submit(data);
+    if (!token) return;
+    await submit(data, token);
   };
 
   return (
@@ -247,6 +262,28 @@ export function CoutureInquiryDialog({
                 )}
               />
 
+              <TurnstileWidget
+                onVerify={onVerify}
+                onExpire={onExpire}
+                onError={onTurnstileError}
+              />
+
+              <FormField
+                control={form.control}
+                name="consent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <ConsentToggle
+                        checked={field.value === true}
+                        onCheckedChange={(checked) => field.onChange(checked)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {/* Error Message */}
               {error && (
                 <p className="text-sm text-destructive">{error}</p>
@@ -256,7 +293,7 @@ export function CoutureInquiryDialog({
               <Button
                 type="submit"
                 className="w-full h-12"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isTokenReady || !form.watch("consent") || isVerifying}
               >
                 {isSubmitting ? (
                   <>

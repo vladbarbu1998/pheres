@@ -4,13 +4,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Eye, EyeOff, Loader2, Mail, CheckCircle } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required").max(50),
@@ -48,8 +50,19 @@ export default function RegisterPage() {
   }, [user, authLoading, navigate]);
 
   const {
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError,
+    verifyToken,
+  } = useTurnstile();
+
+  const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -57,6 +70,14 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
+
+    const verified = await verifyToken();
+    if (!verified) {
+      toast.error("Verification failed. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
     const { error } = await signUp(data.email, data.password, {
       first_name: data.firstName,
       last_name: data.lastName,
@@ -232,39 +253,19 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-start space-x-3">
-                <Checkbox
-                  id="consent"
-                  {...register("consent")}
-                  onCheckedChange={(checked) => {
-                    const event = {
-                      target: { name: "consent", value: checked === true },
-                    };
-                    register("consent").onChange(event as any);
-                  }}
-                  className={errors.consent ? "border-destructive" : ""}
-                />
-                <label
-                  htmlFor="consent"
-                  className="text-sm leading-tight text-muted-foreground cursor-pointer"
-                >
-                  I agree to the{" "}
-                  <Link to="/terms" className="text-foreground underline hover:text-primary">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="/privacy-policy" className="text-foreground underline hover:text-primary">
-                    Privacy Policy
-                  </Link>
-                </label>
-              </div>
-              {errors.consent && (
-                <p className="text-sm text-destructive">{errors.consent.message}</p>
-              )}
-            </div>
+            <TurnstileWidget
+              onVerify={onVerify}
+              onExpire={onExpire}
+              onError={onError}
+            />
 
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+            <ConsentToggle
+              checked={watch("consent") === true}
+              onCheckedChange={(checked) => setValue("consent", checked as any, { shouldValidate: true })}
+              error={errors.consent?.message}
+            />
+
+            <Button type="submit" className="w-full" size="lg" disabled={isLoading || !isTokenReady || !watch("consent") || isVerifying}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
             </Button>

@@ -12,10 +12,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
 import { supabase } from "@/integrations/supabase/client";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  }),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -51,8 +57,19 @@ export default function LoginPage() {
   }, [user, authLoading, navigate, from]);
 
   const {
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError,
+    verifyToken,
+  } = useTurnstile();
+
+  const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -92,7 +109,14 @@ export default function LoginPage() {
     
     setIsLoading(true);
     recordAttempt();
-    
+
+    const verified = await verifyToken();
+    if (!verified) {
+      toast.error("Verification failed. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
     const { error } = await signIn(data.email, data.password);
     setIsLoading(false);
 
@@ -184,7 +208,19 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading || isRateLimited}>
+            <TurnstileWidget
+              onVerify={onVerify}
+              onExpire={onExpire}
+              onError={onError}
+            />
+
+            <ConsentToggle
+              checked={watch("consent") === true}
+              onCheckedChange={(checked) => setValue("consent", checked as any, { shouldValidate: true })}
+              error={errors.consent?.message}
+            />
+
+            <Button type="submit" className="w-full" size="lg" disabled={isLoading || isRateLimited || !isTokenReady || !watch("consent") || isVerifying}>
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : isRateLimited ? (

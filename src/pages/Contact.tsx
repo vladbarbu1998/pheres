@@ -11,12 +11,18 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must be less than 100 characters"),
   email: z.string().trim().email("Please enter a valid email address").max(255, "Email must be less than 255 characters"),
   subject: z.string().optional(),
   message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000, "Message must be less than 2000 characters"),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  }),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -37,17 +43,28 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   
-  const { 
-    checkRateLimit, 
-    recordAttempt, 
-    isRateLimited, 
-    secondsUntilReset 
+  const {
+    checkRateLimit,
+    recordAttempt,
+    isRateLimited,
+    secondsUntilReset
   } = useRateLimit(RATE_LIMIT_PRESETS.contactForm);
+
+  const {
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError,
+    verifyToken,
+  } = useTurnstile();
 
   const {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
@@ -68,6 +85,17 @@ export default function Contact() {
     recordAttempt();
 
     try {
+      const verified = await verifyToken();
+      if (!verified) {
+        toast({
+          title: "Verification failed",
+          description: "Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const { error } = await supabase.from("contact_messages").insert({
         name: data.name,
         email: data.email,
@@ -187,10 +215,22 @@ export default function Contact() {
                   )}
                 </div>
 
-                <Button 
-                  type="submit" 
-                  size="lg" 
-                  disabled={isSubmitting || isRateLimited} 
+                <TurnstileWidget
+                  onVerify={onVerify}
+                  onExpire={onExpire}
+                  onError={onError}
+                />
+
+                <ConsentToggle
+                  checked={watch("consent") === true}
+                  onCheckedChange={(checked) => setValue("consent", checked as any, { shouldValidate: true })}
+                  error={errors.consent?.message}
+                />
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={isSubmitting || isRateLimited || !isTokenReady || !watch("consent") || isVerifying}
                   className="w-full sm:w-auto"
                 >
                   {isSubmitting ? (

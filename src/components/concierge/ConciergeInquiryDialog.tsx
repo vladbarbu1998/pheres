@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Check, Loader2 } from "lucide-react";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 import {
   Sheet,
   SheetContent,
@@ -35,6 +38,9 @@ const conciergeInquirySchema = z.object({
   }),
   phone: z.string().optional(),
   message: z.string().max(2000, "Message must be less than 2000 characters").optional(),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  }),
 });
 
 export type ConciergeInquiryData = z.infer<typeof conciergeInquirySchema>;
@@ -49,6 +55,15 @@ export function ConciergeInquiryDialog({
   onOpenChange,
 }: ConciergeInquiryDialogProps) {
   const { submit, isSubmitting, isSuccess, error, reset } = useConciergeInquiry();
+  const {
+    token,
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError: onTurnstileError,
+    resetToken,
+  } = useTurnstile();
 
   const form = useForm<ConciergeInquiryData>({
     resolver: zodResolver(conciergeInquirySchema),
@@ -59,6 +74,7 @@ export function ConciergeInquiryDialog({
       preferredContact: "email",
       phone: "",
       message: "",
+      consent: undefined as any,
     },
   });
 
@@ -69,12 +85,14 @@ export function ConciergeInquiryDialog({
       setTimeout(() => {
         form.reset();
         reset();
+        resetToken();
       }, 300);
     }
-  }, [open, form, reset]);
+  }, [open, form, reset, resetToken]);
 
   const onSubmit = async (data: ConciergeInquiryData) => {
-    await submit(data);
+    if (!token) return;
+    await submit(data, token);
   };
 
   return (
@@ -224,6 +242,28 @@ export function ConciergeInquiryDialog({
                 )}
               />
 
+              <TurnstileWidget
+                onVerify={onVerify}
+                onExpire={onExpire}
+                onError={onTurnstileError}
+              />
+
+              <FormField
+                control={form.control}
+                name="consent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <ConsentToggle
+                        checked={field.value === true}
+                        onCheckedChange={(checked) => field.onChange(checked)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {/* Error Message */}
               {error && (
                 <p className="text-sm text-destructive">{error}</p>
@@ -233,7 +273,7 @@ export function ConciergeInquiryDialog({
               <Button
                 type="submit"
                 className="w-full h-12"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isTokenReady || !form.watch("consent") || isVerifying}
               >
                 {isSubmitting ? (
                   <>

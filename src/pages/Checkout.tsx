@@ -21,6 +21,9 @@ import { useProfile, useAddresses } from "@/hooks/useAccount";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackBeginCheckout, type AnalyticsProduct } from "@/hooks/useAnalytics";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 
 const checkoutSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -34,6 +37,9 @@ const checkoutSchema = z.object({
   shipping_country: z.string().min(1, "Country is required"),
   shipping_phone: z.string().optional(),
   customer_notes: z.string().optional(),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  }),
 });
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
@@ -45,6 +51,15 @@ export default function Checkout() {
   const { data: profile } = useProfile();
   const { data: addresses } = useAddresses();
   
+  const {
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError,
+    verifyToken,
+  } = useTurnstile();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | "new" | null>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
@@ -146,7 +161,14 @@ export default function Checkout() {
     }
     
     setIsSubmitting(true);
-    
+
+    const verified = await verifyToken();
+    if (!verified) {
+      toast.error("Verification failed. Please try again.");
+      setIsSubmitting(false);
+      return;
+    }
+
     // Track begin_checkout for GA4
     const analyticsItems: AnalyticsProduct[] = items.map(item => ({
       id: item.productId,
@@ -519,6 +541,18 @@ export default function Checkout() {
           You will be redirected to Stripe's secure checkout to complete your payment.
         </p>
       </section>
+
+      <TurnstileWidget
+        onVerify={onVerify}
+        onExpire={onExpire}
+        onError={onError}
+      />
+
+      <ConsentToggle
+        checked={watch("consent") === true}
+        onCheckedChange={(checked) => setValue("consent", checked as any, { shouldValidate: true })}
+        error={errors.consent?.message}
+      />
     </>
   );
 
@@ -587,7 +621,7 @@ export default function Checkout() {
         type="submit"
         size="lg"
         className="w-full mt-6"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !isTokenReady || !watch("consent") || isVerifying}
       >
         {isSubmitting ? (
           <>
@@ -598,10 +632,6 @@ export default function Checkout() {
           "Proceed to Payment"
         )}
       </Button>
-
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        By placing your order, you agree to our terms and conditions.
-      </p>
     </div>
   );
 

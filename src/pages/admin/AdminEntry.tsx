@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Lock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 import AdminDashboard from "./Dashboard";
 
 export default function AdminEntry() {
@@ -15,8 +18,17 @@ export default function AdminEntry() {
   const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [consent, setConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError: onTurnstileError,
+    verifyToken,
+  } = useTurnstile();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +36,13 @@ export default function AdminEntry() {
     setIsSubmitting(true);
 
     try {
+      const verified = await verifyToken();
+      if (!verified) {
+        setError("Verification failed. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -144,10 +163,21 @@ export default function AdminEntry() {
               />
             </div>
 
+            <TurnstileWidget
+              onVerify={onVerify}
+              onExpire={onExpire}
+              onError={onTurnstileError}
+            />
+
+            <ConsentToggle
+              checked={consent}
+              onCheckedChange={setConsent}
+            />
+
             <Button
               type="submit"
               className="w-full"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isTokenReady || !consent || isVerifying}
             >
               {isSubmitting ? (
                 <>

@@ -11,9 +11,15 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useRateLimit, RATE_LIMIT_PRESETS } from "@/hooks/useRateLimit";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { TurnstileWidget } from "@/components/ui/turnstile-widget";
+import { ConsentToggle } from "@/components/ui/consent-toggle";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  }),
 });
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
@@ -31,8 +37,19 @@ export default function ForgotPasswordPage() {
   } = useRateLimit(RATE_LIMIT_PRESETS.passwordReset);
 
   const {
+    isTokenReady,
+    isVerifying,
+    onVerify,
+    onExpire,
+    onError,
+    verifyToken,
+  } = useTurnstile();
+
+  const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -47,7 +64,14 @@ export default function ForgotPasswordPage() {
     
     setIsLoading(true);
     recordAttempt();
-    
+
+    const verified = await verifyToken();
+    if (!verified) {
+      toast.error("Verification failed. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
     const { error } = await resetPassword(data.email);
     setIsLoading(false);
 
@@ -115,7 +139,19 @@ export default function ForgotPasswordPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading || isRateLimited}>
+            <TurnstileWidget
+              onVerify={onVerify}
+              onExpire={onExpire}
+              onError={onError}
+            />
+
+            <ConsentToggle
+              checked={watch("consent") === true}
+              onCheckedChange={(checked) => setValue("consent", checked as any, { shouldValidate: true })}
+              error={errors.consent?.message}
+            />
+
+            <Button type="submit" className="w-full" size="lg" disabled={isLoading || isRateLimited || !isTokenReady || !watch("consent") || isVerifying}>
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : isRateLimited ? (
