@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { trackPurchase, type AnalyticsOrder } from "@/hooks/useAnalytics";
+import { useCart } from "@/contexts/CartContext";
 
 export default function OrderConfirmation() {
   const { orderId } = useParams<{ orderId: string }>();
   const hasTrackedPurchase = useRef(false);
+  const hasClearedCart = useRef(false);
+  const { clearCart } = useCart();
 
   const { data: order, isLoading, isError } = useQuery({
     queryKey: ["order-confirmation", orderId],
@@ -65,6 +68,14 @@ export default function OrderConfirmation() {
       trackPurchase(analyticsOrder);
     }
   }, [order]);
+
+  // Clear frontend cart on arrival (DB cart is cleared by webhook)
+  useEffect(() => {
+    if (order && !hasClearedCart.current) {
+      hasClearedCart.current = true;
+      clearCart();
+    }
+  }, [order, clearCart]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
