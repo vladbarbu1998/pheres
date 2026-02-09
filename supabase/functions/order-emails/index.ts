@@ -573,43 +573,47 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // ====== AUTHORIZATION CHECK ======
-    // This function should only be callable by admins or from internal services
+    // Allow calls from: (1) internal services using service_role_key, (2) admin users
     const authHeader = req.headers.get("Authorization");
-    
-    if (authHeader) {
-      // Verify the caller is an admin
+
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: Authentication required" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Check if this is an internal service call (database trigger uses service_role_key)
+    const token = authHeader.replace("Bearer ", "");
+    const isServiceRoleCall = token === supabaseServiceKey;
+
+    if (!isServiceRoleCall) {
+      // Verify the caller is an admin user
       const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
         global: { headers: { Authorization: authHeader } },
       });
-      
+
       const { data: { user } } = await supabaseUser.auth.getUser();
-      
+
       if (!user) {
         return new Response(
           JSON.stringify({ error: "Unauthorized" }),
           { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
-      
+
       // Check if user is admin
       const { data: isAdmin } = await supabase.rpc("has_role", {
         _user_id: user.id,
         _role: "admin",
       });
-      
+
       if (!isAdmin) {
         return new Response(
           JSON.stringify({ error: "Forbidden: Admin access required" }),
           { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
-    } else {
-      // No auth header - reject the request
-      // In production, you might allow internal service calls with a secret
-      return new Response(
-        JSON.stringify({ error: "Unauthorized: Authentication required" }),
-        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
     }
 
     let body: EmailRequest;
