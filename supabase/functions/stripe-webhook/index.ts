@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.14.0?target=deno";
 
+const cryptoProvider = Stripe.createSubtleCryptoProvider();
+
 serve(async (req) => {
   // Only allow POST (Stripe sends POST webhooks)
   if (req.method !== "POST") {
@@ -30,10 +32,16 @@ serve(async (req) => {
       return new Response("Missing signature", { status: 400 });
     }
 
-    // Verify webhook signature
+    // Verify webhook signature (use async version for Deno/Web Crypto API compatibility)
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSigningSecret);
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        webhookSigningSecret,
+        undefined,
+        cryptoProvider
+      );
     } catch (err) {
       console.error("Webhook signature verification failed:", err.message);
       return new Response(`Webhook signature verification failed: ${err.message}`, { status: 400 });
