@@ -148,7 +148,7 @@ export default function Terms() {
           </p>
           <p>
             If your order is urgent, please contact us at{" "}
-            <a href="tel:+85292117727" className="text-primary hover:underline">+852 9211 7727</a>{" "}
+            <a href="tel:+85231827554" className="text-primary hover:underline">+852 3182 7554</a>{" "}
             or e-mail us at{" "}
             <a href="mailto:orders@pheres.com" className="text-primary hover:underline">orders@pheres.com</a>{" "}
             to request a priority service. An additional service fee may apply.
