@@ -18,7 +18,7 @@ export function TurnstileWidget({ onVerify, onExpire, onError, className }: Turn
         onExpire={onExpire}
         onError={onError}
         theme="light"
-        appearance="interaction-only"
+        appearance="always"
       />
     </div>
   );
