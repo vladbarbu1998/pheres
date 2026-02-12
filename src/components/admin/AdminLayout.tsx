@@ -11,7 +11,7 @@ import {
   FolderOpen,
   ShoppingCart,
   Users,
-  Newspaper,
+  
   Star,
   Mail,
   LogOut,
@@ -30,7 +30,7 @@ const navItems = [
   { title: "Categories", href: "/admin/categories", icon: FolderOpen },
   { title: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { title: "Customers", href: "/admin/customers", icon: Users },
-  { title: "News", href: "/admin/news", icon: Newspaper },
+  
   { title: "Celebrities", href: "/admin/celebrities", icon: Star },
   { title: "Press Outlets", href: "/admin/press-outlets", icon: Building2 },
   { title: "Press Articles", href: "/admin/press-articles", icon: FileText },
