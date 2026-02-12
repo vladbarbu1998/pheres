@@ -9,7 +9,11 @@ interface TurnstileWidgetProps {
 
 const SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
+const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
 export function TurnstileWidget({ onVerify, onExpire, onError, className }: TurnstileWidgetProps) {
+  if (isLocalhost) return null;
+
   return (
     <div className={className}>
       <Turnstile

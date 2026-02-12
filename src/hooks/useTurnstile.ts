@@ -12,8 +12,10 @@ interface UseTurnstileReturn {
   resetToken: () => void;
 }
 
+const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
 export function useTurnstile(): UseTurnstileReturn {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(isLocalhost ? "localhost-bypass" : null);
   const [isVerifying, setIsVerifying] = useState(false);
 
   const onVerify = useCallback((t: string) => {
@@ -21,14 +23,16 @@ export function useTurnstile(): UseTurnstileReturn {
   }, []);
 
   const onExpire = useCallback(() => {
-    setToken(null);
+    if (!isLocalhost) setToken(null);
   }, []);
 
   const onError = useCallback(() => {
-    setToken(null);
+    if (!isLocalhost) setToken(null);
   }, []);
 
   const verifyToken = useCallback(async (): Promise<boolean> => {
+    if (isLocalhost) return true;
+
     if (!token) return false;
 
     setIsVerifying(true);
@@ -47,7 +51,7 @@ export function useTurnstile(): UseTurnstileReturn {
   }, [token]);
 
   const resetToken = useCallback(() => {
-    setToken(null);
+    if (!isLocalhost) setToken(null);
   }, []);
 
   return {
