@@ -4,25 +4,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-const ALLOWED_ORIGINS = [
-  "https://lovable.dev",
-  "https://www.lovable.dev",
-  "https://sbyfgresripeilehcoru.lovableproject.com",
-  "https://pheres.com",
-  "https://www.pheres.com",
-  "https://pheres.lovable.app",
-];
-
-const getCorsHeaders = (origin: string | null) => {
-  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed =>
-    origin === allowed || origin.endsWith('.lovable.dev') || origin.endsWith('.lovableproject.com')
-  ) ? origin : ALLOWED_ORIGINS[0];
-
-  return {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-  };
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 const escapeHtml = (str: string): string => {
@@ -98,9 +83,6 @@ const confirmationEmailHtml = (firstName: string, confirmUrl: string) => `<!DOCT
 </html>`;
 
 serve(async (req: Request) => {
-  const origin = req.headers.get("Origin");
-  const corsHeaders = getCorsHeaders(origin);
-
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
