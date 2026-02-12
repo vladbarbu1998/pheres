@@ -507,11 +507,8 @@ const handler = async (req: Request): Promise<Response> => {
       console.log(`Skipping customer email for status: ${status}`);
     }
 
-    // Send admin notification for new/paid orders (determine internally —
-    // pg_net may not reliably pass the notify_admin boolean from the DB trigger)
-    const shouldNotifyAdmin =
-      status === "paid" ||
-      notify_admin === true;
+    // Send admin notification ONLY when order is paid
+    const shouldNotifyAdmin = status === "paid";
 
     if (shouldNotifyAdmin) {
       const defaultAdmins = ["andrei@pheres.com", "stanoiloren20@gmail.com"];
