@@ -1,22 +1,28 @@
 
 
-# Apply CORS Fix to Auth Edge Functions
+# Fix "Already Registered" Error Handling
 
 ## Problem
-The CORS fix from the previous step was not saved. Both `custom-signup` and `custom-reset-password` still use a hardcoded `ALLOWED_ORIGINS` list that blocks requests from `localhost` and the Lovable preview domain.
+When someone tries to sign up with an email that already has a confirmed account, the edge function returns a 422 status with `{ error: "User already registered" }`. However, `supabase.functions.invoke()` treats any non-2xx response by setting `fnError` with a generic message ("Edge Function returned a non-2xx status code") and discarding the JSON body. The Register page's check for "already registered" in the error message never matches, so the user sees a confusing generic toast.
+
+## Solution
+Change the `custom-signup` edge function to always return HTTP 200, and move the error information into the JSON body. This way `supabase.functions.invoke()` passes the response through `data` (not `fnError`), and the AuthContext can read the specific error message.
 
 ## Changes
 
-### 1. Fix `supabase/functions/custom-signup/index.ts`
-- Remove the `ALLOWED_ORIGINS` array (lines 7-14) and `getCorsHeaders` function (lines 16-25)
-- Replace with a simple `corsHeaders` constant using `Access-Control-Allow-Origin: *` and the full set of Supabase client headers
-- Remove the `const origin = ...` and `const corsHeaders = getCorsHeaders(origin)` lines inside `serve()`
+### 1. Update `supabase/functions/custom-signup/index.ts`
+- Change the "User already registered" response from `status: 422` to `status: 200` with `{ error: "User already registered" }`
+- Change the generic error response from `status: 400` to `status: 200` with `{ error: error.message }`
+- Keep the JSON body exactly the same -- only the HTTP status codes change
+- Keep the 405 (method not allowed) and input validation responses as-is since those indicate programming errors, not user-facing errors
 
-### 2. Fix `supabase/functions/custom-reset-password/index.ts`
-- Same changes as above
+### 2. Redeploy `custom-signup`
 
-### 3. Redeploy both edge functions
+## Why this works
+- The AuthContext already checks `data?.error` (line 70) and returns it as an `Error` object
+- The Register page already checks `error.message.includes("already registered")` (line 88) and shows "This email is already registered. Please sign in instead."
+- By returning 200, the Supabase client passes the body through `data` instead of swallowing it in `fnError`
 
-## Why this is safe
-These functions validate input server-side (email, password format), use Supabase Auth admin APIs for token generation, and are protected by Turnstile on the frontend. CORS origin restrictions add no meaningful security since they only apply to browsers, not server-to-server calls.
+## No other files need changes
+The error propagation chain (edge function -> AuthContext -> Register page) is already correctly wired -- it just needs the HTTP status to be 200 so the Supabase client doesn't intercept the response.
 
