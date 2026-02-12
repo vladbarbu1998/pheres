@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.custom-reset-password]
 verify_jwt = false
+
+[functions.notify-admin-form]
+verify_jwt = false
