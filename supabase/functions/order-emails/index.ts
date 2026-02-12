@@ -441,6 +441,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log(`Processing email for order ${order_id}, status: ${status}, previous: ${previous_status}`);
+    console.log(`Received payload:`, JSON.stringify(body));
 
     // Fetch order details with order items
     const { data: order, error: orderError } = await supabase
@@ -468,7 +469,7 @@ const handler = async (req: Request): Promise<Response> => {
       customerEmail = profile?.email;
     }
 
-    if (!customerEmail) {
+    if (!customerEmail && !SKIP_CUSTOMER_EMAIL.includes(status)) {
       console.error("No customer email found for order:", order_id);
       return new Response(
         JSON.stringify({ error: "No customer email found" }),
@@ -478,7 +479,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const orderData: OrderData = {
       ...order,
-      customer_email: customerEmail,
+      customer_email: customerEmail || "",
       order_items: order.order_items || [],
     };
 
@@ -506,8 +507,13 @@ const handler = async (req: Request): Promise<Response> => {
       console.log(`Skipping customer email for status: ${status}`);
     }
 
-    // Send admin notification for new orders
-    if (notify_admin) {
+    // Send admin notification for new/paid orders (determine internally —
+    // pg_net may not reliably pass the notify_admin boolean from the DB trigger)
+    const shouldNotifyAdmin =
+      status === "paid" ||
+      notify_admin === true;
+
+    if (shouldNotifyAdmin) {
       const defaultAdmins = ["andrei@pheres.com", "stanoiloren20@gmail.com"];
       const adminTo = admin_email ? [admin_email] : (Deno.env.get("ADMIN_EMAIL") ? Deno.env.get("ADMIN_EMAIL")!.split(",") : defaultAdmins);
       console.log(`Sending admin notification to: ${adminTo}`);
