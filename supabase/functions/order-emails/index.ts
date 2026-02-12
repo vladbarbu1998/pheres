@@ -4,26 +4,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-// Security: Restrict CORS to allowed origins
-const ALLOWED_ORIGINS = [
-  "https://lovable.dev",
-  "https://www.lovable.dev",
-  "https://sbyfgresripeilehcoru.lovableproject.com",
-  "https://pheres.com",
-  "https://www.pheres.com",
-  "https://pheres.lovable.app",
-];
-
-const getCorsHeaders = (origin: string | null) => {
-  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed =>
-    origin === allowed || origin.endsWith('.lovable.dev') || origin.endsWith('.lovableproject.com')
-  ) ? origin : ALLOWED_ORIGINS[0];
-
-  return {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-  };
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 // URL validation helper
@@ -131,7 +115,6 @@ const S = {
 
 // Email templates for each order status
 // pending: NO customer email (admin notification only)
-// processing: NO email (MAIL 1 already mentions production)
 const emailTemplates = {
   paid: {
     subject: "Your Pheres Creation \u2014 Order Confirmed",
@@ -340,15 +323,12 @@ interface EmailRequest {
 }
 
 // Valid order statuses
-const VALID_STATUSES = ["pending", "paid", "processing", "shipped", "delivered", "cancelled", "refunded"];
+const VALID_STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled", "refunded"];
 
 // Statuses that skip customer email
-const SKIP_CUSTOMER_EMAIL = ["pending", "processing"];
+const SKIP_CUSTOMER_EMAIL = ["pending"];
 
 const handler = async (req: Request): Promise<Response> => {
-  const origin = req.headers.get("Origin");
-  const corsHeaders = getCorsHeaders(origin);
-
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -504,7 +484,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const results: { customer?: any; admin?: any } = {};
 
-    // Send customer email (skip for pending and processing statuses)
+    // Send customer email (skip for pending status)
     if (!SKIP_CUSTOMER_EMAIL.includes(status)) {
       const template = emailTemplates[status as keyof typeof emailTemplates];
       if (template) {
