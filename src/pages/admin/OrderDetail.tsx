@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -56,6 +57,11 @@ export default function AdminOrderDetail() {
   const [sendEmail, setSendEmail] = useState(true);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
+  // Shipping details for "shipped" status
+  const [carrier, setCarrier] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [trackingUrl, setTrackingUrl] = useState("");
+
   // Function to send order status email
   const sendOrderEmail = async (orderId: string, status: string, previousStatus?: string) => {
     try {
@@ -78,6 +84,12 @@ export default function AdminOrderDetail() {
 
   const handleStatusChange = (status: OrderStatus) => {
     setNewStatus(status);
+    // Pre-fill shipping details from existing order data
+    if (status === "shipped" && order) {
+      setCarrier(order.carrier || "");
+      setTrackingNumber(order.tracking_number || "");
+      setTrackingUrl(order.tracking_url || "");
+    }
     setShowConfirm(true);
   };
 
@@ -90,6 +102,9 @@ export default function AdminOrderDetail() {
       const updateData: any = { status: newStatus };
       if (newStatus === "shipped") {
         updateData.shipped_at = new Date().toISOString();
+        updateData.carrier = carrier.trim() || null;
+        updateData.tracking_number = trackingNumber.trim() || null;
+        updateData.tracking_url = trackingUrl.trim() || null;
       } else if (newStatus === "delivered") {
         updateData.delivered_at = new Date().toISOString();
       }
@@ -393,6 +408,37 @@ export default function AdminOrderDetail() {
               This will update the order status to "{newStatus}".
             </AlertDialogDescription>
           </AlertDialogHeader>
+          {newStatus === "shipped" && (
+            <div className="space-y-3 py-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="carrier">Carrier</Label>
+                <Input
+                  id="carrier"
+                  placeholder="e.g. DHL, FedEx, UPS"
+                  value={carrier}
+                  onChange={(e) => setCarrier(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="tracking-number">Tracking Number</Label>
+                <Input
+                  id="tracking-number"
+                  placeholder="e.g. 1Z999AA10123456784"
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="tracking-url">Tracking URL</Label>
+                <Input
+                  id="tracking-url"
+                  placeholder="https://..."
+                  value={trackingUrl}
+                  onChange={(e) => setTrackingUrl(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
           <div className="flex items-center space-x-2 py-4">
             <Checkbox
               id="send-email"
