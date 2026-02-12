@@ -17,6 +17,9 @@ const statusColors: Record<string, string> = {
   refunded: "bg-gray-100 text-gray-800",
 };
 
+const getStatusLabel = (status: string) =>
+  status === "pending" ? "Pending Payment" : status.charAt(0).toUpperCase() + status.slice(1);
+
 export default function OrdersPage() {
   const { data: orders, isLoading, isError, refetch } = useOrders();
 
@@ -58,7 +61,7 @@ export default function OrdersPage() {
                       variant="secondary"
                       className={cn("capitalize", statusColors[order.status])}
                     >
-                      {order.status}
+                      {getStatusLabel(order.status)}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">

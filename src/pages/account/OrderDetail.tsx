@@ -19,6 +19,9 @@ const statusColors: Record<string, string> = {
   refunded: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
 };
 
+const getStatusLabel = (status: string) =>
+  status === "pending" ? "Pending Payment" : status.charAt(0).toUpperCase() + status.slice(1);
+
 const statusSteps = ["pending", "paid", "shipped", "delivered"];
 
 // Compact horizontal status indicator for mobile
@@ -73,7 +76,7 @@ function MobileStatusIndicator({ currentStatus }: { currentStatus: string }) {
         })}
       </div>
       <p className="text-xs text-muted-foreground mt-1.5 capitalize">
-        Current: <span className="font-medium text-foreground">{currentStatus}</span>
+        Current: <span className="font-medium text-foreground">{getStatusLabel(currentStatus)}</span>
       </p>
     </div>
   );
@@ -125,11 +128,11 @@ function DesktopStatusTimeline({ currentStatus }: { currentStatus: string }) {
               </div>
               <p
                 className={cn(
-                  "mt-2 text-xs capitalize text-center",
+                  "mt-2 text-xs text-center",
                   isCurrent ? "font-medium text-foreground" : "text-muted-foreground"
                 )}
               >
-                {step}
+                {getStatusLabel(step)}
               </p>
             </div>
             {index < statusSteps.length - 1 && (
@@ -187,7 +190,7 @@ export default function OrderDetailPage() {
               variant="secondary"
               className={cn("capitalize text-xs", statusColors[order.status])}
             >
-              {order.status}
+              {getStatusLabel(order.status)}
             </Badge>
           </div>
           <div className="flex items-center justify-between gap-2 text-sm">

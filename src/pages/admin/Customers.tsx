@@ -369,7 +369,7 @@ export default function AdminCustomers() {
                           </TableCell>
                           <TableCell>
                             <Badge className={getStatusColor(order.status)}>
-                              {order.status}
+                              {order.status === "pending" ? "Pending Payment" : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">

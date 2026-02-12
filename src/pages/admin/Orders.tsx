@@ -36,6 +36,9 @@ const statusColors: Record<string, string> = {
   refunded: "bg-gray-100 text-gray-800",
 };
 
+const getStatusLabel = (status: string) =>
+  status === "pending" ? "Pending Payment" : status.charAt(0).toUpperCase() + status.slice(1);
+
 export default function AdminOrders() {
   const { data: orders, isLoading, isError, refetch } = useAdminOrders();
   const [search, setSearch] = useState("");
@@ -141,7 +144,7 @@ export default function AdminOrders() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="pending">Pending Payment</SelectItem>
             <SelectItem value="paid">Paid</SelectItem>
             <SelectItem value="shipped">Shipped</SelectItem>
             <SelectItem value="delivered">Delivered</SelectItem>
@@ -206,7 +209,7 @@ export default function AdminOrders() {
                   <TableCell>${Number(order.total).toFixed(2)}</TableCell>
                   <TableCell>
                     <Badge className={statusColors[order.status] || ""}>
-                      {order.status}
+                      {getStatusLabel(order.status)}
                     </Badge>
                   </TableCell>
                   <TableCell>

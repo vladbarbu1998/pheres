@@ -101,7 +101,7 @@ export function AccountLayout({ children, title, description, isLoading }: Accou
             </aside>
 
             {/* Main Content - consistent min height and spacing */}
-            <div className="flex-1 min-w-0 min-h-[400px]">
+            <div className="flex-1 min-w-0">
               {isLoading ? (
                 <AccountLoadingSkeleton />
               ) : (

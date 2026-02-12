@@ -41,6 +41,7 @@ export function PageTransition({ children }: PageTransitionProps) {
       animate="enter"
       exit="exit"
       variants={pageVariants}
+      className="flex-1 flex flex-col"
       style={{ willChange: "opacity, transform" }}
     >
       {children}

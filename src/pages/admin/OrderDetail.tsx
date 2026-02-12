@@ -47,6 +47,9 @@ const statusColors: Record<string, string> = {
 
 const statuses: OrderStatus[] = ["pending", "paid", "shipped", "delivered", "cancelled", "refunded"];
 
+const getStatusLabel = (status: string) =>
+  status === "pending" ? "Pending Payment" : status.charAt(0).toUpperCase() + status.slice(1);
+
 export default function AdminOrderDetail() {
   const { id } = useParams();
   const { data: order, isLoading, isError, refetch } = useAdminOrder(id);
@@ -295,7 +298,7 @@ export default function AdminOrderDetail() {
             <CardContent className="space-y-4">
               <div className="flex items-center gap-2">
                 <span>Current:</span>
-                <Badge className={statusColors[order.status] || ""}>{order.status}</Badge>
+                <Badge className={statusColors[order.status] || ""}>{getStatusLabel(order.status)}</Badge>
               </div>
               <div className="space-y-2">
                 <Label>Change Status</Label>
@@ -306,7 +309,7 @@ export default function AdminOrderDetail() {
                   <SelectContent>
                     {statuses.map((s) => (
                       <SelectItem key={s} value={s}>
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                        {getStatusLabel(s)}
                       </SelectItem>
                     ))}
                   </SelectContent>

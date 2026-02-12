@@ -16,6 +16,9 @@ const statusColors: Record<string, string> = {
   refunded: "bg-gray-100 text-gray-800",
 };
 
+const getStatusLabel = (status: string) =>
+  status === "pending" ? "Pending Payment" : status.charAt(0).toUpperCase() + status.slice(1);
+
 export default function AdminDashboard() {
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   const { data: recentOrders, isLoading: ordersLoading } = useRecentOrders();
@@ -89,7 +92,7 @@ export default function AdminDashboard() {
             <div className="flex flex-wrap gap-2">
               {Object.entries(stats.ordersByStatus).map(([status, count]) => (
                 <Badge key={status} variant="secondary" className={statusColors[status] || ""}>
-                  {status}: {count}
+                  {getStatusLabel(status)}: {count}
                 </Badge>
               ))}
             </div>
@@ -131,7 +134,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="text-right">
                       <Badge variant="secondary" className={statusColors[order.status] || ""}>
-                        {order.status}
+                        {getStatusLabel(order.status)}
                       </Badge>
                       <p className="text-xs text-muted-foreground mt-1">
                         ${Number(order.total).toFixed(2)}
