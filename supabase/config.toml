@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.verify-turnstile]
 verify_jwt = false
+
+[functions.custom-signup]
+verify_jwt = false
+
+[functions.custom-reset-password]
+verify_jwt = false

@@ -51,15 +51,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     metadata?: { first_name?: string; last_name?: string }
   ) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata,
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    });
-    return { error: error as Error | null };
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('custom-signup', {
+        body: {
+          email,
+          password,
+          firstName: metadata?.first_name || "",
+          lastName: metadata?.last_name || "",
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      if (fnError) {
+        return { error: new Error(fnError.message || "Signup failed") };
+      }
+
+      // The edge function returns JSON; check for application-level errors
+      if (data?.error) {
+        return { error: new Error(data.error) };
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: new Error(err.message || "An unexpected error occurred") };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
@@ -82,10 +97,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/account/reset-password`,
-    });
-    return { error: error as Error | null };
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('custom-reset-password', {
+        body: {
+          email,
+          redirectTo: `${window.location.origin}/account/reset-password`,
+        },
+      });
+
+      if (fnError) {
+        return { error: new Error(fnError.message || "Password reset failed") };
+      }
+
+      if (data?.error) {
+        return { error: new Error(data.error) };
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: new Error(err.message || "An unexpected error occurred") };
+    }
   };
 
   const updatePassword = async (password: string) => {
