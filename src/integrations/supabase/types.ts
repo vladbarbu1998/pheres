@@ -454,6 +454,7 @@ export type Database = {
           billing_last_name: string | null
           billing_postal_code: string | null
           billing_state: string | null
+          carrier: string | null
           created_at: string
           currency: string
           customer_email: string | null
@@ -495,6 +496,7 @@ export type Database = {
           billing_last_name?: string | null
           billing_postal_code?: string | null
           billing_state?: string | null
+          carrier?: string | null
           created_at?: string
           currency?: string
           customer_email?: string | null
@@ -536,6 +538,7 @@ export type Database = {
           billing_last_name?: string | null
           billing_postal_code?: string | null
           billing_state?: string | null
+          carrier?: string | null
           created_at?: string
           currency?: string
           customer_email?: string | null
