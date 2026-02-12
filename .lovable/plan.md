@@ -1,28 +1,38 @@
 
 
-# Fix "Already Registered" Error Handling
+# Fix Vault Secret for Order Email Notifications
 
 ## Problem
-When someone tries to sign up with an email that already has a confirmed account, the edge function returns a 422 status with `{ error: "User already registered" }`. However, `supabase.functions.invoke()` treats any non-2xx response by setting `fnError` with a generic message ("Edge Function returned a non-2xx status code") and discarding the JSON body. The Register page's check for "already registered" in the error message never matches, so the user sees a confusing generic toast.
+The `notify_order_status_change` database trigger reads `service_role_key` from the Supabase Vault to call the `order-emails` edge function. Currently, the vault entry contains a placeholder value (`"YOUR_SERVICE_ROLE_KEY"`) instead of the actual key, so order confirmation emails are never sent.
 
 ## Solution
-Change the `custom-signup` edge function to always return HTTP 200, and move the error information into the JSON body. This way `supabase.functions.invoke()` passes the response through `data` (not `fnError`), and the AuthContext can read the specific error message.
+Run a SQL migration that:
+1. Deletes the existing placeholder vault secret named `service_role_key`
+2. Re-creates it using `current_setting('supabase.service_role_key', true)`, which automatically pulls the real service role key from the running Supabase config -- no manual copy-paste needed
 
-## Changes
+## Technical Details
 
-### 1. Update `supabase/functions/custom-signup/index.ts`
-- Change the "User already registered" response from `status: 422` to `status: 200` with `{ error: "User already registered" }`
-- Change the generic error response from `status: 400` to `status: 200` with `{ error: error.message }`
-- Keep the JSON body exactly the same -- only the HTTP status codes change
-- Keep the 405 (method not allowed) and input validation responses as-is since those indicate programming errors, not user-facing errors
+### SQL Migration
+```sql
+DELETE FROM vault.secrets WHERE name = 'service_role_key';
+SELECT vault.create_secret(
+  current_setting('supabase.service_role_key', true),
+  'service_role_key'
+);
+```
 
-### 2. Redeploy `custom-signup`
+### Why this works
+- `current_setting('supabase.service_role_key', true)` reads the actual service role key from the Supabase runtime configuration
+- The `notify_order_status_change` trigger already queries `vault.decrypted_secrets WHERE name = 'service_role_key'` to build the Authorization header for the `order-emails` edge function call
+- Once the vault has the real key, the trigger will successfully authenticate against the edge function
 
-## Why this works
-- The AuthContext already checks `data?.error` (line 70) and returns it as an `Error` object
-- The Register page already checks `error.message.includes("already registered")` (line 88) and shows "This email is already registered. Please sign in instead."
-- By returning 200, the Supabase client passes the body through `data` instead of swallowing it in `fnError`
-
-## No other files need changes
-The error propagation chain (edge function -> AuthContext -> Register page) is already correctly wired -- it just needs the HTTP status to be 200 so the Supabase client doesn't intercept the response.
+### Also verify `supabase_url` vault entry
+The same trigger also reads a vault secret named `supabase_url`. We should verify this is also set correctly, and fix it if needed using:
+```sql
+DELETE FROM vault.secrets WHERE name = 'supabase_url';
+SELECT vault.create_secret(
+  current_setting('supabase.supabase_url', true),
+  'supabase_url'
+);
+```
 
