@@ -84,14 +84,14 @@ export default function LoginPage() {
 
     setIsResending(true);
     try {
-      const response = await supabase.functions.invoke("resend-verification", {
-        body: {
-          email: emailValue,
-          redirectTo: `${window.location.origin}/`,
+      await supabase.auth.resend({
+        type: "signup",
+        email: emailValue,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
         },
       });
 
-      // Always show success to prevent email enumeration
       toast.success("Verification email sent! Please check your inbox.");
       setShowResendOption(false);
     } catch {

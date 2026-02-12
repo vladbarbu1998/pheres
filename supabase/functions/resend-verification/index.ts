@@ -150,7 +150,7 @@ serve(async (req: Request) => {
     const { data, error } = await supabase.auth.admin.generateLink({
       type: "signup",
       email,
-      password: existingUser.encrypted_password || crypto.randomUUID(),
+      password: crypto.randomUUID(),
       options: {
         redirectTo: redirectTo || "https://pheres.com/",
       },
