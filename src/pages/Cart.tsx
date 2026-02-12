@@ -44,7 +44,7 @@ export default function Cart() {
         title="Your Cart"
         backLink={{ to: "/shop", label: "Continue Shopping" }}
         leftContent={
-          <div className="text-center py-16 border border-dashed border-border rounded-sm" data-testid="empty-state">
+          <div className="text-center py-16 border border-dashed border-border rounded-sm min-h-[60vh] flex flex-col items-center justify-center" data-testid="empty-state">
             <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground/50 mb-6" />
             <h2 className="font-display text-2xl font-semibold text-foreground mb-2">
               Your cart is empty

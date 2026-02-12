@@ -81,23 +81,23 @@ export default function LoginPage() {
       toast.error("Please enter your email address first.");
       return;
     }
-    
+
     setIsResending(true);
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email: emailValue,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    });
-    setIsResending(false);
-    
-    if (error) {
-      toast.error(error.message);
-    } else {
+    try {
+      const response = await supabase.functions.invoke("resend-verification", {
+        body: {
+          email: emailValue,
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      // Always show success to prevent email enumeration
       toast.success("Verification email sent! Please check your inbox.");
       setShowResendOption(false);
+    } catch {
+      toast.error("Failed to resend. Please try again.");
     }
+    setIsResending(false);
   };
 
   const onSubmit = async (data: LoginFormData) => {
