@@ -234,15 +234,30 @@ export default function AdminOrderDetail() {
             </CardContent>
           </Card>
 
+          {/* Customer info */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <p className="font-medium">
+                {order.shipping_first_name} {order.shipping_last_name}
+              </p>
+              {order.customer_email && (
+                <p className="text-muted-foreground">{order.customer_email}</p>
+              )}
+              {order.shipping_phone && (
+                <p className="text-muted-foreground">{order.shipping_phone}</p>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Shipping address */}
           <Card>
             <CardHeader>
               <CardTitle>Shipping Address</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-medium">
-                {order.shipping_first_name} {order.shipping_last_name}
-              </p>
               <p className="text-muted-foreground">
                 {order.shipping_address_line_1}
                 {order.shipping_address_line_2 && <>, {order.shipping_address_line_2}</>}
@@ -252,9 +267,6 @@ export default function AdminOrderDetail() {
                 {order.shipping_state && `, ${order.shipping_state}`} {order.shipping_postal_code}
               </p>
               <p className="text-muted-foreground">{order.shipping_country}</p>
-              {order.shipping_phone && (
-                <p className="text-muted-foreground mt-2">{order.shipping_phone}</p>
-              )}
             </CardContent>
           </Card>
         </div>
