@@ -506,13 +506,14 @@ const handler = async (req: Request): Promise<Response> => {
       console.log(`Skipping customer email for status: ${status}`);
     }
 
-    // Send admin notification for new orders (pending status)
-    if (notify_admin && admin_email && status === "pending") {
-      console.log(`Sending admin notification to: ${admin_email}`);
+    // Send admin notification for new orders
+    if (notify_admin) {
+      const adminTo = admin_email || Deno.env.get("ADMIN_EMAIL") || "andrei@pheres.com";
+      console.log(`Sending admin notification to: ${adminTo}`);
 
       const adminEmailResponse = await resend.emails.send({
         from: "Pheres Orders <orders@pheres.com>",
-        to: [admin_email],
+        to: [adminTo],
         subject: `New Order: ${order.order_number}`,
         html: adminOrderNotification(orderData),
       });
