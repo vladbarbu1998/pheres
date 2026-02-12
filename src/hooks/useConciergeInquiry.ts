@@ -66,6 +66,19 @@ export function useConciergeInquiry(): UseConciergeInquiryReturn {
         throw new Error(insertError.message);
       }
 
+      // Fire-and-forget admin notification
+      supabase.functions.invoke("notify-admin-form", {
+        body: {
+          type: "concierge_inquiry",
+          name: validated.name,
+          email: validated.email,
+          country: validated.country,
+          preferredContact: validated.preferredContact,
+          phone: validated.phone,
+          message: validated.message,
+        },
+      }).catch(() => {});
+
       setIsSuccess(true);
     } catch (err) {
       if (err instanceof z.ZodError) {

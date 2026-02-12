@@ -105,6 +105,11 @@ export default function Contact() {
 
       if (error) throw error;
 
+      // Fire-and-forget admin notification
+      supabase.functions.invoke("notify-admin-form", {
+        body: { type: "contact", name: data.name, email: data.email, subject: data.subject, message: data.message },
+      }).catch(() => {});
+
       setIsSubmitted(true);
       reset();
       toast({

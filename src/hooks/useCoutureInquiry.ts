@@ -70,6 +70,21 @@ export function useCoutureInquiry(): UseCoutureInquiryReturn {
         throw new Error(insertError.message);
       }
 
+      // Fire-and-forget admin notification
+      supabase.functions.invoke("notify-admin-form", {
+        body: {
+          type: "couture_inquiry",
+          name: validated.name,
+          email: validated.email,
+          country: validated.country,
+          preferredContact: validated.preferredContact,
+          phone: validated.phone,
+          message: validated.message,
+          productName: validated.productName,
+          interestedInViewing: validated.interestedInViewing,
+        },
+      }).catch(() => {});
+
       setIsSuccess(true);
     } catch (err) {
       if (err instanceof z.ZodError) {
