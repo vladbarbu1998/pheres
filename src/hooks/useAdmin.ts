@@ -321,21 +321,6 @@ export function useAdminCustomers() {
   });
 }
 
-// News
-export function useAdminNews() {
-  return useQuery({
-    queryKey: ["admin-news"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("news")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
-}
 
 // Press entries
 export function useAdminPress() {

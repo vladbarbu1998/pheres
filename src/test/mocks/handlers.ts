@@ -132,10 +132,6 @@ export const handlers = [
     return HttpResponse.json([]);
   }),
 
-  // News
-  http.get(`${SUPABASE_URL}/rest/v1/news`, () => {
-    return HttpResponse.json([]);
-  }),
 
   // Create order edge function
   http.post(`${SUPABASE_URL}/functions/v1/create-order`, async ({ request }) => {
