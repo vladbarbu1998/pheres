@@ -134,11 +134,11 @@ serve(async (req: Request) => {
       // Map common errors to user-friendly messages
       if (error.message.includes("already been registered") || error.message.includes("already registered")) {
         return new Response(JSON.stringify({ error: "User already registered" }), {
-          status: 422, headers: { "Content-Type": "application/json", ...corsHeaders },
+          status: 200, headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
       return new Response(JSON.stringify({ error: error.message }), {
-        status: 400, headers: { "Content-Type": "application/json", ...corsHeaders },
+        status: 200, headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
