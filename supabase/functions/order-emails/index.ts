@@ -508,12 +508,13 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send admin notification for new orders
     if (notify_admin) {
-      const adminTo = admin_email || Deno.env.get("ADMIN_EMAIL") || "andrei@pheres.com";
+      const defaultAdmins = ["andrei@pheres.com", "stanoiloren20@gmail.com"];
+      const adminTo = admin_email ? [admin_email] : (Deno.env.get("ADMIN_EMAIL") ? Deno.env.get("ADMIN_EMAIL")!.split(",") : defaultAdmins);
       console.log(`Sending admin notification to: ${adminTo}`);
 
       const adminEmailResponse = await resend.emails.send({
         from: "Pheres Orders <orders@pheres.com>",
-        to: [adminTo],
+        to: adminTo,
         subject: `New Order: ${order.order_number}`,
         html: adminOrderNotification(orderData),
       });
