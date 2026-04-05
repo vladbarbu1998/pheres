@@ -320,8 +320,8 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* FAQ Section with FAQPage schema */}
-      <FAQSection />
+      {/* FAQ Section - hidden until approved by client */}
+      {/* <FAQSection /> */}
     </Layout>
   );
 }
