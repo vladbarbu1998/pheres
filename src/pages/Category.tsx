@@ -1,6 +1,7 @@
 import { useParams, Link, useSearchParams } from "react-router-dom";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
@@ -74,23 +75,6 @@ export default function CategoryPage() {
     productType: "ready_to_wear",
   });
 
-  // Update document title and meta for SEO
-  useEffect(() => {
-    if (category) {
-      document.title = `${category.name} | Pheres Jewelry`;
-      
-      // Update meta description
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription && category.description) {
-        metaDescription.setAttribute("content", category.description.slice(0, 160));
-      }
-    }
-    
-    return () => {
-      document.title = "Pheres | Luxury Jewelry";
-    };
-  }, [category]);
-
   const handleSortChange = (sort: SortOption) => {
     setSearchParams({ sort });
     setPage(1);
@@ -157,6 +141,30 @@ export default function CategoryPage() {
 
   return (
     <Layout>
+      {category && (
+        <SEOHead
+          title={`${category.name} | PHERES Fine Jewelry`}
+          description={category.description?.slice(0, 160) || `Shop ${category.name} from PHERES. Luxury fine jewelry crafted with rare diamonds and gemstones.`}
+          url={`/shop/category/${slug}`}
+          image={category.image_url || undefined}
+          jsonLd={[
+            {
+              "@type": "CollectionPage",
+              "name": `${category.name} | PHERES`,
+              "description": category.description || `${category.name} jewelry by PHERES`,
+              "url": `https://pheres.com/shop/category/${slug}`,
+            },
+            {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pheres.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://pheres.com/shop" },
+                { "@type": "ListItem", "position": 3, "name": category.name },
+              ],
+            },
+          ]}
+        />
+      )}
       {/* Hero Section */}
       <section className="relative border-b border-border">
         {/* Background image */}

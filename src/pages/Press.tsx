@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { PageHero } from "@/components/layout/PageHero";
 import { PressLogoCarousel } from "@/components/press/PressLogoCarousel";
 import { PressArticleCard } from "@/components/press/PressArticleCard";
@@ -46,6 +47,11 @@ export default function PressPage() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Press | PHERES"
+        description="PHERES in the world's most prestigious publications. Read features, interviews, and editorial coverage of our luxury fine jewelry."
+        url="/press"
+      />
       <PageHero
         label="In the Spotlight"
         title="Press"

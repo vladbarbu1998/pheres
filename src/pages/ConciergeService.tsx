@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { BrandWord } from "@/components/ui/brand-word";
@@ -11,6 +12,11 @@ export default function ConciergeService() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Concierge Service | PHERES"
+        description="Experience personalized luxury assistance from PHERES. Discreet concierge service for bespoke jewelry consultations, concierge delivery, and post-purchase care."
+        url="/concierge-service"
+      />
       <PageHero
         label="Exclusive Service"
         title="Concierge Service"

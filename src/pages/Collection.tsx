@@ -2,6 +2,7 @@ import { useParams, Link, useSearchParams, Navigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
@@ -128,6 +129,29 @@ export default function CollectionPage() {
 
   return (
     <Layout>
+      {collection && (
+        <SEOHead
+          title={`${collection.name} Collection | PHERES`}
+          description={collection.description?.replace(/<[^>]*>/g, '').slice(0, 160) || `Explore the ${collection.name} collection by PHERES. Luxury fine jewelry crafted with exceptional artistry.`}
+          url={`/shop/collection/${slug}`}
+          image={collection.image_url || undefined}
+          jsonLd={[
+            {
+              "@type": "CollectionPage",
+              "name": `${collection.name} Collection | PHERES`,
+              "url": `https://pheres.com/shop/collection/${slug}`,
+            },
+            {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pheres.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://pheres.com/shop" },
+                { "@type": "ListItem", "position": 3, "name": collection.name },
+              ],
+            },
+          ]}
+        />
+      )}
       {/* Hero Section */}
       <section className="relative border-b border-border">
         {/* Background image */}

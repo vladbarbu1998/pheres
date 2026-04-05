@@ -2,6 +2,7 @@ import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { EmptyState } from "@/components/shop/EmptyState";
 import { ErrorState } from "@/components/shop/ErrorState";
@@ -122,6 +123,14 @@ export default function CoutureCollectionPage() {
 
   return (
     <Layout>
+      {collection && (
+        <SEOHead
+          title={`${collection.name} Couture Collection | PHERES`}
+          description={collection.description?.replace(/<[^>]*>/g, '').slice(0, 160) || `Explore the ${collection.name} couture collection by PHERES. One-of-a-kind masterpieces available by inquiry.`}
+          url={`/couture/${collectionSlug}`}
+          image={collection.image_url || undefined}
+        />
+      )}
       {/* Hero Section */}
       <section className="relative border-b border-border">
         {/* Background image */}

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { useFeaturedPress } from "@/hooks/usePress";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { BrandHeritageSection } from "@/components/home/BrandHeritageSection";
@@ -13,6 +14,20 @@ export default function Index() {
 
   return (
     <Layout>
+      <SEOHead
+        title="PHERES | Luxury Fine Jewelry | Hong Kong"
+        description="Discover exceptional couture and ready-to-wear fine jewelry by PHERES. Handcrafted with rare diamonds and gemstones since 2006. Based in Hong Kong, worn by icons worldwide."
+        url="/"
+        jsonLd={{
+          "@type": "WebPage",
+          "name": "PHERES - Luxury Fine Jewelry House",
+          "description": "Discover exceptional couture and ready-to-wear fine jewelry by PHERES.",
+          "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": ["h1", ".brand-heritage-section"]
+          }
+        }}
+      />
       {/* 1. Hero - Prima impresie */}
       <section className="relative h-[calc(100vh-73px)] w-full overflow-hidden">
         <div 

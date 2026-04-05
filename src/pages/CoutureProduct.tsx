@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { CoutureGallery, CoutureGallerySkeleton } from "@/components/couture/CoutureGallery";
 import { CoutureInfoPanel, CoutureInfoPanelSkeleton } from "@/components/couture/CoutureInfoPanel";
 import { CoutureStorySection } from "@/components/couture/CoutureStorySection";
@@ -113,8 +114,47 @@ export default function CoutureProductPage() {
     );
   }
 
+  // Couture product JSON-LD
+  const coutureJsonLd = product
+    ? [
+        {
+          "@type": "Product" as const,
+          "name": product.name,
+          "description": product.short_description || product.description || `${product.name} - Couture piece by PHERES`,
+          "image": sortedImages[0]?.image_url || "",
+          "brand": { "@type": "Brand", "name": "PHERES" },
+          "offers": {
+            "@type": "Offer",
+            "availability": "https://schema.org/PreOrder",
+            "url": `https://pheres.com/couture/${collectionSlug}/${productSlug}`,
+          },
+        },
+        {
+          "@type": "BreadcrumbList" as const,
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pheres.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Couture", "item": "https://pheres.com/collections/couture" },
+            ...(collection
+              ? [{ "@type": "ListItem", "position": 3, "name": collection.name, "item": `https://pheres.com/couture/${collection.slug}` }]
+              : []),
+            { "@type": "ListItem", "position": collection ? 4 : 3, "name": product.name },
+          ],
+        },
+      ]
+    : undefined;
+
   return (
     <Layout>
+      {product && (
+        <SEOHead
+          title={`${product.name} | PHERES Couture`}
+          description={product.short_description || product.description?.slice(0, 160) || `Discover ${product.name}, an exceptional couture creation by PHERES. Inquire for availability.`}
+          url={`/couture/${collectionSlug}/${productSlug}`}
+          image={sortedImages[0]?.image_url}
+          type="product"
+          jsonLd={coutureJsonLd}
+        />
+      )}
       <div className="bg-secondary/10 min-h-screen">
         {/* Above the fold - 60/40 layout */}
         <section className="container max-w-7xl mx-auto px-4 py-8 lg:py-12">

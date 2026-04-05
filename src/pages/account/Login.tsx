@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Eye, EyeOff, Loader2, Clock, Mail } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -151,6 +152,12 @@ export default function LoginPage() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Sign In | PHERES"
+        description="Sign in to your PHERES account."
+        url="/account/login"
+        noindex
+      />
       <div className="container flex min-h-[70vh] items-center justify-center py-12">
         <div className="mx-auto w-full max-w-md space-y-8">
           <div className="text-center">

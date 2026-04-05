@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import {
   ShopFilters,
@@ -121,6 +122,11 @@ export default function ShopPage() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Shop Luxury Jewelry | PHERES"
+        description="Browse the PHERES collection of luxury fine jewelry. Discover exquisite rings, necklaces, earrings, and bracelets crafted with rare diamonds and gemstones."
+        url="/shop"
+      />
       {/* Hero Section */}
       <section className="border-b border-border bg-secondary/30">
         <div className="container py-12 lg:py-16">

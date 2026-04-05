@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { PageHero } from "@/components/layout/PageHero";
 import { BiographyViewer } from "@/components/story/BiographyViewer";
 import { Diamond, Gem, Globe, Leaf } from "lucide-react";
@@ -34,6 +35,21 @@ const values = [
 export default function Story() {
   return (
     <Layout>
+      <SEOHead
+        title="Our Story | PHERES"
+        description="Founded in 2006 by Narcisa Pheres in Hong Kong. Discover the journey of PHERES, a luxury fine jewelry house crafting exceptional pieces with rare diamonds and gemstones."
+        url="/story"
+        jsonLd={{
+          "@type": "AboutPage",
+          "name": "Our Story | PHERES",
+          "description": "The story of PHERES luxury jewelry house, founded by Narcisa Pheres in 2006.",
+          "url": "https://pheres.com/story",
+          "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": [".space-y-4"]
+          }
+        }}
+      />
       <PageHero
         label="Since 2006"
         title="Our Story"

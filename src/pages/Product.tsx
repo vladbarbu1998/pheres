@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { ProductGallery, ProductGallerySkeleton } from "@/components/product/ProductGallery";
 import { ProductInfo, ProductInfoSkeleton } from "@/components/product/ProductInfo";
 import { ProductDetails } from "@/components/product/ProductDetails";
@@ -127,8 +128,60 @@ export default function ProductPage() {
     );
   }
 
+  // Build JSON-LD for product and breadcrumb
+  const productJsonLd = product
+    ? [
+        {
+          "@type": "Product" as const,
+          "name": product.name,
+          "description": product.short_description || product.description || `${product.name} by PHERES`,
+          "image": sortedImages[0]?.image_url || "",
+          "brand": { "@type": "Brand", "name": "PHERES" },
+          "sku": (product as any).sku || undefined,
+          ...(Number(product.base_price) > 0
+            ? {
+                "offers": {
+                  "@type": "Offer",
+                  "price": String(product.base_price),
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "url": `https://pheres.com/shop/${categorySlug}/${productSlug}`,
+                },
+              }
+            : {
+                "offers": {
+                  "@type": "Offer",
+                  "availability": "https://schema.org/PreOrder",
+                  "url": `https://pheres.com/shop/${categorySlug}/${productSlug}`,
+                },
+              }),
+        },
+        {
+          "@type": "BreadcrumbList" as const,
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pheres.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://pheres.com/shop" },
+            ...(category
+              ? [{ "@type": "ListItem", "position": 3, "name": category.name, "item": `https://pheres.com/shop/category/${category.slug}` }]
+              : []),
+            { "@type": "ListItem", "position": category ? 4 : 3, "name": product.name },
+          ],
+        },
+      ]
+    : undefined;
+
   return (
     <Layout>
+      {product && (
+        <SEOHead
+          title={`${product.name} | PHERES`}
+          description={product.short_description || product.description?.slice(0, 160) || `Discover ${product.name} by PHERES. Luxury fine jewelry crafted with exceptional materials.`}
+          url={`/shop/${categorySlug}/${productSlug}`}
+          image={sortedImages[0]?.image_url}
+          type="product"
+          jsonLd={productJsonLd}
+        />
+      )}
       <div className="container py-8 lg:py-12 overflow-x-hidden">
         {/* Breadcrumb */}
         {productLoading ? (

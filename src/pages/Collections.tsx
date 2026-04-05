@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { BrandWord } from "@/components/ui/brand-word";
 import universeCouture from "@/assets/universe-couture.jpg";
 import universeRtw from "@/assets/universe-rtw.webp";
@@ -71,6 +72,11 @@ function UniverseCard({ title, overline, subtitle, cta, href, imageUrl, imageAlt
 export default function CollectionsPage() {
   return (
     <Layout>
+      <SEOHead
+        title="Collections | PHERES"
+        description="Explore PHERES jewelry collections. Discover our Couture high jewelry and Ready to Wear collections, crafted with rare diamonds and gemstones."
+        url="/collections"
+      />
       {/* Asymmetric Editorial Layout */}
       <section className="min-h-[calc(100vh-4rem)] bg-background md:min-h-[calc(100vh-5rem)]">
         <div className="grid h-full min-h-[calc(100vh-4rem)] grid-cols-1 gap-px bg-border md:min-h-[calc(100vh-5rem)] md:grid-cols-2 lg:grid-cols-[1.4fr_1fr]">

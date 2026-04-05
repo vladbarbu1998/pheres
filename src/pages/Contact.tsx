@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { MapPin, Instagram, Send, CheckCircle, Clock } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { FAQSection } from "@/components/seo/FAQSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,6 +132,11 @@ export default function Contact() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Contact PHERES | Hong Kong Office"
+        description="Get in touch with PHERES luxury jewelry. Visit our Hong Kong office at Level 29, Infinitus Plaza, Sheung Wan, or send us a message for bespoke inquiries."
+        url="/contact"
+      />
       {/* Header */}
       <section className="container py-12 md:py-16">
         <div className="max-w-2xl">
@@ -312,6 +319,9 @@ export default function Contact() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section with FAQPage schema */}
+      <FAQSection />
     </Layout>
   );
 }

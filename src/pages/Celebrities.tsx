@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { PageHero } from "@/components/layout/PageHero";
 import { useCelebrityAppearances, type CelebrityAppearance } from "@/hooks/usePress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -202,6 +203,11 @@ export default function Celebrities() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Celebrities | PHERES"
+        description="See PHERES luxury jewelry on the world's most celebrated icons. Red carpet moments from the Oscars, Grammys, Golden Globes, and Met Gala."
+        url="/celebrities"
+      />
       <PageHero
         label="Worn by Icons"
         title="Celebrities & Red Carpet Moments"

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { useCollectionsByType } from "@/hooks/useProducts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sanitizeHtml } from "@/lib/sanitize";
@@ -53,6 +54,11 @@ export default function CollectionTypePage() {
 
   return (
     <Layout>
+      <SEOHead
+        title={`${config.title} Collections | PHERES`}
+        description={config.description}
+        url={`/collections/${type}`}
+      />
       {/* Hero Section */}
       <section className="border-b border-border bg-secondary/30 py-20 md:py-28">
         <div className="container">
