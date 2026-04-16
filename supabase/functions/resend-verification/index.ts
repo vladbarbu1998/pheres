@@ -150,7 +150,7 @@ serve(async (req: Request) => {
 
     console.log(`Resending verification email to: ${email}`);
     await resend.emails.send({
-      from: "Pheres <noreply@pheres.com>",
+      from: "Pheres <noreply@mail.pheres.com>",
       to: [email],
       subject: "Confirm Your Email \u2014 Pheres",
       html: confirmationEmailHtml(firstName, data.properties.action_link),

@@ -220,7 +220,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending admin notification for ${type} form submission`);
 
     const emailResponse = await resend.emails.send({
-      from: "Pheres <orders@pheres.com>",
+      from: "Pheres <orders@mail.pheres.com>",
       to: ADMIN_RECIPIENTS,
       subject,
       html,

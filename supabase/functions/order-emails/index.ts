@@ -492,7 +492,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.log(`Sending ${status} email to customer: ${customerEmail}`);
 
         const emailResponse = await resend.emails.send({
-          from: "Pheres <orders@pheres.com>",
+          from: "Pheres <orders@mail.pheres.com>",
           to: [customerEmail],
           subject: template.subject,
           html: template.getHtml(orderData),
@@ -516,7 +516,7 @@ const handler = async (req: Request): Promise<Response> => {
       console.log(`Sending admin notification to: ${adminTo}`);
 
       const adminEmailResponse = await resend.emails.send({
-        from: "Pheres Orders <orders@pheres.com>",
+        from: "Pheres Orders <orders@mail.pheres.com>",
         to: adminTo,
         subject: `New Order: ${order.order_number}`,
         html: adminOrderNotification(orderData),

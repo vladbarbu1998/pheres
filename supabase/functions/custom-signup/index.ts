@@ -153,7 +153,7 @@ serve(async (req: Request) => {
     // Send branded confirmation email via Resend
     console.log(`Sending branded confirmation email to: ${email}`);
     const emailResponse = await resend.emails.send({
-      from: "Pheres <noreply@pheres.com>",
+      from: "Pheres <noreply@mail.pheres.com>",
       to: [email],
       subject: "Confirm Your Email \u2014 Pheres",
       html: confirmationEmailHtml(firstName || "", confirmUrl),
