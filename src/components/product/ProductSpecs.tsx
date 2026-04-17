@@ -1,0 +1,148 @@
+interface ProductMetal {
+  id?: string;
+  metal_type: string;
+  metal_weight?: string | null;
+  display_order?: number;
+}
+
+interface ProductStone {
+  id?: string;
+  stone_type: string;
+  stone_carat?: string | null;
+  stone_color?: string | null;
+  stone_clarity?: string | null;
+  stone_cut?: string | null;
+  display_order?: number;
+}
+
+interface ProductSpecsProps {
+  productCode?: string | null;
+  modelNumber?: string | null;
+  metals?: ProductMetal[];
+  grossWeight?: string | null;
+  size?: string | null;
+  stones?: ProductStone[];
+  certification?: string | null;
+  collectionName?: string | null;
+}
+
+interface SpecItemProps {
+  label: string;
+  value: string;
+}
+
+function SpecItem({ label, value }: SpecItemProps) {
+  return (
+    <div className="flex justify-between gap-4 py-3">
+      <span className="text-sm text-muted-foreground shrink-0">{label}</span>
+      <span className="text-sm font-medium text-foreground text-right break-words">{value}</span>
+    </div>
+  );
+}
+
+export function ProductSpecs({
+  productCode,
+  modelNumber,
+  metals = [],
+  grossWeight,
+  size,
+  stones = [],
+  certification,
+  collectionName,
+}: ProductSpecsProps) {
+  const baseSpecs = [
+    { label: "Model Number", value: modelNumber },
+    { label: "Product Code", value: productCode },
+  ].filter((spec) => spec.value);
+
+  // Build metal specs - each metal gets its own line
+  const metalSpecs: { label: string; value: string }[] = [];
+  
+  metals.forEach((metal, index) => {
+    if (metal.metal_type) {
+      const metalLabel = metals.length > 1 ? `Metal ${index + 1}` : "Metal";
+      metalSpecs.push({
+        label: metalLabel,
+        value: metal.metal_type,
+      });
+      if (metal.metal_weight) {
+        metalSpecs.push({
+          label: metals.length > 1 ? `Metal ${index + 1} Weight` : "Metal Weight",
+          value: metal.metal_weight,
+        });
+      }
+    }
+  });
+
+  // Gross weight and certification
+  const additionalSpecs = [
+    { label: "Gross Weight", value: grossWeight },
+    { label: "Certification", value: certification },
+  ].filter((spec) => spec.value);
+
+  // Build stone specs - each stone gets its own lines
+  const stoneSpecs: { label: string; value: string }[] = [];
+  
+  stones.forEach((stone) => {
+    if (stone.stone_type) {
+      // Main line: "{Stone Type} Weight: {carat}" or just "{Stone Type}"
+      if (stone.stone_carat) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Weight`,
+          value: stone.stone_carat,
+        });
+      } else {
+        stoneSpecs.push({
+          label: "Stone",
+          value: stone.stone_type,
+        });
+      }
+
+      // Additional stone properties
+      if (stone.stone_color) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Color`,
+          value: stone.stone_color,
+        });
+      }
+      if (stone.stone_clarity) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Clarity`,
+          value: stone.stone_clarity,
+        });
+      }
+      if (stone.stone_cut) {
+        stoneSpecs.push({
+          label: `${stone.stone_type} Cut`,
+          value: stone.stone_cut,
+        });
+      }
+    }
+  });
+
+  // Size right above collection - add " symbol if not present
+  const formatSize = (s: string) => s.endsWith('"') || s.endsWith("'") || s.endsWith("in") ? s : `${s}"`;
+  const sizeSpec = size ? [{ label: "Size", value: formatSize(size) }] : [];
+  
+  // Collection always last
+  const collectionSpec = collectionName ? [{ label: "Collection", value: collectionName }] : [];
+
+  const allSpecs = [...baseSpecs, ...metalSpecs, ...additionalSpecs, ...stoneSpecs, ...sizeSpec, ...collectionSpec];
+
+  if (allSpecs.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-1">
+      <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-foreground mb-4">
+        Specifications
+      </h3>
+      <div className="divide-y divide-border">
+        {allSpecs.map((spec, index) => (
+          <SpecItem key={`${spec.label}-${index}`} label={spec.label} value={spec.value!} />
+        ))}
+      </div>
+    </div>
+  );
+}

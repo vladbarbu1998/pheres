@@ -1,0 +1,373 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import DOMPurify from "dompurify";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Share2, Link2, Check, Heart, Send, Linkedin, Mail } from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { useFavoriteToggle } from "@/hooks/useFavoriteToggle";
+import { ProductSpecs } from "@/components/product/ProductSpecs";
+
+interface Metal {
+  id: string;
+  metal_type: string;
+  metal_weight: string | null;
+}
+
+interface Stone {
+  id: string;
+  stone_type: string;
+  stone_carat: string | null;
+  stone_clarity: string | null;
+  stone_color: string | null;
+  stone_cut: string | null;
+}
+
+interface CoutureInfoPanelProps {
+  productId: string;
+  productName: string;
+  shortDescription?: string | null;
+  collectionName?: string | null;
+  collectionSlug?: string | null;
+  metals?: Metal[];
+  stones?: Stone[];
+  grossWeight?: string | null;
+  size?: string | null;
+  certification?: string | null;
+  productCode?: string | null;
+  modelNumber?: string | null;
+  productImageUrl?: string | null;
+  isArchived?: boolean;
+  onInquire: () => void;
+}
+
+export function CoutureInfoPanel({
+  productId,
+  productName,
+  shortDescription,
+  collectionName,
+  collectionSlug,
+  metals = [],
+  stones = [],
+  grossWeight,
+  size,
+  certification,
+  productCode,
+  modelNumber,
+  productImageUrl,
+  isArchived,
+  onInquire,
+}: CoutureInfoPanelProps) {
+  const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const { isFavorited, isToggling, toggle: toggleFavorite } = useFavoriteToggle(productId);
+
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareText = `Discover ${productName} - One of a Kind piece by PHERES`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast.success("Link copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy link");
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: productName,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (err) {
+        // User cancelled or error - ignore
+      }
+    }
+  };
+
+  const socialLinks = [
+    {
+      name: "Pinterest",
+      icon: Heart,
+      url: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(productImageUrl || "")}&description=${encodeURIComponent(shareText)}`,
+    },
+    {
+      name: "Facebook",
+      icon: "F",
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      name: "X",
+      icon: "𝕏",
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
+    },
+    {
+      name: "WhatsApp",
+      icon: Send,
+      url: `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
+    },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      name: "Email",
+      icon: Mail,
+      url: `mailto:?subject=${encodeURIComponent(productName + " - PHERES")}&body=${encodeURIComponent(shareText + "\n\n" + shareUrl)}`,
+    },
+  ];
+
+  const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
+
+  return (
+    <div className="flex flex-col h-full lg:sticky lg:top-24">
+      {/* Collection Link */}
+      {collectionName && collectionSlug && (
+        <Link 
+          href={`/couture/${collectionSlug}`}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8 group animate-fade-in"
+          style={{ animationDelay: "0ms", animationFillMode: "both" }}
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+          {collectionName}
+        </Link>
+      )}
+
+      {/* Product Name */}
+      <h1 
+        className="font-display text-3xl md:text-4xl lg:text-[2.75rem] font-semibold tracking-wide text-foreground leading-tight mb-3 animate-fade-in"
+        style={{ animationDelay: "50ms", animationFillMode: "both" }}
+      >
+        {productName}
+      </h1>
+
+      {/* One of a Kind Label + Archive badge */}
+      <div 
+        className="flex flex-wrap items-center gap-3 mb-8 animate-fade-in"
+        style={{ animationDelay: "100ms", animationFillMode: "both" }}
+      >
+        <p className="font-label text-xs uppercase tracking-[0.25em] text-muted-foreground">
+          One of a Kind
+        </p>
+        {isArchived && (
+          <span className="bg-muted px-2 py-0.5 font-label text-xs font-medium tracking-wide text-muted-foreground">
+            ARCHIVE PIECE
+          </span>
+        )}
+      </div>
+
+      {/* Short Description */}
+      {shortDescription && (
+        <div 
+          className="text-base text-muted-foreground leading-relaxed mb-8 max-w-prose prose prose-sm animate-fade-in"
+          style={{ animationDelay: "150ms", animationFillMode: "both" }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(shortDescription) }}
+        />
+      )}
+
+      <Separator 
+        className="mb-8 animate-fade-in" 
+        style={{ animationDelay: "200ms", animationFillMode: "both" }} 
+      />
+
+
+      {/* Primary CTA */}
+      {isArchived ? (
+        <div 
+          className="mb-4 animate-fade-in"
+          style={{ animationDelay: "350ms", animationFillMode: "both" }}
+        >
+          <p className="text-muted-foreground text-center mb-4">
+            This PHERES creation is part of a past collection and is no longer available for purchase.
+          </p>
+          <Button
+            onClick={onInquire}
+            size="lg"
+            variant="outline"
+            className="w-full h-14 text-base font-medium tracking-wide"
+          >
+            Inquire About Archive Piece
+          </Button>
+          <p className="text-xs text-muted-foreground text-center mt-2 italic">
+            Inquiries are for historical reference only.
+          </p>
+        </div>
+      ) : (
+        <Button
+          onClick={onInquire}
+          size="lg"
+          className="w-full h-14 text-base font-medium tracking-wide mb-4 animate-fade-in"
+          style={{ animationDelay: "350ms", animationFillMode: "both" }}
+        >
+          Request Information
+        </Button>
+      )}
+
+      {/* Add to Favorites */}
+      <Button
+        variant="outline"
+        onClick={toggleFavorite}
+        disabled={isToggling}
+        className="w-full h-12 text-base font-medium tracking-wide mb-4 animate-fade-in"
+        style={{ animationDelay: "375ms", animationFillMode: "both" }}
+      >
+        <Heart className={cn("mr-2 h-4 w-4", isFavorited && "fill-primary text-primary")} />
+        {isFavorited ? "In Wishlist" : "Add to Wishlist"}
+      </Button>
+
+      {/* Secondary CTA */}
+      <Link
+        href="/contact"
+        className="text-sm text-center text-muted-foreground hover:text-primary transition-colors mb-8 animate-fade-in"
+        style={{ animationDelay: "400ms", animationFillMode: "both" }}
+      >
+        Contact a PHERES Advisor
+      </Link>
+
+      {/* Full Specifications */}
+      {(metals.length > 0 || stones.length > 0 || grossWeight || size || certification) && (
+        <div 
+          className="pt-6 border-t border-border/50 mb-8 animate-fade-in"
+          style={{ animationDelay: "450ms", animationFillMode: "both" }}
+        >
+          <ProductSpecs
+            productCode={productCode}
+            modelNumber={modelNumber}
+            metals={metals}
+            grossWeight={grossWeight}
+            size={size}
+            stones={stones}
+            certification={certification}
+            collectionName={collectionName}
+          />
+        </div>
+      )}
+
+      {/* Share Button */}
+      <div 
+        className="flex justify-center animate-fade-in"
+        style={{ animationDelay: "500ms", animationFillMode: "both" }}
+      >
+        {canShare ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleNativeShare}
+            className="text-muted-foreground hover:text-foreground gap-2 group"
+          >
+            <Share2 className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+            Share This Piece
+          </Button>
+        ) : (
+          <DropdownMenu open={shareOpen} onOpenChange={setShareOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground gap-2 group"
+              >
+                <Share2 className={cn(
+                  "h-4 w-4 transition-all duration-300",
+                  shareOpen 
+                    ? "rotate-12 scale-110 text-primary" 
+                    : "group-hover:scale-110 group-hover:rotate-6"
+                )} />
+                Share This Piece
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className="w-52 p-2 bg-background border border-border shadow-xl rounded-xl animate-scale-in" 
+              align="center"
+              sideOffset={8}
+            >
+              <DropdownMenuItem
+                onClick={handleCopyLink}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer focus:bg-muted"
+              >
+                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  {copied ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Link2 className="h-4 w-4 text-foreground" />
+                  )}
+                </div>
+                <span className="text-sm font-medium">{copied ? "Copied!" : "Copy Link"}</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator className="my-2" />
+              
+              <p className="px-3 py-1.5 text-xs text-muted-foreground uppercase tracking-wider">Share via</p>
+              
+              <div className="grid grid-cols-3 gap-1 p-1">
+                {socialLinks.map((link, index) => {
+                  const Icon = link.icon;
+                  const isStringIcon = typeof Icon === "string";
+                  
+                  return (
+                    <a
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShareOpen(false)}
+                      className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted transition-all duration-200 group/item"
+                      style={{ 
+                        animationDelay: `${index * 50}ms`,
+                        animationFillMode: "both"
+                      }}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all duration-200 group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:scale-110">
+                        {isStringIcon ? (
+                          <span className="text-sm font-semibold">{Icon}</span>
+                        ) : (
+                          <Icon className="h-4 w-4" />
+                        )}
+                      </div>
+                      <span className="text-[10px] text-muted-foreground group-hover/item:text-foreground transition-colors">
+                        {link.name}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function CoutureInfoPanelSkeleton() {
+  return (
+    <div className="flex flex-col">
+      <Skeleton className="h-4 w-32 mb-8" />
+      <Skeleton className="h-12 w-full mb-3" />
+      <Skeleton className="h-4 w-24 mb-8" />
+      <Skeleton className="h-20 w-full mb-8" />
+      <Skeleton className="h-px w-full mb-8" />
+      <Skeleton className="h-4 w-48 mb-8" />
+      <Skeleton className="h-px w-full mb-8" />
+      <Skeleton className="h-14 w-full mb-4" />
+      <Skeleton className="h-4 w-40 mx-auto mb-8" />
+      <Skeleton className="h-8 w-32 mx-auto" />
+    </div>
+  );
+}

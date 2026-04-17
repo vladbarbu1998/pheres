@@ -1,0 +1,502 @@
+"use client";
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useAdminProducts, useAdminCategories, useAdminCollections } from "@/hooks/useAdmin";
+import { useStorageCleanup, getProductImageUrls } from "@/hooks/useStorageCleanup";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { exportToCsv } from "@/lib/exportCsv";
+import { toast } from "sonner";
+import { Plus, Search, Trash2, Pencil, Download, Loader2, RotateCcw } from "lucide-react";
+import { format } from "date-fns";
+
+export default function AdminProducts() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname() ?? "/admin/products";
+
+  // Read filters from URL
+  const categoryId = searchParams?.get("category") ?? "";
+  const collectionId = searchParams?.get("collection") ?? "";
+  const initialSearch = searchParams?.get("q") ?? "";
+  const initialTab = searchParams?.get("type") ?? "ready_to_wear";
+
+  const [search, setSearch] = useState(initialSearch);
+  const [activeTab, setActiveTab] = useState<"couture" | "ready_to_wear">(
+    initialTab === "couture" ? "couture" : "ready_to_wear"
+  );
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Fetch products with filters
+  const { data: products, isLoading, isError, refetch } = useAdminProducts({
+    categoryId: categoryId || undefined,
+    collectionId: collectionId || undefined,
+  });
+
+  // Fetch categories and collections for dropdowns
+  const { data: categories } = useAdminCategories();
+  const { data: collections } = useAdminCollections();
+
+  // Filter products by type
+  const coutureProducts = products?.filter((p: any) => p.product_type === "couture") || [];
+  const readyToWearProducts = products?.filter((p: any) => p.product_type !== "couture") || [];
+
+  // Update URL when filters change
+  const updateFilters = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams?.toString() ?? "");
+    if (value) {
+      newParams.set(key, value);
+    } else {
+      newParams.delete(key);
+    }
+    router.replace(`${pathname}?${newParams.toString()}`);
+  };
+
+  // Reset all filters
+  const handleResetFilters = () => {
+    setSearch("");
+    const newParams = new URLSearchParams();
+    newParams.set("type", activeTab);
+    router.replace(`${pathname}?${newParams.toString()}`);
+  };
+
+  const hasActiveFilters = !!search || !!categoryId || !!collectionId;
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as "couture" | "ready_to_wear");
+    updateFilters("type", value);
+  };
+
+  // Sync search to URL with debounce
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const newParams = new URLSearchParams(searchParams?.toString() ?? "");
+      if (search) {
+        newParams.set("q", search);
+      } else {
+        newParams.delete("q");
+      }
+      router.replace(`${pathname}?${newParams.toString()}`);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  const filterBySearch = (productList: any[]) =>
+    productList.filter(
+      (product) =>
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.slug.toLowerCase().includes(search.toLowerCase()) ||
+        (product.product_number?.toLowerCase().includes(search.toLowerCase()) ?? false)
+    );
+
+  const filteredCouture = filterBySearch(coutureProducts);
+  const filteredReadyToWear = filterBySearch(readyToWearProducts);
+
+  const handleExport = () => {
+    const currentProducts = activeTab === "couture" ? filteredCouture : filteredReadyToWear;
+    if (!currentProducts?.length) {
+      toast.error("No products to export");
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const exportData = currentProducts.map((product) => ({
+        product_id: product.product_number || product.id,
+        sku: product.sku || "",
+        name: product.name,
+        category_names: (product as any).category?.name || "",
+        collection_names: getCollectionNames(product) || "",
+        price: activeTab === "couture" ? "Inquiry Only" : Number(product.base_price).toFixed(2),
+        currency: activeTab === "couture" ? "" : "USD",
+        stock_quantity: (product as any).product_variants?.reduce(
+          (sum: number, v: any) => sum + (v.stock_quantity || 0),
+          0
+        ) || 0,
+        status: product.is_active ? "Active" : "Draft",
+        created_at: format(new Date(product.created_at), "yyyy-MM-dd HH:mm"),
+        updated_at: format(new Date(product.updated_at), "yyyy-MM-dd HH:mm"),
+      }));
+
+      const columns = [
+        { key: "product_id" as const, header: "Product ID" },
+        { key: "sku" as const, header: "SKU" },
+        { key: "name" as const, header: "Name" },
+        { key: "category_names" as const, header: "Category" },
+        { key: "collection_names" as const, header: "Collection" },
+        { key: "price" as const, header: "Price" },
+        { key: "currency" as const, header: "Currency" },
+        { key: "stock_quantity" as const, header: "Stock Quantity" },
+        { key: "status" as const, header: "Status" },
+        { key: "created_at" as const, header: "Created At" },
+        { key: "updated_at" as const, header: "Updated At" },
+      ];
+
+      const filename = `pheres-${activeTab}-products-${format(new Date(), "yyyy-MM-dd")}.csv`;
+      exportToCsv(exportData, columns, filename);
+      toast.success(`Exported ${exportData.length} products`);
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Failed to export products");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const storageCleanup = useStorageCleanup();
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    // Get the product to collect image URLs before deletion
+    const productToDelete = products?.find((p: any) => p.id === deleteId);
+    const imageUrls = productToDelete ? getProductImageUrls(productToDelete) : [];
+    
+    const { error } = await supabase.from("products").delete().eq("id", deleteId);
+    
+    if (error) {
+      toast.error("Failed to delete product");
+    } else {
+      toast.success("Product deleted");
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      
+      // Cleanup orphaned images in background
+      if (imageUrls.length > 0) {
+        storageCleanup.mutate(imageUrls, {
+          onSuccess: (data) => {
+            if (data.deletedCount > 0) {
+              console.log(`Cleaned up ${data.deletedCount} orphaned image(s)`);
+            }
+          },
+          onError: (err) => {
+            console.error("Image cleanup error:", err);
+          },
+        });
+      }
+    }
+    setDeleteId(null);
+  };
+
+  const getPrimaryImage = (product: any) => {
+    const primary = product.product_images?.find((img: any) => img.is_primary);
+    return primary?.image_url || product.product_images?.[0]?.image_url;
+  };
+
+  const getCollectionNames = (product: any) => {
+    return product.product_collections
+      ?.map((pc: any) => pc.collections?.name)
+      .filter(Boolean)
+      .join(", ");
+  };
+
+  const renderProductTable = (productList: any[], isCouture: boolean) => {
+    if (productList.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            {search || categoryId || collectionId
+              ? "No products match your filters."
+              : `No ${isCouture ? "Couture" : "Ready To Wear"} products yet.`}
+          </p>
+          {!search && !categoryId && !collectionId && (
+            <Button asChild className="mt-4">
+              <Link href={`/admin/products/new?type=${isCouture ? "couture" : "ready_to_wear"}`}>
+                Add your first {isCouture ? "Couture" : "Ready To Wear"} product
+              </Link>
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-16">ID</TableHead>
+              <TableHead className="w-16">Image</TableHead>
+              <TableHead>Name</TableHead>
+              {!isCouture && <TableHead className="hidden md:table-cell">Price</TableHead>}
+              <TableHead className="hidden md:table-cell">Category</TableHead>
+              <TableHead className="hidden lg:table-cell">Collection</TableHead>
+              <TableHead className="hidden sm:table-cell">Status</TableHead>
+              <TableHead className="w-24">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {productList.map((product) => {
+              // Compute effective_archived: product is archived OR any of its collections is archived
+              const collectionArchived = product.product_collections?.some(
+                (pc: any) => pc.collections?.archived === true
+              ) ?? false;
+              const effectiveArchived = product.archived || collectionArchived;
+              
+              return (
+                <TableRow key={product.id} className={effectiveArchived ? "opacity-60" : ""}>
+                  <TableCell>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {product.product_number || "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
+                      {getPrimaryImage(product) ? (
+                        <img
+                          src={getPrimaryImage(product)}
+                          alt={product.name}
+                          className="h-full w-full object-cover object-center"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
+                          —
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <p className="font-medium">{product.name}</p>
+                      <p className="text-xs text-muted-foreground">{product.slug}</p>
+                    </div>
+                  </TableCell>
+                  {!isCouture && (
+                    <TableCell className="hidden md:table-cell">
+                      ${Number(product.base_price).toFixed(2)}
+                    </TableCell>
+                  )}
+                  <TableCell className="hidden md:table-cell">
+                    <span className="text-sm text-muted-foreground">
+                      {(product as any).category?.name || "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <span className="text-sm text-muted-foreground">
+                      {getCollectionNames(product) || "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <div className="flex flex-wrap gap-1">
+                      <Badge variant={product.is_active ? "default" : "secondary"}>
+                        {product.is_active ? "Active" : "Draft"}
+                      </Badge>
+                      {product.archived && (
+                        <Badge variant="outline" className="bg-muted text-muted-foreground">
+                          Archived
+                        </Badge>
+                      )}
+                      {!product.archived && collectionArchived && (
+                        <Badge variant="outline" className="bg-muted/50 text-muted-foreground text-[10px]">
+                          Via Collection
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/admin/products/${product.id}`}>
+                          <Pencil className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeleteId(product.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  };
+
+  return (
+    <AdminLayout title="Products" description="Manage your product catalog">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <TabsList>
+            <TabsTrigger value="ready_to_wear">
+              Ready To Wear ({readyToWearProducts.length})
+            </TabsTrigger>
+            <TabsTrigger value="couture">
+              Couture ({coutureProducts.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleExport} disabled={isExporting || isLoading}>
+              {isExporting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              Export CSV
+            </Button>
+            <Button asChild>
+              <Link href={`/admin/products/new?type=${activeTab}`}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add {activeTab === "couture" ? "Couture" : "Product"}
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* Filters row */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          {/* Category filter */}
+          <Select
+            value={categoryId}
+            onValueChange={(value) => updateFilters("category", value === "all" ? "" : value)}
+          >
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {categories?.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Collection filter */}
+          <Select
+            value={collectionId}
+            onValueChange={(value) => updateFilters("collection", value === "all" ? "" : value)}
+          >
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="All collections" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All collections</SelectItem>
+              {collections
+                ?.filter((col) => 
+                  activeTab === "couture" 
+                    ? col.collection_type === "couture" 
+                    : col.collection_type === "ready_to_wear"
+                )
+                .filter((col) => col.parent_id !== null)
+                .map((col) => (
+                  <SelectItem key={col.id} value={col.id}>
+                    {col.name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+
+          {/* Reset filters */}
+          <Button
+            variant="outline"
+            onClick={handleResetFilters}
+            disabled={!hasActiveFilters}
+            className="shrink-0"
+          >
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Reset
+          </Button>
+
+          {/* Search */}
+          <div className="relative flex-1 sm:max-w-[280px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-16" />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Failed to load products.</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4">
+              Try Again
+            </Button>
+          </div>
+        ) : (
+          <>
+            <TabsContent value="ready_to_wear" className="mt-0">
+              {renderProductTable(filteredReadyToWear, false)}
+            </TabsContent>
+            <TabsContent value="couture" className="mt-0">
+              {renderProductTable(filteredCouture, true)}
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete product?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the product
+              and all associated images and variants.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </AdminLayout>
+  );
+}

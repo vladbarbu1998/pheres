@@ -1,0 +1,104 @@
+"use client";
+
+import Link from "next/link";
+import { Logo } from "@/components/layout/Logo";
+
+const footerLinks = {
+  shop: [
+    { name: "All Jewelry", href: "/shop" },
+    { name: "Collections", href: "/collections" },
+    { name: "Concierge Service", href: "/concierge-service" },
+  ],
+  about: [
+    { name: "Our Story", href: "/story" },
+    { name: "Celebrities", href: "/celebrities" },
+    { name: "Contact", href: "/contact" },
+  ],
+  legal: [
+    { name: "Returns & Refunds", href: "/returns" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Cookie Policy", href: "/cookie-policy" },
+    { name: "Terms & Conditions", href: "/terms" },
+  ],
+};
+
+export function Footer() {
+  return (
+    <footer className="border-t border-border bg-secondary/30">
+      <div className="container py-12 lg:py-16">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div className="flex-1">
+            <Logo />
+            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+              Italian Luxury Brand; Fine Jewelry & Couture. A one-of-a-kind luxury experience for the powerful and discerning collector.
+            </p>
+          </div>
+
+          {/* Shop */}
+          <div>
+            <h3 className="font-display text-base font-semibold tracking-wide text-foreground">
+              Shop
+            </h3>
+            <ul className="mt-4 space-y-3">
+              {footerLinks.shop.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* About */}
+          <div>
+            <h3 className="font-display text-base font-semibold tracking-wide text-foreground">
+              About
+            </h3>
+            <ul className="mt-4 space-y-3">
+              {footerLinks.about.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="font-display text-base font-semibold tracking-wide text-foreground">
+              Legal
+            </h3>
+            <ul className="mt-4 space-y-3">
+              {footerLinks.legal.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-12 border-t border-border pt-8 flex items-center justify-center">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} <span className="brand-word">Pheres</span>. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
