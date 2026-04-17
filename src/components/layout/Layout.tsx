@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { BackToTop } from "./BackToTop";
@@ -11,8 +11,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
